@@ -1,8 +1,12 @@
 #! /usr/bin/env python3
 # coding: utf-8
 
-import os, glob, pickle, termios, tty, sys, time
+import os, glob, pickle, sys, time
 from var import *
+if SYSTEME_D_EXPLOITATION == 'nt':
+    import msvcrt
+else:
+    import termios, tty
 
 def effaceEtAffiche(*valeur):
     """Efface l'écran et positionne le curseur en haut a gauche."""
@@ -115,6 +119,7 @@ def playermove(LabyMap, PosJoueur, Fin, Portes, LabyOn):
     print(MESSAGEDEMANDEMOUVEMENT)
     while noinput:
         x=capturesaisie()
+        print(x)
         if x == CTRL_C:
             exit()
         if x == ECHAP_CARAC:
@@ -160,8 +165,11 @@ def playermove(LabyMap, PosJoueur, Fin, Portes, LabyOn):
 
 def capturesaisie():
     """Renvoie la touche de clavier pressée"""
-    orig_settings = termios.tcgetattr(sys.stdin)
-    tty.setraw(sys.stdin)
-    saisie=sys.stdin.read(1)[0]
-    termios.tcsetattr(sys.stdin, termios.TCSADRAIN, orig_settings)
+    if SYSTEME_D_EXPLOITATION == 'nt':
+        print("Je ne sais pas encore faire ça")
+    else:
+        orig_settings = termios.tcgetattr(sys.stdin)
+        tty.setraw(sys.stdin)
+        saisie=sys.stdin.read(1)[0]
+        termios.tcsetattr(sys.stdin, termios.TCSADRAIN, orig_settings)
     return saisie

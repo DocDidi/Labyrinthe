@@ -7,7 +7,6 @@ from var import *
 
 GameOn = True
 PartieEnCours = repriseSauvegarde()
-
 while GameOn:
     # Boucle du jeu
     if PartieEnCours:

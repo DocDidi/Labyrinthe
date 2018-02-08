@@ -10,7 +10,10 @@ LETTREPORTE = "#"
 LETTRECOULOIR = " "
 
 SYSTEME_D_EXPLOITATION = os.name
-FICHIERDESAUVEGARDE = os.environ['HOME']+"/LabyrintheEnCours.save"
+if SYSTEME_D_EXPLOITATION == 'nt':
+    FICHIERDESAUVEGARDE = "LabyrintheEnCours.save"
+else:
+    FICHIERDESAUVEGARDE = os.environ['HOME']+"/LabyrintheEnCours.save"
 EMPLACEMENTCARTES = "Cartes/*.txt"
 
 MESSAGECHOIXCARTE = "Quelle carte voulez-vous jouer ?"

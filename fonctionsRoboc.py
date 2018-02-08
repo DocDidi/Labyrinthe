@@ -3,10 +3,6 @@
 
 import os, glob, pickle, sys, time
 from var import *
-if SYSTEME_D_EXPLOITATION == 'nt':
-    import msvcrt
-else:
-    import termios, tty
 
 def effaceEtAffiche(*valeur):
     """Efface l'écran et positionne le curseur en haut a gauche."""
@@ -166,8 +162,21 @@ def playermove(LabyMap, PosJoueur, Fin, Portes, LabyOn):
 def capturesaisie():
     """Renvoie la touche de clavier pressée"""
     if SYSTEME_D_EXPLOITATION == 'nt':
-        print("Je ne sais pas encore faire ça")
+        import keyboard
+        saisie = keyboard.read_hotkey()
+        if saisie == "up":
+            saisie = FLECHE_HAUT
+        elif saisie == "down":
+            saisie = FLECHE_BAS
+        elif saisie == "right":
+            saisie = FLECHE_DROITE
+        elif saisie == "left":
+            saisie = FLECHE_GAUCHE
+        keyboard.clear_all_hotkeys()
+        return saisie
+
     else:
+        import termios, tty
         orig_settings = termios.tcgetattr(sys.stdin)
         tty.setraw(sys.stdin)
         saisie=sys.stdin.read(1)[0]

@@ -1,4 +1,5 @@
 #! /usr/bin/env python3
+# coding: utf-8
 
 import os, glob, pickle, termios, tty, sys, time
 from var import *

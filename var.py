@@ -1,4 +1,5 @@
 #! /usb/bin/env python3
+# coding: utf-8
 
 LETTREMURS = "X"
 LETTREJOUEUR = "O"

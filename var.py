@@ -12,8 +12,16 @@ LETTRECOULOIR = " "
 SYSTEME_D_EXPLOITATION = os.name
 if SYSTEME_D_EXPLOITATION == 'nt':
     FICHIERDESAUVEGARDE = "LabyrintheEnCours.save"
+    SYMBOLEMUR = "X"
+    SYMBOLEPORTE = "#"
+    SYMBOLEFIN = " "
+    SYMBOLEJOUEUR = "O"
 else:
     FICHIERDESAUVEGARDE = os.environ['HOME']+"/LabyrintheEnCours.save"
+    SYMBOLEMUR = "\U00002338"
+    SYMBOLEPORTE = "\U000022c2"
+    SYMBOLEFIN = " "
+    SYMBOLEJOUEUR = "\U0000229b"
 EMPLACEMENTCARTES = "Cartes/*.txt"
 
 MESSAGECHOIXCARTE = "Quelle carte voulez-vous jouer ?"
@@ -30,10 +38,7 @@ MESSAGEECHECCHOIXCARTE = "Désolé, Au revoir."
 CARTEDEFAUT = "XXXXX X   X XXXXX XXXXX\nX   X X   X X _ X X\
 \nX O X X   X XXXXX XXXXX\nX   X X   X X         X\nXXXXX XXXXX X     XXXXX\n\n\
 La carte que vous avez chargée n'est pas valide."
-SYMBOLEMUR = "\U00002338"
-SYMBOLEPORTE = "\U000022c2"
-SYMBOLEFIN = " "
-SYMBOLEJOUEUR = "\U0000229b"
+
 CTRL_C = '\x03'
 ECHAP_CARAC = '\x1b'
 FLECHE_HAUT = '\x1b[A'

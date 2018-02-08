@@ -4,14 +4,14 @@
 import os, glob, pickle, termios, tty, sys, time
 from var import *
 
-def efface(*valeur):
+def effaceEtAffiche(*valeur):
     """Efface l'écran et positionne le curseur en haut a gauche."""
-    print(EFFACE_ECRAN)
-    if valeur == ():
-        print(RESET_CURSEUR, end = "")
+    if SYSTEME_D_EXPLOITATION == 'nt':
+        os.system('cls')
     else:
-        print(RESET_CURSEUR + valeur[0])
-    return
+        os.system('clear')
+    if valeur:
+        print(valeur[0])
 
 def afficheLaby(LabyMap):
     """Affiche le labyrinthe"""
@@ -29,7 +29,7 @@ def afficheLaby(LabyMap):
             else:
                 tampon += letter
         tampon += "\n"
-    efface(tampon)
+    effaceEtAffiche(tampon)
 
 def repriseSauvegarde():
     """Propose de reprendre la partie précedente"""
@@ -58,7 +58,7 @@ def choixlaby():
         print(MESSAGEERREURDOSSIER.format(EMPLACEMENTCARTES))
         exit()
     chemin = EMPLACEMENTCARTES.find("*")
-    efface(MESSAGECHOIXCARTE)
+    effaceEtAffiche(MESSAGECHOIXCARTE)
     for i, carte in enumerate(contenu):
         print("{0} - {1}".format(i+1, carte[chemin:-4].capitalize()))
     print("Q - Quitter")

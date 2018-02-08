@@ -1,13 +1,16 @@
 #! /usb/bin/env python3
 # coding: utf-8
 
+import os
+
 LETTREMURS = "X"
 LETTREJOUEUR = "O"
 LETTREFIN = "_"
 LETTREPORTE = "#"
 LETTRECOULOIR = " "
 
-FICHIERDESAUVEGARDE = "PartieEnCours"
+SYSTEME_D_EXPLOITATION = os.name
+FICHIERDESAUVEGARDE = os.environ['HOME']+"/LabyrintheEnCours.save"
 EMPLACEMENTCARTES = "Cartes/*.txt"
 
 MESSAGECHOIXCARTE = "Quelle carte voulez-vous jouer ?"

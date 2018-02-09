@@ -5,15 +5,6 @@ from fonctionsRoboc import *
 
 from var import *
 
-chaine = ""
-# for j in (RED_TEXT, GREEN_TEXT, YELLOW_TEXT,BLUE_TEXT,MAGENTA_TEXT,\
-# CYAN_TEXT,WHITE_TEXT):
-#     for i in range(3):
-#         chaine = chaine + j + SYMBOLEMUR
-#     chaine = chaine + j + SYMBOLEJOUEUR + SYMBOLEPORTE
-#
-# input(chaine + WHITE_TEXT)
-
 GameOn = True
 PartieEnCours = repriseSauvegarde()
 while GameOn:

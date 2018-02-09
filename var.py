@@ -51,7 +51,6 @@ EMPLACEMENTCARTES = "Cartes/*.txt"
 MESSAGECHOIXCARTE = "Quelle carte voulez-vous jouer ?"
 MESSAGEDEMANDEMOUVEMENT = "Utilisez les touches flechées pour vous déplacer.\
  (Q pour quitter) "
-# MESSAGEDEMANDEMOUVEMENT = "Ou allez vous ? (N/S/E/O)(Q pour quitter) "
 MESSAGEREUSSITELABY = "Bravo ! (pressez une touche pour revenir au menu)"
 MESSAGEREPRISESAUVEGARDE = "Il y a une partie sauvegardée,\
  voulez vous la continuer ?"

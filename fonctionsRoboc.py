@@ -8,10 +8,15 @@ def effaceEtAffiche(*valeur):
     """Efface l'écran et positionne le curseur en haut a gauche."""
     if SYSTEME_D_EXPLOITATION == 'nt':
         os.system('cls')
+        if valeur:
+            print(valeur[0])
     else:
-        os.system('clear')
-    if valeur:
-        print(valeur[0])
+        print(EFFACE_ECRAN)
+        if valeur == ():
+            print(RESET_CURSEUR, end = "")
+        else:
+            print(RESET_CURSEUR + WHITE_TEXT + valeur[0])
+
 
 def afficheLaby(LabyMap):
     """Affiche le labyrinthe"""
@@ -19,13 +24,13 @@ def afficheLaby(LabyMap):
     for line in LabyMap:
         for letter in line:
             if letter == LETTREMURS:
-                tampon += SYMBOLEMUR
+                tampon += YELLOW_TEXT + SYMBOLEMUR
             elif letter == LETTREPORTE:
-                tampon += SYMBOLEPORTE
+                tampon += GREEN_TEXT + SYMBOLEPORTE
             elif letter == LETTREFIN:
                 tampon += SYMBOLEFIN
             elif letter == LETTREJOUEUR:
-                tampon += SYMBOLEJOUEUR
+                tampon += CYAN_TEXT + SYMBOLEJOUEUR
             else:
                 tampon += letter
         tampon += "\n"
@@ -34,7 +39,7 @@ def afficheLaby(LabyMap):
 def repriseSauvegarde():
     """Propose de reprendre la partie précedente"""
     if os.path.exists(FICHIERDESAUVEGARDE):
-        print(MESSAGEREPRISESAUVEGARDE)
+        print(WHITE_TEXT + MESSAGEREPRISESAUVEGARDE)
         choix = capturesaisie()
         if choix.lower() == "o":
             with open(FICHIERDESAUVEGARDE, "rb") as Sauvegarde:
@@ -55,17 +60,22 @@ def choixlaby():
     """Menu de selection des cartes"""
     contenu = glob.glob(EMPLACEMENTCARTES)
     if not contenu:
-        print(MESSAGEERREURDOSSIER.format(EMPLACEMENTCARTES))
+        print(WHITE_TEXT = MESSAGEERREURDOSSIER.format(EMPLACEMENTCARTES))
         exit()
     chemin = EMPLACEMENTCARTES.find("*")
     effaceEtAffiche(MESSAGECHOIXCARTE)
     for i, carte in enumerate(contenu):
-        print("{0} - {1}".format(i+1, carte[chemin:-4].capitalize()))
-    print("Q - Quitter")
+        print(WHITE_TEXT + "{0} - {1}"\
+        .format(i+1, carte[chemin:-4].capitalize()))
+    print(WHITE_TEXT + "Q - Quitter")
     i=0
     while i <3:
         choix = input()
-        if choix.upper() == "Q":
+        try:
+            choix = choix.upper()
+        except:
+            pass
+        if choix == "Q":
             exit()
         try:
             choix = int(choix)
@@ -78,8 +88,8 @@ def choixlaby():
             break
         else:
             i +=1
-            print(MESSAGEERREURCHOIXCARTE)
-    print(MESSAGEECHECCHOIXCARTE)
+            print(WHITE_TEXT + MESSAGEERREURCHOIXCARTE)
+    print(WHITE_TEXT + MESSAGEECHECCHOIXCARTE)
     exit()
 
 def labyload(fichier):
@@ -112,13 +122,14 @@ def labymap(carte):
 def playermove(LabyMap, PosJoueur, Fin, Portes, LabyOn):
     """Fait bouger le joueur"""
     noinput = True
-    print(MESSAGEDEMANDEMOUVEMENT)
+    print(WHITE_TEXT + MESSAGEDEMANDEMOUVEMENT)
     while noinput:
         x=capturesaisie()
-        print(x)
+        # print(x)
         if x == CTRL_C:
             exit()
         if x == ECHAP_CARAC:
+            import termios, tty
             orig_settings = termios.tcgetattr(sys.stdin)
             tty.setraw(sys.stdin)
             y=sys.stdin.read(2)
@@ -151,7 +162,7 @@ def playermove(LabyMap, PosJoueur, Fin, Portes, LabyOn):
         if PosJoueur == Fin:
             LabyOn = False
             os.remove(FICHIERDESAUVEGARDE)
-            print(MESSAGEREUSSITELABY)
+            print(WHITE_TEXT + MESSAGEREUSSITELABY)
             capturesaisie()
             return (LabyMap, PosJoueur, Fin, Portes, LabyOn)
 

@@ -2,7 +2,7 @@
 # coding: utf-8
 
 from fonctionsRoboc import *
-
+from Joueur import *
 from var import *
 
 GameOn = True

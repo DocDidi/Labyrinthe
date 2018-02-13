@@ -29,12 +29,13 @@ def afficheLaby(LabyMap):
                 tampon += GREEN_TEXT + SYMBOLEPORTE
             elif letter == LETTREFIN:
                 tampon += SYMBOLEFIN
-            elif letter == LETTREJOUEUR:
-                tampon += CYAN_TEXT + SYMBOLEJOUEUR
+            # elif letter == LETTREJOUEUR:
+            #     tampon += CYAN_TEXT + SYMBOLEJOUEUR
             else:
                 tampon += letter
         tampon += "\n"
     effaceEtAffiche(tampon)
+    print(Joueur)
 
 def repriseSauvegarde():
     """Propose de reprendre la partie précedente"""
@@ -109,7 +110,8 @@ def labymap(carte):
         for j, letter in enumerate(line):
             LabyMap[i].append(letter)
             if letter is LETTREJOUEUR:
-                PosJoueur = [i,j]
+                # PosJoueur = [i,j]
+                Joueur = Joueur(i,j)
             elif letter is LETTREFIN:
                 Fin = [i,j]
             elif letter is LETTREPORTE:

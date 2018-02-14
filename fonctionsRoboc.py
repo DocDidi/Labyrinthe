@@ -1,9 +1,11 @@
 #! /usr/bin/env python3
 # coding: utf-8
 
-import os, glob, pickle, sys, time
+import glob, pickle, sys, time
 from var import *
 from Joueur import *
+from Mur import *
+from Porte import *
 
 def effaceEtAffiche(*valeur):
     """Efface l'écran et positionne le curseur en haut a gauche."""
@@ -19,23 +21,15 @@ def effaceEtAffiche(*valeur):
             print(RESET_CURSEUR + WHITE_TEXT + valeur[0])
 
 
-def afficheLaby(LabyMap, Joueur):
+def afficheLaby(Joueur, Murs, Portes):
     """Affiche le labyrinthe"""
-    tampon=""
-    for line in LabyMap:
-        for letter in line:
-            if letter == LETTREMURS:
-                tampon += YELLOW_TEXT + SYMBOLEMUR
-            elif letter == LETTREPORTE:
-                tampon += GREEN_TEXT + SYMBOLEPORTE
-            elif letter == LETTREFIN:
-                tampon += SYMBOLEFIN
-            # elif letter == LETTREJOUEUR:
-            #     tampon += CYAN_TEXT + SYMBOLEJOUEUR
-            else:
-                tampon += letter
-        tampon += "\n"
-    effaceEtAffiche(tampon)
+    effaceEtAffiche()
+    for mur in Murs:
+        if mur.revealed == True:
+            print(mur)
+    for porte in Portes:
+        if porte.revealed == True:
+            print(porte)
     print(Joueur)
 
 def repriseSauvegarde():
@@ -53,10 +47,10 @@ def repriseSauvegarde():
         PartieEnCours = False
     return (PartieEnCours)
 
-def sauvegarde(LabyMap, Joueur, Fin, Portes):
+def sauvegarde(Joueur, Murs, Portes, Hauteur):
     """Sauvegarde la partie"""
     with open(FICHIERDESAUVEGARDE, "wb") as Sauvegarde:
-        Sauvegarde.write(pickle.dumps((LabyMap, Joueur, Fin, Portes)))
+        Sauvegarde.write(pickle.dumps((Joueur, Murs, Portes, Hauteur)))
 
 def choixlaby():
     """Menu de selection des cartes"""
@@ -101,36 +95,35 @@ def labyload(fichier):
             return carte.read()
 
 def labymap(carte):
-    """Converti la carte (str) en tableau à 2 dimensions
-    et liste les obstacles, point de départ et fin"""
+    """Converti la carte (str) en données du jeu"""
     lines = carte.split("\n")
     Portes = []
     LabyMap = []
+    Murs = []
     for i, line in enumerate(lines):
         LabyMap.append([])
         for j, letter in enumerate(line):
             LabyMap[i].append(letter)
             if letter is LETTREJOUEUR:
-                # PosJoueur = [i,j]
                 Joueur = Personnage(i,j)
             elif letter is LETTREFIN:
-                Fin = [i,j]
+                Portes.append(Porte(i,j,fin = True))
             elif letter is LETTREPORTE:
-                Portes.append((i,j))
+                Portes.append(Porte(i,j))
+            elif letter is LETTREMURS:
+                Murs.append(Mur(i,j))
     try:
-        return(LabyMap, Joueur, Fin, Portes)
+        return(Joueur, Murs, Portes, len(lines))
     except:
         return labymap(CARTEDEFAUT)
 
-def playermove(LabyMap, Joueur, Fin, Portes, LabyOn):
+def playermove(Joueur, Murs, LabyOn, Hauteur):
     """Fait bouger le joueur"""
     noinput = True
-    PosJoueur = Joueur.PosJoueur()
-    print(WHITE_TEXT + MESSAGEDEMANDEMOUVEMENT.format(len(LabyMap)+2))
+    print(WHITE_TEXT + MESSAGEDEMANDEMOUVEMENT.format(Hauteur + 2))
     TestPosJoueur = [Joueur.y, Joueur.x]
     while noinput:
         x=capturesaisie()
-        # print(x)
         if x == CTRL_C:
             exit()
         if x == ECHAP_CARAC:
@@ -143,50 +136,29 @@ def playermove(LabyMap, Joueur, Fin, Portes, LabyOn):
         if x==FLECHE_HAUT:
             TestPosJoueur = [Joueur.y-1,Joueur.x]
             noinput = False
-            # axe, sens, noinput = 0,-1, False
         elif x==FLECHE_BAS:
             TestPosJoueur = [Joueur.y+1,Joueur.x]
             noinput = False
-            # axe, sens, noinput = 0, 1, False
         elif x==FLECHE_DROITE:
             TestPosJoueur = [Joueur.y,Joueur.x+1]
             noinput = False
-            # axe, sens, noinput = 1, 1, False
         elif x==FLECHE_GAUCHE:
             TestPosJoueur = [Joueur.y,Joueur.x-1]
             noinput = False
-            # axe, sens, noinput = 1,-1, False
         elif x.lower()=='q':
-            # axe, sens = 0, 0
             noinput =  LabyOn = False
-        elif x.lower()=='d':
-            print(PosJoueur, Fin)
 
-    # TestPos = list(PosJoueur)
-    # TestPos[axe] += sens
+    bloc = False
 
-    if LabyMap[TestPosJoueur[0]][TestPosJoueur[1]] \
-    in (LETTRECOULOIR, LETTREPORTE, LETTREFIN, LETTREJOUEUR):
-        # if Joueur.PosJoueur() in Portes:
-        #     LabyMap[Joueur.y][Joueur.x] = LETTREPORTE
-        # else:
-        #     LabyMap[Joueur.y][Joueur.x] = LETTRECOULOIR
+    for mur in Murs:
+        if (TestPosJoueur[1], TestPosJoueur[0]) == (mur.x, mur.y):
+            bloc = True
+
+    if bloc == False:
         Joueur.x = TestPosJoueur[1]
         Joueur.y = TestPosJoueur[0]
-        # PosJoueur = list(TestPos)
-        # LabyMap[Joueur.y][Joueur.x] = LETTREJOUEUR
-        # afficheLaby(LabyMap, Joueur)
-        PosJoueur = Joueur.PosJoueur()
-        if PosJoueur == Fin:
-            LabyOn = False
-            os.remove(FICHIERDESAUVEGARDE)
-            print(WHITE_TEXT + MESSAGEREUSSITELABY.format(len(LabyMap)+2))
-            capturesaisie()
-            return (LabyMap, Fin, Portes, LabyOn)
 
-    if LabyOn:
-        sauvegarde(LabyMap, Joueur, Fin, Portes)
-    return (LabyMap, Fin, Portes, LabyOn)
+    return (LabyOn)
 
 def capturesaisie():
     """Renvoie la touche de clavier pressée"""
@@ -211,3 +183,12 @@ def capturesaisie():
         saisie=sys.stdin.read(1)[0]
         termios.tcsetattr(sys.stdin, termios.TCSADRAIN, orig_settings)
     return saisie
+
+def brouillard(Joueur, Murs, Portes):
+    """Modifie l'attribut revealed des murs"""
+    for mur in Murs:
+        if (-2 <= Joueur.x - mur.x <= 2) and (-2 <= Joueur.y - mur.y <= 2):
+            mur.revealed = True
+    for porte in Portes:
+        if (-2 <= Joueur.x - porte.x <= 2) and (-2 <= Joueur.y - porte.y <= 2):
+            porte.revealed = True

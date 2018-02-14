@@ -10,16 +10,27 @@ PartieEnCours = repriseSauvegarde()
 while GameOn:
     # Boucle du jeu
     if PartieEnCours:
-        LabyMap, Joueur, Fin, Portes = PartieEnCours
+        Joueur, Murs, Portes, Hauteur = PartieEnCours
         PartieEnCours = False
     else:
         fichier = choixlaby()
         laby = labyload(fichier)
-        LabyMap, Joueur, Fin, Portes = labymap(laby)
-        input((LabyMap, Joueur, Fin, Portes))
+        Joueur, Murs, Portes, Hauteur = labymap(laby)
+        # input(Murs)
 
     LabyOn = True
     while LabyOn:
-        afficheLaby(LabyMap, Joueur)
-        LabyMap, Fin, Portes, LabyOn \
-        = playermove(LabyMap, Joueur, Fin, Portes, LabyOn)
+        brouillard(Joueur, Murs, Portes)
+        afficheLaby(Joueur, Murs, Portes)
+        PosJoueur = Joueur.PosJoueur()
+        for porte in Portes:
+            if porte.fin:
+                if (Joueur.x, Joueur.y) == (porte.x, porte.y):
+                    LabyOn = False
+                    os.remove(FICHIERDESAUVEGARDE)
+                    print(WHITE_TEXT + MESSAGEREUSSITELABY.format(Hauteur +2))
+                    capturesaisie()
+                    break
+                else:
+                    LabyOn = playermove(Joueur, Murs, LabyOn, Hauteur)
+                    sauvegarde(Joueur, Murs, Portes, Hauteur)

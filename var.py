@@ -54,7 +54,7 @@ MESSAGEDEMANDEMOUVEMENT = "\033[{}HUtilisez les touches flechées pour vous dép
 MESSAGEREUSSITELABY = "\033[{}HBravo ! (pressez une touche pour revenir au menu)"
 MESSAGEREPRISESAUVEGARDE = "Il y a une partie sauvegardée,\
  voulez vous la continuer ?"
-MESSAGEERREURDOSSIER = "Le répertoirre {0} est vide ou n'existe pas."
+MESSAGEERREURDOSSIER = "Le répertoire {0} est vide ou n'existe pas."
 MESSAGEERREURCHOIXCARTE = "Désolé, votre choix est invalide."
 MESSAGEERREURMOUVEMENT = "Mauvaise direction."
 MESSAGEECHECCHOIXCARTE = "Désolé, Au revoir."

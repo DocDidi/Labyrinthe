@@ -3,6 +3,7 @@
 
 import os, glob, pickle, sys, time
 from var import *
+from Joueur import *
 
 def effaceEtAffiche(*valeur):
     """Efface l'écran et positionne le curseur en haut a gauche."""
@@ -18,7 +19,7 @@ def effaceEtAffiche(*valeur):
             print(RESET_CURSEUR + WHITE_TEXT + valeur[0])
 
 
-def afficheLaby(LabyMap):
+def afficheLaby(LabyMap, Joueur):
     """Affiche le labyrinthe"""
     tampon=""
     for line in LabyMap:
@@ -52,10 +53,10 @@ def repriseSauvegarde():
         PartieEnCours = False
     return (PartieEnCours)
 
-def sauvegarde(LabyMap, PosJoueur, Fin, Portes):
+def sauvegarde(LabyMap, Joueur, Fin, Portes):
     """Sauvegarde la partie"""
     with open(FICHIERDESAUVEGARDE, "wb") as Sauvegarde:
-        Sauvegarde.write(pickle.dumps((LabyMap, PosJoueur, Fin, Portes)))
+        Sauvegarde.write(pickle.dumps((LabyMap, Joueur, Fin, Portes)))
 
 def choixlaby():
     """Menu de selection des cartes"""
@@ -111,20 +112,22 @@ def labymap(carte):
             LabyMap[i].append(letter)
             if letter is LETTREJOUEUR:
                 # PosJoueur = [i,j]
-                Joueur = Joueur(i,j)
+                Joueur = Personnage(i,j)
             elif letter is LETTREFIN:
                 Fin = [i,j]
             elif letter is LETTREPORTE:
                 Portes.append((i,j))
     try:
-        return(LabyMap, PosJoueur, Fin, Portes)
+        return(LabyMap, Joueur, Fin, Portes)
     except:
         return labymap(CARTEDEFAUT)
 
-def playermove(LabyMap, PosJoueur, Fin, Portes, LabyOn):
+def playermove(LabyMap, Joueur, Fin, Portes, LabyOn):
     """Fait bouger le joueur"""
     noinput = True
-    print(WHITE_TEXT + MESSAGEDEMANDEMOUVEMENT)
+    PosJoueur = Joueur.PosJoueur()
+    print(WHITE_TEXT + MESSAGEDEMANDEMOUVEMENT.format(len(LabyMap)+2))
+    TestPosJoueur = [Joueur.y, Joueur.x]
     while noinput:
         x=capturesaisie()
         # print(x)
@@ -138,39 +141,52 @@ def playermove(LabyMap, PosJoueur, Fin, Portes, LabyOn):
             termios.tcsetattr(sys.stdin, termios.TCSADRAIN, orig_settings)
             x = x+y
         if x==FLECHE_HAUT:
-            axe, sens, noinput = 0,-1, False
+            TestPosJoueur = [Joueur.y-1,Joueur.x]
+            noinput = False
+            # axe, sens, noinput = 0,-1, False
         elif x==FLECHE_BAS:
-            axe, sens, noinput = 0, 1, False
+            TestPosJoueur = [Joueur.y+1,Joueur.x]
+            noinput = False
+            # axe, sens, noinput = 0, 1, False
         elif x==FLECHE_DROITE:
-            axe, sens, noinput = 1, 1, False
+            TestPosJoueur = [Joueur.y,Joueur.x+1]
+            noinput = False
+            # axe, sens, noinput = 1, 1, False
         elif x==FLECHE_GAUCHE:
-            axe, sens, noinput = 1,-1, False
+            TestPosJoueur = [Joueur.y,Joueur.x-1]
+            noinput = False
+            # axe, sens, noinput = 1,-1, False
         elif x.lower()=='q':
-            axe, sens = 0, 0
+            # axe, sens = 0, 0
             noinput =  LabyOn = False
+        elif x.lower()=='d':
+            print(PosJoueur, Fin)
 
-    TestPos = list(PosJoueur)
-    TestPos[axe] += sens
+    # TestPos = list(PosJoueur)
+    # TestPos[axe] += sens
 
-    if LabyMap[TestPos[0]][TestPos[1]] \
-    in (LETTRECOULOIR, LETTREPORTE, LETTREFIN):
-        if tuple(PosJoueur) in Portes:
-            LabyMap[PosJoueur[0]][PosJoueur[1]] = LETTREPORTE
-        else:
-            LabyMap[PosJoueur[0]][PosJoueur[1]] = LETTRECOULOIR
-        PosJoueur = list(TestPos)
-        LabyMap[PosJoueur[0]][PosJoueur[1]] = LETTREJOUEUR
-        afficheLaby(LabyMap)
+    if LabyMap[TestPosJoueur[0]][TestPosJoueur[1]] \
+    in (LETTRECOULOIR, LETTREPORTE, LETTREFIN, LETTREJOUEUR):
+        # if Joueur.PosJoueur() in Portes:
+        #     LabyMap[Joueur.y][Joueur.x] = LETTREPORTE
+        # else:
+        #     LabyMap[Joueur.y][Joueur.x] = LETTRECOULOIR
+        Joueur.x = TestPosJoueur[1]
+        Joueur.y = TestPosJoueur[0]
+        # PosJoueur = list(TestPos)
+        # LabyMap[Joueur.y][Joueur.x] = LETTREJOUEUR
+        # afficheLaby(LabyMap, Joueur)
+        PosJoueur = Joueur.PosJoueur()
         if PosJoueur == Fin:
             LabyOn = False
             os.remove(FICHIERDESAUVEGARDE)
-            print(WHITE_TEXT + MESSAGEREUSSITELABY)
+            print(WHITE_TEXT + MESSAGEREUSSITELABY.format(len(LabyMap)+2))
             capturesaisie()
-            return (LabyMap, PosJoueur, Fin, Portes, LabyOn)
+            return (LabyMap, Fin, Portes, LabyOn)
 
     if LabyOn:
-        sauvegarde(LabyMap, PosJoueur, Fin, Portes)
-    return (LabyMap, PosJoueur, Fin, Portes, LabyOn)
+        sauvegarde(LabyMap, Joueur, Fin, Portes)
+    return (LabyMap, Fin, Portes, LabyOn)
 
 def capturesaisie():
     """Renvoie la touche de clavier pressée"""

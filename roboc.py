@@ -2,7 +2,7 @@
 # coding: utf-8
 
 from fonctionsRoboc import *
-from Joueur import *
+
 from var import *
 
 GameOn = True
@@ -10,15 +10,16 @@ PartieEnCours = repriseSauvegarde()
 while GameOn:
     # Boucle du jeu
     if PartieEnCours:
-        LabyMap, PosJoueur, Fin, Portes = PartieEnCours
+        LabyMap, Joueur, Fin, Portes = PartieEnCours
         PartieEnCours = False
     else:
         fichier = choixlaby()
         laby = labyload(fichier)
-        LabyMap, PosJoueur, Fin, Portes = labymap(laby)
+        LabyMap, Joueur, Fin, Portes = labymap(laby)
+        input((LabyMap, Joueur, Fin, Portes))
 
     LabyOn = True
     while LabyOn:
-        afficheLaby(LabyMap)
-        LabyMap, PosJoueur, Fin, Portes, LabyOn \
-        = playermove(LabyMap, PosJoueur, Fin, Portes, LabyOn)
+        afficheLaby(LabyMap, Joueur)
+        LabyMap, Fin, Portes, LabyOn \
+        = playermove(LabyMap, Joueur, Fin, Portes, LabyOn)

@@ -49,9 +49,9 @@ else:
 EMPLACEMENTCARTES = "Cartes/*.txt"
 
 MESSAGECHOIXCARTE = "Quelle carte voulez-vous jouer ?"
-MESSAGEDEMANDEMOUVEMENT = "Utilisez les touches flechées pour vous déplacer.\
+MESSAGEDEMANDEMOUVEMENT = "\033[{}HUtilisez les touches flechées pour vous déplacer.\
  (Q pour quitter) "
-MESSAGEREUSSITELABY = "Bravo ! (pressez une touche pour revenir au menu)"
+MESSAGEREUSSITELABY = "\033[{}HBravo ! (pressez une touche pour revenir au menu)"
 MESSAGEREPRISESAUVEGARDE = "Il y a une partie sauvegardée,\
  voulez vous la continuer ?"
 MESSAGEERREURDOSSIER = "Le répertoirre {0} est vide ou n'existe pas."

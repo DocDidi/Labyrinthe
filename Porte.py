@@ -10,6 +10,7 @@ class Porte:
         self.revealed = False
         self.lit = False
         self.fin = fin
+        self.bloc = False
 
     def __str__(self):
         if self.revealed == True and self.lit == False:

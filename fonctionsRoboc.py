@@ -21,16 +21,21 @@ def effaceEtAffiche(*valeur):
         else:
             print(RESET_CURSEUR + WHITE_TEXT + valeur[0])
 
+def verifTailleConsole(Hauteur):
+    HAUTEURECRANCORRECT = True
+    rows, columns = os.popen('stty size', 'r').read().split()
+    while int(rows) < Hauteur + 3:
+        HAUTEURECRANCORRECT = False
+        rows, columns = os.popen('stty size', 'r').read().split()
+        effaceEtAffiche(MESSAGEHAUTEURECRANINCORRECT)
+    if HAUTEURECRANCORRECT == False:
+        effaceEtAffiche(MESSAGEHAUTEURECRANCORRECT)
+        input()
 
-def afficheLaby(Joueur, Murs, Portes, Couloirs):
+def afficheLaby(Joueur, Props, Hauteur):
     """Affiche le labyrinthe"""
-    effaceEtAffiche()
-    for mur in Murs:
-        print(mur)
-    for porte in Portes:
-        print(porte)
-    for couloir in Couloirs:
-        print(couloir)
+    for item in Props:
+        print(item)
     print(Joueur)
 
 def repriseSauvegarde():
@@ -48,11 +53,10 @@ def repriseSauvegarde():
         PartieEnCours = False
     return (PartieEnCours)
 
-def sauvegarde(Joueur, Murs, Portes, Couloirs, Hauteur):
+def sauvegarde(Joueur, Props, Hauteur):
     """Sauvegarde la partie"""
     with open(FICHIERDESAUVEGARDE, "wb") as Sauvegarde:
-        Sauvegarde.write(pickle.dumps\
-        ((Joueur, Murs, Portes, Couloirs, Hauteur)))
+        Sauvegarde.write(pickle.dumps((Joueur, Props, Hauteur)))
 
 def choixlaby():
     """Menu de selection des cartes"""
@@ -113,6 +117,7 @@ def labyload(fichier):
 def labymap(carte):
     """Converti la carte (str) en données du jeu"""
     lines = carte.split("\n")
+    Props = []
     Murs = []
     Portes = []
     Couloirs = []
@@ -120,21 +125,22 @@ def labymap(carte):
         for j, letter in enumerate(line):
             if letter is LETTREJOUEUR:
                 Joueur = Personnage(i,j)
+                Props.append(Couloir(i,j))
             elif letter is LETTREFIN:
-                Portes.append(Porte(i,j,fin = True))
+                Props.append(Porte(i,j,fin = True))
             elif letter is LETTREPORTE:
-                Portes.append(Porte(i,j))
+                Props.append(Porte(i,j))
             elif letter is LETTREMURS:
-                Murs.append(Mur(i,j))
+                Props.append(Mur(i,j))
             else:
-                Couloirs.append(Couloir(i,j))
+                Props.append(Couloir(i,j))
 
     try:
-        return(Joueur, Murs, Portes, Couloirs, i)
+        return(Joueur, Props, i)
     except:
         return labymap(CARTEDEFAUT)
 
-def playermove(Joueur, Murs, LabyOn, Hauteur):
+def playermove(Joueur, Props, LabyOn, Hauteur):
     """Fait bouger le joueur"""
     noinput = True
     print(WHITE_TEXT + MESSAGEDEMANDEMOUVEMENT.format(Hauteur + 2))
@@ -167,8 +173,9 @@ def playermove(Joueur, Murs, LabyOn, Hauteur):
 
     bloc = False
 
-    for mur in Murs:
-        if (TestPosJoueur[1], TestPosJoueur[0]) == (mur.x, mur.y):
+    for item in Props:
+        if (TestPosJoueur[1], TestPosJoueur[0]) == (item.x, item.y)\
+        and item.bloc == True:
             bloc = True
 
     if bloc == False:
@@ -210,11 +217,7 @@ def islit(sujet, Joueur):
     else:
         sujet.lit = False
 
-def brouillard(Joueur, Murs, Portes, Couloirs):
+def brouillard(Joueur, Props):
     """Liste les choses à reveler"""
-    for mur in Murs:
-        islit(mur, Joueur)
-    for porte in Portes:
-        islit(porte, Joueur)
-    for couloir in Couloirs:
-        islit(couloir, Joueur)
+    for item in Props:
+        islit(item, Joueur)

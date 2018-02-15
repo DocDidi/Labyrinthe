@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # coding: utf-8
 
-import glob, pickle, sys, time
+import os, glob, pickle, sys, time
 from var import *
 from Joueur import *
 from Mur import *
@@ -59,34 +59,86 @@ def choixlaby():
         print(WHITE_TEXT = MESSAGEERREURDOSSIER.format(EMPLACEMENTCARTES))
         exit()
     chemin = EMPLACEMENTCARTES.find("*")
-    effaceEtAffiche(MESSAGECHOIXCARTE)
-    for i, carte in enumerate(contenu):
-        print(WHITE_TEXT + "{0} - {1}"\
-        .format(i+1, carte[chemin:-4].capitalize()))
-    print(WHITE_TEXT + "Q - Quitter")
-    i=0
-    while i <3:
-        choix = input()
-        try:
-            choix = choix.upper()
-        except:
-            pass
-        if choix == "Q":
-            exit()
-        try:
-            choix = int(choix)
-            carte = contenu[choix-1]
-            essai = True
-        except:
-            essai = False
-        if os.path.exists(carte) and essai:
-            return carte
-            break
-        else:
-            i +=1
-            print(WHITE_TEXT + MESSAGEERREURCHOIXCARTE)
-    print(WHITE_TEXT + MESSAGEECHECCHOIXCARTE)
-    exit()
+    chosen = False
+    selected = 0
+    while not chosen:
+        effaceEtAffiche(MESSAGECHOIXCARTE)
+        for i, carte in enumerate(contenu):
+            if i == selected:
+                print(BLACK_ON_WHITE + "{0} - {1}"\
+                .format(i+1, carte[chemin:-4].capitalize()))
+            else:
+                print(WHITE_TEXT + "{0} - {1}"\
+                .format(i+1, carte[chemin:-4].capitalize()))
+        print(WHITE_TEXT + "\nQ - Quitter")
+        noinput = True
+        while noinput:
+            x=capturesaisie()
+            if x == CTRL_C:
+                exit()
+            if ord(x) == 13:
+                chosen = contenu[selected]
+                noinput = False
+            if x == ECHAP_CARAC:
+                import termios, tty
+                orig_settings = termios.tcgetattr(sys.stdin)
+                tty.setraw(sys.stdin)
+                y=sys.stdin.read(2)
+                termios.tcsetattr(sys.stdin, termios.TCSADRAIN, orig_settings)
+                x = x+y
+            if x==FLECHE_BAS:
+                if selected < (len(contenu)-1):
+                    selected += 1
+                noinput = False
+            elif x==FLECHE_HAUT:
+                if selected > 0:
+                    selected -= 1
+                noinput = False
+            elif x.lower()=='q':
+                exit()
+    if os.path.exists(chosen):
+        return chosen
+    else:
+        print(WHITE_TEXT + MESSAGEERREURCHOIXCARTE)
+        exit()
+
+
+
+
+
+
+
+
+
+
+    # effaceEtAffiche(MESSAGECHOIXCARTE)
+    # for i, carte in enumerate(contenu):
+    #     print(WHITE_TEXT + "{0} - {1}"\
+    #     .format(i+1, carte[chemin:-4].capitalize()))
+    # print(WHITE_TEXT + "Q - Quitter")
+    # i=0
+    # while i <3:
+    #     choix = input()
+    #     try:
+    #         choix = choix.upper()
+    #     except:
+    #         pass
+        # if choix == "Q":
+        #     exit()
+    #     try:
+    #         choix = int(choix)
+    #         carte = contenu[choix-1]
+    #         essai = True
+    #     except:
+    #         essai = False
+    #     if os.path.exists(carte) and essai:
+    #         return carte
+    #         break
+    #     else:
+    #         i +=1
+    #         print(WHITE_TEXT + MESSAGEERREURCHOIXCARTE)
+    # print(WHITE_TEXT + MESSAGEECHECCHOIXCARTE)
+    # exit()
 
 def labyload(fichier):
     """Charge la carte selectionnée"""

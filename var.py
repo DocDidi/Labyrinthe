@@ -23,6 +23,8 @@ if SYSTEME_D_EXPLOITATION == 'nt':
     SYMBOLEMUR = "X"
     SYMBOLEPORTE = "#"
     SYMBOLEJOUEUR = "O"
+    SYMBOLECOULOIR = " "
+    SYMBOLEBROUILLARD = "@"
     RED_TEXT = ""
     GREEN_TEXT = ""
     YELLOW_TEXT = ""
@@ -36,6 +38,8 @@ else:
     SYMBOLEMUR = "\U00002338"
     SYMBOLEPORTE = "\U000022c2"
     SYMBOLEJOUEUR = "\U0000229b"
+    SYMBOLECOULOIR = " "
+    SYMBOLEBROUILLARD = "\U0000223F"
     BLACK_ON_WHITE = "\033[0;1;30;47m"
     RED_TEXT = "\033[0;31m"
     GREEN_TEXT = "\033[0;32m"
@@ -44,6 +48,14 @@ else:
     MAGENTA_TEXT = "\033[0;35m"
     CYAN_TEXT = "\033[0;36m"
     WHITE_TEXT = "\033[0;37m"
+    B_RED_TEXT = "\033[0;1;31m"
+    B_GREEN_TEXT = "\033[0;1;32m"
+    B_YELLOW_TEXT = "\033[0;1;33m"
+    B_BLUE_TEXT = "\033[0;1;34m"
+    B_MAGENTA_TEXT = "\033[0;1;35m"
+    B_CYAN_TEXT = "\033[0;1;36m"
+    B_WHITE_TEXT = "\033[0;1;37m"
+
 
 EMPLACEMENTCARTES = "Cartes/*.txt"
 

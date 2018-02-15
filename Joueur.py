@@ -10,7 +10,7 @@ class Personnage:
 
     def __str__(self):
         return ("{0}\033[{1};{2}H{3}".format\
-        (BLUE_TEXT,self.y+1,self.x+1,SYMBOLEJOUEUR))
+        (B_BLUE_TEXT,self.y+1,self.x+1,SYMBOLEJOUEUR))
 
     def PosJoueur(self):
         return [self.y,self.x]

@@ -6,6 +6,7 @@ from var import *
 from Joueur import *
 from Mur import *
 from Porte import *
+from Couloir import *
 
 def effaceEtAffiche(*valeur):
     """Efface l'écran et positionne le curseur en haut a gauche."""
@@ -21,15 +22,15 @@ def effaceEtAffiche(*valeur):
             print(RESET_CURSEUR + WHITE_TEXT + valeur[0])
 
 
-def afficheLaby(Joueur, Murs, Portes):
+def afficheLaby(Joueur, Murs, Portes, Couloirs):
     """Affiche le labyrinthe"""
     effaceEtAffiche()
     for mur in Murs:
-        if mur.revealed == True:
-            print(mur)
+        print(mur)
     for porte in Portes:
-        if porte.revealed == True:
-            print(porte)
+        print(porte)
+    for couloir in Couloirs:
+        print(couloir)
     print(Joueur)
 
 def repriseSauvegarde():
@@ -47,10 +48,11 @@ def repriseSauvegarde():
         PartieEnCours = False
     return (PartieEnCours)
 
-def sauvegarde(Joueur, Murs, Portes, Hauteur):
+def sauvegarde(Joueur, Murs, Portes, Couloirs, Hauteur):
     """Sauvegarde la partie"""
     with open(FICHIERDESAUVEGARDE, "wb") as Sauvegarde:
-        Sauvegarde.write(pickle.dumps((Joueur, Murs, Portes, Hauteur)))
+        Sauvegarde.write(pickle.dumps\
+        ((Joueur, Murs, Portes, Couloirs, Hauteur)))
 
 def choixlaby():
     """Menu de selection des cartes"""
@@ -102,44 +104,6 @@ def choixlaby():
         print(WHITE_TEXT + MESSAGEERREURCHOIXCARTE)
         exit()
 
-
-
-
-
-
-
-
-
-
-    # effaceEtAffiche(MESSAGECHOIXCARTE)
-    # for i, carte in enumerate(contenu):
-    #     print(WHITE_TEXT + "{0} - {1}"\
-    #     .format(i+1, carte[chemin:-4].capitalize()))
-    # print(WHITE_TEXT + "Q - Quitter")
-    # i=0
-    # while i <3:
-    #     choix = input()
-    #     try:
-    #         choix = choix.upper()
-    #     except:
-    #         pass
-        # if choix == "Q":
-        #     exit()
-    #     try:
-    #         choix = int(choix)
-    #         carte = contenu[choix-1]
-    #         essai = True
-    #     except:
-    #         essai = False
-    #     if os.path.exists(carte) and essai:
-    #         return carte
-    #         break
-    #     else:
-    #         i +=1
-    #         print(WHITE_TEXT + MESSAGEERREURCHOIXCARTE)
-    # print(WHITE_TEXT + MESSAGEECHECCHOIXCARTE)
-    # exit()
-
 def labyload(fichier):
     """Charge la carte selectionnée"""
     if os.path.exists(fichier):
@@ -149,13 +113,11 @@ def labyload(fichier):
 def labymap(carte):
     """Converti la carte (str) en données du jeu"""
     lines = carte.split("\n")
-    Portes = []
-    LabyMap = []
     Murs = []
+    Portes = []
+    Couloirs = []
     for i, line in enumerate(lines):
-        LabyMap.append([])
         for j, letter in enumerate(line):
-            LabyMap[i].append(letter)
             if letter is LETTREJOUEUR:
                 Joueur = Personnage(i,j)
             elif letter is LETTREFIN:
@@ -164,8 +126,11 @@ def labymap(carte):
                 Portes.append(Porte(i,j))
             elif letter is LETTREMURS:
                 Murs.append(Mur(i,j))
+            else:
+                Couloirs.append(Couloir(i,j))
+
     try:
-        return(Joueur, Murs, Portes, len(lines))
+        return(Joueur, Murs, Portes, Couloirs, i)
     except:
         return labymap(CARTEDEFAUT)
 
@@ -236,11 +201,20 @@ def capturesaisie():
         termios.tcsetattr(sys.stdin, termios.TCSADRAIN, orig_settings)
     return saisie
 
-def brouillard(Joueur, Murs, Portes):
-    """Modifie l'attribut revealed des murs"""
+def islit(sujet, Joueur):
+    """Calcule si l'objet est éclairé"""
+    if ((-1 <= Joueur.x - sujet.x <= 1) and (-2 <= Joueur.y - sujet.y <= 2)) or\
+    ((-2 <= Joueur.x - sujet.x <= 2) and (-1 <= Joueur.y - sujet.y <= 1)):
+        sujet.revealed = True
+        sujet.lit = True
+    else:
+        sujet.lit = False
+
+def brouillard(Joueur, Murs, Portes, Couloirs):
+    """Liste les choses à reveler"""
     for mur in Murs:
-        if (-2 <= Joueur.x - mur.x <= 2) and (-2 <= Joueur.y - mur.y <= 2):
-            mur.revealed = True
+        islit(mur, Joueur)
     for porte in Portes:
-        if (-2 <= Joueur.x - porte.x <= 2) and (-2 <= Joueur.y - porte.y <= 2):
-            porte.revealed = True
+        islit(porte, Joueur)
+    for couloir in Couloirs:
+        islit(couloir, Joueur)

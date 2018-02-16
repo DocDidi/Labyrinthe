@@ -94,7 +94,7 @@ def choixlaby():
             else:
                 print(WHITE_TEXT + "{0} - {1}"\
                 .format(i+1, carte[chemin:-4].capitalize()))
-        print(WHITE_TEXT + "\nA - Une carte générée aléatoirement\nQ - Quitter")
+        print(WHITE_TEXT + MESSAGEAUTRECHOIXCARTE)
         noinput = True
         while noinput:
             x=capturesaisie()
@@ -112,7 +112,7 @@ def choixlaby():
                 x = x+y
             elif x.lower()=='q':
                 exit()
-            elif x.lower()=='a':
+            elif x.lower()=='r':
                 rows, columns = os.popen('stty size', 'r').read().split()
                 carte = makeMaze(int(columns)-1,int(rows)-4)
                 return False, carte

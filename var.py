@@ -60,6 +60,7 @@ else:
 EMPLACEMENTCARTES = "Cartes/*.txt"
 
 MESSAGECHOIXCARTE = "Quelle carte voulez-vous jouer ?"
+MESSAGEAUTRECHOIXCARTE = "\nR - Une carte générée aléatoirement\nQ - Quitter"
 MESSAGEDEMANDEMOUVEMENT = "\033[{}HUtilisez les touches flechées pour \
 vous déplacer. (Q pour quitter) "
 MESSAGEREUSSITELABY = "\033[{}H\033[KBravo ! (pressez une touche pour \

@@ -13,12 +13,18 @@ class Porte:
         self.bloc = False
 
     def __str__(self):
+        if self.fin == True:
+            color = RED_TEXT
+            b_color = B_RED_TEXT
+        else:
+            color = GREEN_TEXT
+            b_color = B_GREEN_TEXT
         if self.revealed == True and self.lit == False:
             return ("{0}\033[{1};{2}H{3}".format\
-            (GREEN_TEXT,self.y+1,self.x+1,SYMBOLEPORTE))
+            (color,self.y+1,self.x+1,SYMBOLEPORTE))
         elif self.lit == True:
             return ("{0}\033[{1};{2}H{3}".format\
-            (B_GREEN_TEXT,self.y+1,self.x+1,SYMBOLEPORTE))
+            (b_color,self.y+1,self.x+1,SYMBOLEPORTE))
         else:
             return ("{0}\033[{1};{2}H{3}".format\
             (WHITE_TEXT,self.y+1,self.x+1,SYMBOLEBROUILLARD))

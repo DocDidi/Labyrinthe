@@ -1,7 +1,8 @@
 #! /usr/bin/env python3
 # coding: utf-8
 
-import random
+import random, os
+from var import *
 
 class Cell:
     def __init__(self, i, j, valeur):
@@ -13,12 +14,6 @@ class Cell:
         self.left = True
         self.right = True
     def __str__(self):
-        # chaine = ""
-        # if self.up: chaine+="U"
-        # if self.down: chaine+="D"
-        # if self.left: chaine+="L"
-        # if self.right: chaine+="R"
-        # return chaine
         return str(self.i)+str(self.j)+str(self.valeur)
     def __repr__(self):
         chaine = ""
@@ -27,7 +22,6 @@ class Cell:
         if self.left: chaine+="L"
         if self.right: chaine+="R"
         return chaine
-        # return str(self.i)+str(self.j)+str(self.valeur)
     def testMur(self, Grid):
         x=random.randint(1,4)
         if x == 1: # Up
@@ -38,7 +32,6 @@ class Cell:
                     AncienneValeur = max(cible.valeur, self.valeur)
                     modifValeurs(AncienneValeur,NouvelleValeur,Grid)
                     self.up = False
-                    # cible.down = False
         if x == 2: # Down
             try:
                 cible = Grid[self.i+1][self.j]
@@ -47,7 +40,6 @@ class Cell:
                     AncienneValeur = max(cible.valeur, self.valeur)
                     modifValeurs(AncienneValeur,NouvelleValeur,Grid)
                     self.down = False
-                    # cible.up = False
             except:
                 pass
         if x == 3: # Left
@@ -58,7 +50,6 @@ class Cell:
                     AncienneValeur = max(cible.valeur, self.valeur)
                     modifValeurs(AncienneValeur,NouvelleValeur,Grid)
                     self.left = False
-                    # cible.right = False
         if x == 4: # Right
             try:
                 cible = Grid[self.i][self.j+1]
@@ -67,7 +58,6 @@ class Cell:
                     AncienneValeur = max(cible.valeur, self.valeur)
                     modifValeurs(AncienneValeur,NouvelleValeur,Grid)
                     self.right = False
-                    # cible.left = False
             except:
                 pass
 
@@ -76,7 +66,6 @@ def modifValeurs(Ancienne, Nouvelle, Grid):
         for j in i:
             if j.valeur == Ancienne:
                 j.valeur = Nouvelle
-                # input("OK!")
 
 def roundToSupOdd(x):
     if x % 2 == 1:
@@ -96,16 +85,16 @@ def canevas(w,h):
     for i in range(h):
         canevas.append([])
         for j in range(w):
-            canevas[i].append("X")
+            canevas[i].append(LETTREMURS)
     return canevas
 
-def affCarte(carte):
+def convCarteStr(carte):
     chainecanevas=""
     for line in carte:
         for letter in line:
             chainecanevas += letter
         chainecanevas += "\n"
-    print(chainecanevas[:-1])
+    return chainecanevas
 
 
 def grid(w, h):
@@ -119,6 +108,30 @@ def grid(w, h):
             Grid[i].append(Cell(i,j,valeur))
             valeur += 1
     return Grid
+
+def makeEntranceAndExit(carte):
+    locations = [ "NO", "NE", "SO", "SE"]
+    ChoixD = locations.pop(random.randint(0, len(locations)-1))
+    # print(ChoixD, locations)
+    if ChoixD == "NO":
+        carte[1][1] = LETTREJOUEUR
+    elif ChoixD == "NE":
+        carte[1][len(carte[1])-2] = LETTREJOUEUR
+    elif ChoixD == "SO":
+        carte[len(carte)-2][1] = LETTREJOUEUR
+    elif ChoixD == "SE":
+        carte[len(carte)-2][len(carte[1])-2] = LETTREJOUEUR
+    ChoixA = locations.pop(random.randint(0, len(locations)-1))
+    # print(ChoixA, locations)
+    if ChoixA == "NO":
+        carte[0][1] = LETTREFIN
+    elif ChoixA == "NE":
+        carte[0][len(carte[1])-2] = LETTREFIN
+    elif ChoixA == "SO":
+        carte[len(carte)-1][1] = LETTREFIN
+    elif ChoixA == "SE":
+        carte[len(carte)-1][len(carte[1])-2] = LETTREFIN
+
 
 def makeMaze(w,h):
     Grid = grid(w,h)
@@ -134,18 +147,24 @@ def makeMaze(w,h):
             break
     for i, line in enumerate(Grid):
         for j, item in enumerate(line):
-            carte[i*2+1][j*2+1] = " "
+            carte[i*2+1][j*2+1] = LETTRECOULOIR
             if item.up == False:
-                carte[i*2][j*2+1] = " "
+                carte[i*2][j*2+1] = LETTRECOULOIR
 
             if item.down == False:
-                carte[i*2+2][j*2+1] = " "
+                carte[i*2+2][j*2+1] = LETTRECOULOIR
 
             if item.left == False:
-                carte[i*2+1][j*2] = " "
+                carte[i*2+1][j*2] = LETTRECOULOIR
 
             if item.right == False:
-                carte[i*2+1][j*2+2] = " "
-    affCarte(carte)
+                carte[i*2+1][j*2+2] = LETTRECOULOIR
+    makeEntranceAndExit(carte)
+    CarteStr = convCarteStr(carte)
+    return CarteStr
 
-makeMaze(16,16)
+
+if __name__ == '__main__':
+    rows, columns = os.popen('stty size', 'r').read().split()
+    carte = makeMaze(int(columns),int(rows)-1)
+    print(carte)

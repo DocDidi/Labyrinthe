@@ -13,8 +13,11 @@ while GameOn:
         Joueur, Props, Hauteur = PartieEnCours
         PartieEnCours = False
     else:
-        fichier = choixlaby()
-        laby = labyload(fichier)
+        fichier, hasard = choixlaby()
+        if fichier:
+            laby = labyload(fichier)
+        if hasard:
+            laby = hasard
         Joueur, Props, Hauteur = labymap(laby)
     verifTailleConsole(Hauteur)
     effaceEtAffiche()

@@ -7,6 +7,7 @@ from Joueur import *
 from Mur import *
 from Porte import *
 from Couloir import *
+from GenerateMaze import *
 
 def effaceEtAffiche(*valeur):
     """Efface l'écran et positionne le curseur en haut a gauche."""
@@ -76,22 +77,28 @@ def choixlaby():
             else:
                 print(WHITE_TEXT + "{0} - {1}"\
                 .format(i+1, carte[chemin:-4].capitalize()))
-        print(WHITE_TEXT + "\nQ - Quitter")
+        print(WHITE_TEXT + "\nA - Une carte générée aléatoirement\nQ - Quitter")
         noinput = True
         while noinput:
             x=capturesaisie()
             if x == CTRL_C:
                 exit()
-            if ord(x) == 13:
+            elif ord(x) == 13:
                 chosen = contenu[selected]
                 noinput = False
-            if x == ECHAP_CARAC:
+            elif x == ECHAP_CARAC:
                 import termios, tty
                 orig_settings = termios.tcgetattr(sys.stdin)
                 tty.setraw(sys.stdin)
                 y=sys.stdin.read(2)
                 termios.tcsetattr(sys.stdin, termios.TCSADRAIN, orig_settings)
                 x = x+y
+            elif x.lower()=='q':
+                exit()
+            elif x.lower()=='a':
+                rows, columns = os.popen('stty size', 'r').read().split()
+                carte = makeMaze(int(columns),int(rows)-4)
+                return False, carte
             if x==FLECHE_BAS:
                 if selected < (len(contenu)-1):
                     selected += 1
@@ -100,10 +107,8 @@ def choixlaby():
                 if selected > 0:
                     selected -= 1
                 noinput = False
-            elif x.lower()=='q':
-                exit()
     if os.path.exists(chosen):
-        return chosen
+        return chosen, False
     else:
         print(WHITE_TEXT + MESSAGEERREURCHOIXCARTE)
         exit()

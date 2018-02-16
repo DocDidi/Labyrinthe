@@ -10,7 +10,7 @@ PartieEnCours = repriseSauvegarde()
 while GameOn:
     # Boucle du jeu
     if PartieEnCours:
-        Joueur, Props, Hauteur = PartieEnCours
+        Joueur, Props, Hauteur, Largeur = PartieEnCours
         PartieEnCours = False
     else:
         fichier, hasard = choixlaby()
@@ -18,13 +18,13 @@ while GameOn:
             laby = labyload(fichier)
         if hasard:
             laby = hasard
-        Joueur, Props, Hauteur = labymap(laby)
-    verifTailleConsole(Hauteur)
+        Joueur, Props, Hauteur, Largeur = labymap(laby)
+    verifTailleConsole(Hauteur, Largeur)
     effaceEtAffiche()
     LabyOn = True
     while LabyOn:
         brouillard(Joueur, Props)
-        afficheLaby(Joueur, Props, Hauteur)
+        afficheLaby(Joueur, Props, Hauteur, Largeur)
         # PosJoueur = Joueur.PosJoueur()
         for porte in Props:
             if porte.fin:
@@ -36,4 +36,4 @@ while GameOn:
                     break
                 else:
                     LabyOn = playermove(Joueur, Props, LabyOn, Hauteur)
-                    sauvegarde(Joueur, Props, Hauteur)
+                    sauvegarde(Joueur, Props, Hauteur, Largeur)

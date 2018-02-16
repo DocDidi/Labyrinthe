@@ -22,22 +22,39 @@ def effaceEtAffiche(*valeur):
         else:
             print(RESET_CURSEUR + WHITE_TEXT + valeur[0])
 
-def verifTailleConsole(Hauteur):
+def verifTailleConsole(Hauteur, Largeur):
     HAUTEURECRANCORRECT = True
+    LARGEURECRANCORRECT = True
     rows, columns = os.popen('stty size', 'r').read().split()
     while int(rows) < Hauteur + 3:
         HAUTEURECRANCORRECT = False
         rows, columns = os.popen('stty size', 'r').read().split()
         effaceEtAffiche(MESSAGEHAUTEURECRANINCORRECT)
     if HAUTEURECRANCORRECT == False:
-        effaceEtAffiche(MESSAGEHAUTEURECRANCORRECT)
+        effaceEtAffiche(MESSAGEECRANCORRECT)
+        input()
+    while int(columns) < Largeur:
+        LARGEURECRANCORRECT = False
+        rows, columns = os.popen('stty size', 'r').read().split()
+        effaceEtAffiche(MESSAGELARGEURECRANINCORRECT)
+    if LARGEURECRANCORRECT == False:
+        effaceEtAffiche(MESSAGEECRANCORRECT)
         input()
 
-def afficheLaby(Joueur, Props, Hauteur):
+def afficheLaby(Joueur, Props, Hauteur, Largeur):
     """Affiche le labyrinthe"""
+    Grid = []
+    for i in range(Hauteur):
+        Grid.append([])
+        for j in range(Largeur+1):
+            Grid[i].append(' ')
     for item in Props:
-        print(item)
+        Grid[item.y][item.x] = str(item)
+        # print(item)
+    carte = convCarteStr(Grid)
+    effaceEtAffiche(carte)
     print(Joueur)
+    print(WHITE_TEXT + MESSAGEDEMANDEMOUVEMENT.format(Hauteur + 2))
 
 def repriseSauvegarde():
     """Propose de reprendre la partie précedente"""
@@ -54,10 +71,10 @@ def repriseSauvegarde():
         PartieEnCours = False
     return (PartieEnCours)
 
-def sauvegarde(Joueur, Props, Hauteur):
+def sauvegarde(Joueur, Props, Hauteur, Largeur):
     """Sauvegarde la partie"""
     with open(FICHIERDESAUVEGARDE, "wb") as Sauvegarde:
-        Sauvegarde.write(pickle.dumps((Joueur, Props, Hauteur)))
+        Sauvegarde.write(pickle.dumps((Joueur, Props, Hauteur, Largeur)))
 
 def choixlaby():
     """Menu de selection des cartes"""
@@ -97,7 +114,7 @@ def choixlaby():
                 exit()
             elif x.lower()=='a':
                 rows, columns = os.popen('stty size', 'r').read().split()
-                carte = makeMaze(int(columns),int(rows)-4)
+                carte = makeMaze(int(columns)-1,int(rows)-4)
                 return False, carte
             if x==FLECHE_BAS:
                 if selected < (len(contenu)-1):
@@ -141,20 +158,25 @@ def labymap(carte):
                 Props.append(Couloir(i,j))
 
     try:
-        return(Joueur, Props, i)
+        return(Joueur, Props, i, j)
     except:
         return labymap(CARTEDEFAUT)
 
 def playermove(Joueur, Props, LabyOn, Hauteur):
     """Fait bouger le joueur"""
     noinput = True
-    print(WHITE_TEXT + MESSAGEDEMANDEMOUVEMENT.format(Hauteur + 2))
     TestPosJoueur = [Joueur.y, Joueur.x]
     while noinput:
         x=capturesaisie()
         if x == CTRL_C:
             exit()
-        if x == ECHAP_CARAC:
+        elif x.lower()=='q':
+            noinput =  LabyOn = False
+        elif x.lower()=='d':
+            for item in Props:
+                item.revealed = True
+                noinput = False
+        elif x == ECHAP_CARAC:
             import termios, tty
             orig_settings = termios.tcgetattr(sys.stdin)
             tty.setraw(sys.stdin)
@@ -173,8 +195,8 @@ def playermove(Joueur, Props, LabyOn, Hauteur):
         elif x==FLECHE_GAUCHE:
             TestPosJoueur = [Joueur.y,Joueur.x-1]
             noinput = False
-        elif x.lower()=='q':
-            noinput =  LabyOn = False
+
+
 
     bloc = False
 

@@ -132,6 +132,14 @@ def makeEntranceAndExit(carte):
     elif ChoixA == "SE":
         carte[len(carte)-1][len(carte[1])-2] = LETTREFIN
 
+def addDoors(carte):
+    for i in range((len(carte)*len(carte[1]))//5):
+        x = random.randint(0, len(carte[1])-1)
+        y = random.randint(0, len(carte)-1)
+        if carte[y][x] == LETTRECOULOIR:
+            if carte[y][x-1] == LETTREMURS and carte[y][x+1] == LETTREMURS and\
+            carte[y-1][x] == LETTRECOULOIR and carte[y+1][x] == LETTRECOULOIR:
+                carte[y][x] = LETTREPORTE
 
 def makeMaze(w,h):
     Grid = grid(w,h)
@@ -160,6 +168,7 @@ def makeMaze(w,h):
             if item.right == False:
                 carte[i*2+1][j*2+2] = LETTRECOULOIR
     makeEntranceAndExit(carte)
+    addDoors(carte)
     CarteStr = convCarteStr(carte)
     return CarteStr
 

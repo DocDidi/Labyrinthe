@@ -72,7 +72,9 @@ MESSAGEERREURMOUVEMENT = "Mauvaise direction."
 MESSAGEECHECCHOIXCARTE = "Désolé, Au revoir."
 MESSAGEHAUTEURECRANINCORRECT = "Votre console est trop petite. \
 Veuillez l'agrandir verticalement."
-MESSAGEHAUTEURECRANCORRECT = "C'est bon ! Pressez entrée pour continuer."
+MESSAGELARGEURECRANINCORRECT = "Votre console est trop petite. \
+Veuillez l'agrandir horizontalement."
+MESSAGEECRANCORRECT = "C'est bon ! Pressez entrée pour continuer."
 CARTEDEFAUT = "XXXXX X   X XXXXX XXXXX\nX   X X   X X _ X X\
 \nX O X X   X XXXXX XXXXX\nX   X X   X X         X\nXXXXX XXXXX X     XXXXX\n\n\
 La carte que vous avez chargée n'est pas valide."

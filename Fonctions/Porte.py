@@ -1,24 +1,30 @@
 #! /usr/bin/env python3
 # coding: utf-8
 
-from var import *
+from Fonctions.var import *
 
-class Mur:
-    def __init__(self, y, x):
+class Porte:
+    def __init__(self, y, x, fin = False):
         self.x = x
         self.y = y
         self.revealed = False
         self.lit = False
-        self.fin = False
-        self.bloc = True
+        self.fin = fin
+        self.bloc = False
 
     def __str__(self):
+        if self.fin == True:
+            color = RED_TEXT
+            b_color = B_RED_TEXT
+        else:
+            color = GREEN_TEXT
+            b_color = B_GREEN_TEXT
         if self.revealed == True and self.lit == False:
             return ("{0}\033[{1};{2}H{3}".format\
-            (YELLOW_TEXT,self.y+1,self.x+1,SYMBOLEMUR))
+            (color,self.y+1,self.x+1,SYMBOLEPORTE))
         elif self.lit == True:
             return ("{0}\033[{1};{2}H{3}".format\
-            (B_YELLOW_TEXT,self.y+1,self.x+1,SYMBOLEMUR))
+            (b_color,self.y+1,self.x+1,SYMBOLEPORTE))
         else:
             return ("{0}\033[{1};{2}H{3}".format\
             (WHITE_TEXT,self.y+1,self.x+1,SYMBOLEBROUILLARD))

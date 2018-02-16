@@ -2,12 +2,12 @@
 # coding: utf-8
 
 import os, glob, pickle, sys, time, termios, tty
-from var import *
-from Joueur import *
-from Mur import *
-from Porte import *
-from Couloir import *
-from GenerateMaze import *
+from Fonctions.var import *
+from Fonctions.Joueur import *
+from Fonctions.Mur import *
+from Fonctions.Porte import *
+from Fonctions.Couloir import *
+from Fonctions.GenerateMaze import *
 
 def effaceEtAffiche(*valeur):
     """Efface l'écran et positionne le curseur en haut a gauche.

@@ -2,7 +2,7 @@
 # coding: utf-8
 
 import random, os
-from var import *
+from Fonctions.var import *
 
 class Cell:
     def __init__(self, i, j, valeur):

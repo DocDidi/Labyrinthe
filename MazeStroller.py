@@ -1,9 +1,9 @@
 #! /usr/bin/env python3
 # coding: utf-8
 
-from fonctionsRoboc import *
+from Fonctions.fonctionsRoboc import *
 
-from var import *
+from Fonctions.var import *
 
 if SYSTEME_D_EXPLOITATION == 'nt':
     print(MESSAGEINCOMPATIBILITESYSTEME)

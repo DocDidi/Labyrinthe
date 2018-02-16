@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # coding: utf-8
 
-from var import *
+from Fonctions.var import *
 
 class Personnage:
     def __init__(self, y, x):

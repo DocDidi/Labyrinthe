@@ -5,6 +5,10 @@ from fonctionsRoboc import *
 
 from var import *
 
+if SYSTEME_D_EXPLOITATION == 'nt':
+    print(MESSAGEINCOMPATIBILITESYSTEME)
+    exit()
+    
 GameOn = True
 PartieEnCours = repriseSauvegarde()
 while GameOn:

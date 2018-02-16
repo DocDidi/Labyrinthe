@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # coding: utf-8
 
-import os, glob, pickle, sys, time
+import os, glob, pickle, sys, time, termios, tty
 from var import *
 from Joueur import *
 from Mur import *
@@ -11,16 +11,11 @@ from GenerateMaze import *
 
 def effaceEtAffiche(*valeur):
     """Efface l'écran et positionne le curseur en haut a gauche."""
-    if SYSTEME_D_EXPLOITATION == 'nt':
-        os.system('cls')
-        if valeur:
-            print(valeur[0])
+    print(EFFACE_ECRAN)
+    if valeur == ():
+        print(RESET_CURSEUR, end = "")
     else:
-        print(EFFACE_ECRAN)
-        if valeur == ():
-            print(RESET_CURSEUR, end = "")
-        else:
-            print(RESET_CURSEUR + WHITE_TEXT + valeur[0])
+        print(RESET_CURSEUR + WHITE_TEXT + valeur[0])
 
 def verifTailleConsole(Hauteur, Largeur):
     HAUTEURECRANCORRECT = True
@@ -50,7 +45,6 @@ def afficheLaby(Joueur, Props, Hauteur, Largeur):
             Grid[i].append(' ')
     for item in Props:
         Grid[item.y][item.x] = str(item)
-        # print(item)
     carte = convCarteStr(Grid)
     effaceEtAffiche(carte)
     print(Joueur)
@@ -60,7 +54,7 @@ def repriseSauvegarde():
     """Propose de reprendre la partie précedente"""
     if os.path.exists(FICHIERDESAUVEGARDE):
         print(WHITE_TEXT + MESSAGEREPRISESAUVEGARDE)
-        choix = capturesaisie()
+        choix = capturesaisie(1)
         if choix.lower() == "o":
             with open(FICHIERDESAUVEGARDE, "rb") as Sauvegarde:
                 PartieEnCours = pickle.loads(Sauvegarde.read())
@@ -97,18 +91,14 @@ def choixlaby():
         print(WHITE_TEXT + MESSAGEAUTRECHOIXCARTE)
         noinput = True
         while noinput:
-            x=capturesaisie()
+            x=capturesaisie(1)
             if x == CTRL_C:
                 exit()
             elif ord(x) == 13:
                 chosen = contenu[selected]
                 noinput = False
             elif x == ECHAP_CARAC:
-                import termios, tty
-                orig_settings = termios.tcgetattr(sys.stdin)
-                tty.setraw(sys.stdin)
-                y=sys.stdin.read(2)
-                termios.tcsetattr(sys.stdin, termios.TCSADRAIN, orig_settings)
+                y = capturesaisie(2)
                 x = x+y
             elif x.lower()=='q':
                 exit()
@@ -167,7 +157,7 @@ def playermove(Joueur, Props, LabyOn, Hauteur):
     noinput = True
     TestPosJoueur = [Joueur.y, Joueur.x]
     while noinput:
-        x=capturesaisie()
+        x=capturesaisie(1)
         if x == CTRL_C:
             exit()
         elif x.lower()=='q':
@@ -177,11 +167,7 @@ def playermove(Joueur, Props, LabyOn, Hauteur):
                 item.revealed = True
                 noinput = False
         elif x == ECHAP_CARAC:
-            import termios, tty
-            orig_settings = termios.tcgetattr(sys.stdin)
-            tty.setraw(sys.stdin)
-            y=sys.stdin.read(2)
-            termios.tcsetattr(sys.stdin, termios.TCSADRAIN, orig_settings)
+            y = capturesaisie(2)
             x = x+y
         if x==FLECHE_HAUT:
             TestPosJoueur = [Joueur.y-1,Joueur.x]
@@ -211,28 +197,12 @@ def playermove(Joueur, Props, LabyOn, Hauteur):
 
     return (LabyOn)
 
-def capturesaisie():
+def capturesaisie(nbl):
     """Renvoie la touche de clavier pressée"""
-    if SYSTEME_D_EXPLOITATION == 'nt':
-        import keyboard
-        saisie = keyboard.read_hotkey()
-        if saisie == "up":
-            saisie = FLECHE_HAUT
-        elif saisie == "down":
-            saisie = FLECHE_BAS
-        elif saisie == "right":
-            saisie = FLECHE_DROITE
-        elif saisie == "left":
-            saisie = FLECHE_GAUCHE
-        keyboard.clear_all_hotkeys()
-        return saisie
-
-    else:
-        import termios, tty
-        orig_settings = termios.tcgetattr(sys.stdin)
-        tty.setraw(sys.stdin)
-        saisie=sys.stdin.read(1)[0]
-        termios.tcsetattr(sys.stdin, termios.TCSADRAIN, orig_settings)
+    orig_settings = termios.tcgetattr(sys.stdin)
+    tty.setraw(sys.stdin)
+    saisie=sys.stdin.read(nbl)
+    termios.tcsetattr(sys.stdin, termios.TCSADRAIN, orig_settings)
     return saisie
 
 def islit(sujet, Joueur):

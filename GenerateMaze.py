@@ -22,23 +22,21 @@ class Cell:
         if self.left: chaine+="L"
         if self.right: chaine+="R"
         return chaine
+
     def testMur(self, Grid):
+        """Choisi une direction au hasard et casse le mur si c'est possible"""
         x=random.randint(1,4)
         if x == 1: # Up
             if self.i-1 > 0:
                 cible = Grid[self.i-1][self.j]
                 if cible.valeur != self.valeur:
-                    NouvelleValeur = min(cible.valeur, self.valeur)
-                    AncienneValeur = max(cible.valeur, self.valeur)
-                    modifValeurs(AncienneValeur,NouvelleValeur,Grid)
+                    modifValeurs(cible.valeur,self.valeur,Grid)
                     self.up = False
         if x == 2: # Down
             try:
                 cible = Grid[self.i+1][self.j]
                 if cible.valeur != self.valeur:
-                    NouvelleValeur = min(cible.valeur, self.valeur)
-                    AncienneValeur = max(cible.valeur, self.valeur)
-                    modifValeurs(AncienneValeur,NouvelleValeur,Grid)
+                    modifValeurs(cible.valeur,self.valeur,Grid)
                     self.down = False
             except:
                 pass
@@ -46,39 +44,35 @@ class Cell:
             if self.j-1 > 0:
                 cible = Grid[self.i][self.j-1]
                 if cible.valeur != self.valeur:
-                    NouvelleValeur = min(cible.valeur, self.valeur)
-                    AncienneValeur = max(cible.valeur, self.valeur)
-                    modifValeurs(AncienneValeur,NouvelleValeur,Grid)
+                    modifValeurs(cible.valeur,self.valeur,Grid)
                     self.left = False
         if x == 4: # Right
             try:
                 cible = Grid[self.i][self.j+1]
                 if cible.valeur != self.valeur:
-                    NouvelleValeur = min(cible.valeur, self.valeur)
-                    AncienneValeur = max(cible.valeur, self.valeur)
-                    modifValeurs(AncienneValeur,NouvelleValeur,Grid)
+                    modifValeurs(cible.valeur,self.valeur,Grid)
                     self.right = False
             except:
                 pass
 
-def modifValeurs(Ancienne, Nouvelle, Grid):
+def modifValeurs(a, b, Grid):
+    """Modifie les index après le cassage d'un mur"""
+    NouvelleValeur = min(a, b)
+    AncienneValeur = max(a, b)
     for i in Grid:
         for j in i:
-            if j.valeur == Ancienne:
-                j.valeur = Nouvelle
+            if j.valeur == AncienneValeur:
+                j.valeur = NouvelleValeur
 
 def roundToSupOdd(x):
+    """Arrondi au chiffre impair supérieur"""
     if x % 2 == 1:
         return x
     else:
         return x + 1
-def roundToInfEven(x):
-    if x % 2 == 0:
-        return x
-    else:
-        return x -1
 
 def canevas(w,h):
+    """Prépare un canevas de la bonne taille pour y graver la carte"""
     w = roundToSupOdd(w)
     h = roundToSupOdd(h)
     canevas = []
@@ -89,6 +83,7 @@ def canevas(w,h):
     return canevas
 
 def convCarteStr(carte):
+    """Converti la carte (liste) en chaine de caracteres"""
     chainecanevas=""
     for line in carte:
         for letter in line:
@@ -98,6 +93,7 @@ def convCarteStr(carte):
 
 
 def grid(w, h):
+    """Défini la Grid de cells"""
     valeur = 0
     w = w//2
     h = h//2
@@ -110,6 +106,7 @@ def grid(w, h):
     return Grid
 
 def makeEntranceAndExit(carte):
+    """Place l'entrée et la sortie sur la carte"""
     locations = [ "NO", "NE", "SO", "SE"]
     ChoixD = locations.pop(random.randint(0, len(locations)-1))
     # print(ChoixD, locations)
@@ -133,6 +130,7 @@ def makeEntranceAndExit(carte):
         carte[len(carte)-1][len(carte[1])-2] = LETTREFIN
 
 def addDoors(carte):
+    """Ajoute des portes sur la carte"""
     for i in range((len(carte)*len(carte[1]))//5):
         x = random.randint(0, len(carte[1])-1)
         y = random.randint(0, len(carte)-1)
@@ -142,6 +140,8 @@ def addDoors(carte):
                 carte[y][x] = LETTREPORTE
 
 def makeMaze(w,h):
+    """Fonction principale.
+    Construit un labyrinthe à la taille demandée."""
     Grid = grid(w,h)
     carte = canevas(w,h)
     while True:
@@ -174,6 +174,7 @@ def makeMaze(w,h):
 
 
 if __name__ == '__main__':
-    rows, columns = os.popen('stty size', 'r').read().split()
-    carte = makeMaze(int(columns),int(rows)-1)
+    # rows, columns = os.popen('stty size', 'r').read().split()
+    # carte = makeMaze(int(columns),int(rows)-1)
+    carte = makeMaze(20,10)
     print(carte)

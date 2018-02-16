@@ -47,7 +47,16 @@ B_WHITE_TEXT = "\033[0;1;37m"
 EMPLACEMENTCARTES = "Cartes/*.txt"
 
 MESSAGECHOIXCARTE = "Quelle carte voulez-vous jouer ?"
-MESSAGEAUTRECHOIXCARTE = "\nR - Une carte générée aléatoirement\nQ - Quitter"
+# MESSAGEAUTRECHOIXCARTE = "\nR - Une carte générée aléatoirement\nQ - Quitter"
+MESSAGECHOIXCARTEALEATOIREPETITE = "Une carte aléatoire (petite)"
+LARGEURPETITE = 21
+HAUTEURPETITE = 11
+MESSAGECHOIXCARTEALEATOIREGRANDE = "Une carte aléatoire (grande)"
+LARGEURGRANDE = 41
+HAUTEURGRANDE = 21
+MESSAGECHOIXCARTEALEATOIREECRAN = "Une carte aléatoire \
+(de la taille de la console)"
+MESSAGECHOIXQUITTER = "Quitter (Q)\n"
 MESSAGEDEMANDEMOUVEMENT = "\033[{}HUtilisez les touches flechées pour \
 vous déplacer. (Q pour quitter) "
 MESSAGEREUSSITELABY = "\033[{}H\033[KBravo ! (pressez une touche pour \
@@ -57,12 +66,18 @@ MESSAGEREPRISESAUVEGARDE = "Il y a une partie sauvegardée,\
 MESSAGEERREURDOSSIER = "Le répertoire {0} est vide ou n'existe pas."
 MESSAGEERREURCHOIXCARTE = "Désolé, votre choix est invalide."
 MESSAGEERREURMOUVEMENT = "Mauvaise direction."
-MESSAGEECHECCHOIXCARTE = "Désolé, Au revoir."
 MESSAGEHAUTEURECRANINCORRECT = "Votre console est trop petite. \
 Veuillez l'agrandir verticalement."
 MESSAGELARGEURECRANINCORRECT = "Votre console est trop petite. \
 Veuillez l'agrandir horizontalement."
 MESSAGEECRANCORRECT = "C'est bon ! Pressez entrée pour continuer."
-CARTEDEFAUT = "XXXXX X   X XXXXX XXXXX\nX   X X   X X _ X X\
-\nX O X X   X XXXXX XXXXX\nX   X X   X X         X\nXXXXX XXXXX X     XXXXX\n\n\
-La carte que vous avez chargée n'est pas valide."
+CARTEDEFAUT = "\
+XXXXXXXXXXXXXXXXXXXXXXX\n\
+X                     X\n\
+X   XXX X X XXX XXX   X\n\
+X   X X X X X X X     X\n\
+X   X_X XOX XXX XXX   X\n\
+X   X X X X X     X   X\n\
+X   XXX XXX X   XXX   X\n\
+X                     X\n\
+XXXXXXXXXXXXXXXXXXXXXXX\n"

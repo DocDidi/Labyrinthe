@@ -10,7 +10,8 @@ from Couloir import *
 from GenerateMaze import *
 
 def effaceEtAffiche(*valeur):
-    """Efface l'écran et positionne le curseur en haut a gauche."""
+    """Efface l'écran et positionne le curseur en haut a gauche.
+    Peut prendre en entrée une chaine de caracteres à afficher"""
     print(EFFACE_ECRAN)
     if valeur == ():
         print(RESET_CURSEUR, end = "")
@@ -18,6 +19,7 @@ def effaceEtAffiche(*valeur):
         print(RESET_CURSEUR + WHITE_TEXT + valeur[0])
 
 def verifTailleConsole(Hauteur, Largeur):
+    """Demande a l'utilisateur d'agrandir sa console si besoin."""
     HAUTEURECRANCORRECT = True
     LARGEURECRANCORRECT = True
     rows, columns = os.popen('stty size', 'r').read().split()
@@ -37,7 +39,7 @@ def verifTailleConsole(Hauteur, Largeur):
         input()
 
 def afficheLaby(Joueur, Props, Hauteur, Largeur):
-    """Affiche le labyrinthe"""
+    """Affiche le labyrinthe."""
     Grid = []
     for i in range(Hauteur):
         Grid.append([])
@@ -50,8 +52,15 @@ def afficheLaby(Joueur, Props, Hauteur, Largeur):
     print(Joueur)
     print(WHITE_TEXT + MESSAGEDEMANDEMOUVEMENT.format(Hauteur + 2))
 
+def sauvegarde(Joueur, Props, Hauteur, Largeur):
+    """Sauvegarde la partie"""
+    with open(FICHIERDESAUVEGARDE, "wb") as Sauvegarde:
+        Sauvegarde.write(pickle.dumps((Joueur, Props, Hauteur, Largeur)))
+
 def repriseSauvegarde():
-    """Propose de reprendre la partie précedente"""
+    """Propose de reprendre la partie précedente
+    Renvoie un Tuple contenant les Joueur, Props, Hauteur, Largeur
+    qui étaient dans le fichier"""
     if os.path.exists(FICHIERDESAUVEGARDE):
         print(WHITE_TEXT + MESSAGEREPRISESAUVEGARDE)
         choix = capturesaisie(1)
@@ -65,30 +74,32 @@ def repriseSauvegarde():
         PartieEnCours = False
     return (PartieEnCours)
 
-def sauvegarde(Joueur, Props, Hauteur, Largeur):
-    """Sauvegarde la partie"""
-    with open(FICHIERDESAUVEGARDE, "wb") as Sauvegarde:
-        Sauvegarde.write(pickle.dumps((Joueur, Props, Hauteur, Largeur)))
-
 def choixlaby():
-    """Menu de selection des cartes"""
+    """Menu de selection des cartes.
+    Renvoie le nom du fichier choisi ou la carte aléatoire."""
     contenu = glob.glob(EMPLACEMENTCARTES)
     if not contenu:
         print(WHITE_TEXT = MESSAGEERREURDOSSIER.format(EMPLACEMENTCARTES))
         exit()
+    contenu = contenu + [MESSAGECHOIXCARTEALEATOIREPETITE,\
+    MESSAGECHOIXCARTEALEATOIREGRANDE, MESSAGECHOIXCARTEALEATOIREECRAN,\
+    MESSAGECHOIXQUITTER]
     chemin = EMPLACEMENTCARTES.find("*")
     chosen = False
     selected = 0
     while not chosen:
-        effaceEtAffiche(MESSAGECHOIXCARTE)
+        effaceEtAffiche(WHITE_TEXT + MESSAGECHOIXCARTE)
         for i, carte in enumerate(contenu):
             if i == selected:
-                print(BLACK_ON_WHITE + "{0} - {1}"\
-                .format(i+1, carte[chemin:-4].capitalize()))
+                if os.path.exists(carte):
+                    print(BLACK_ON_WHITE + carte[chemin:-4].capitalize())
+                else:
+                    print(BLACK_ON_WHITE + carte + WHITE_TEXT)
             else:
-                print(WHITE_TEXT + "{0} - {1}"\
-                .format(i+1, carte[chemin:-4].capitalize()))
-        print(WHITE_TEXT + MESSAGEAUTRECHOIXCARTE)
+                if os.path.exists(carte):
+                    print(WHITE_TEXT + carte[chemin:-4].capitalize())
+                else:
+                    print(WHITE_TEXT + carte)
         noinput = True
         while noinput:
             x=capturesaisie(1)
@@ -105,7 +116,7 @@ def choixlaby():
             elif x.lower()=='r':
                 rows, columns = os.popen('stty size', 'r').read().split()
                 carte = makeMaze(int(columns)-1,int(rows)-4)
-                return False, carte
+                return carte
             if x==FLECHE_BAS:
                 if selected < (len(contenu)-1):
                     selected += 1
@@ -115,19 +126,27 @@ def choixlaby():
                     selected -= 1
                 noinput = False
     if os.path.exists(chosen):
-        return chosen, False
+        with open(chosen, "r") as carte:
+            return carte.read()
+    elif chosen == MESSAGECHOIXCARTEALEATOIREPETITE:
+        carte = makeMaze(LARGEURPETITE,HAUTEURPETITE)
+        return carte
+    elif chosen == MESSAGECHOIXCARTEALEATOIREGRANDE:
+        carte = makeMaze(LARGEURGRANDE,HAUTEURGRANDE)
+        return carte
+    elif chosen == MESSAGECHOIXCARTEALEATOIREECRAN:
+        rows, columns = os.popen('stty size', 'r').read().split()
+        carte = makeMaze(int(columns)-1,int(rows)-4)
+        return carte
+    elif chosen == MESSAGECHOIXQUITTER:
+        exit()
     else:
         print(WHITE_TEXT + MESSAGEERREURCHOIXCARTE)
         exit()
 
-def labyload(fichier):
-    """Charge la carte selectionnée"""
-    if os.path.exists(fichier):
-        with open(fichier, "r") as carte:
-            return carte.read()
-
 def labymap(carte):
-    """Converti la carte (str) en données du jeu"""
+    """Extrait les données du jeu de la carte (str)
+    Renvoie Joueur, Props, Hauteur, Largeur"""
     lines = carte.split("\n")
     Props = []
     Murs = []
@@ -153,7 +172,8 @@ def labymap(carte):
         return labymap(CARTEDEFAUT)
 
 def playermove(Joueur, Props, LabyOn, Hauteur):
-    """Fait bouger le joueur"""
+    """Fait bouger le joueur
+    Renvoie LabyOn == True si le jeu continue."""
     noinput = True
     TestPosJoueur = [Joueur.y, Joueur.x]
     while noinput:
@@ -182,15 +202,11 @@ def playermove(Joueur, Props, LabyOn, Hauteur):
             TestPosJoueur = [Joueur.y,Joueur.x-1]
             noinput = False
 
-
-
     bloc = False
-
     for item in Props:
         if (TestPosJoueur[1], TestPosJoueur[0]) == (item.x, item.y)\
         and item.bloc == True:
             bloc = True
-
     if bloc == False:
         Joueur.x = TestPosJoueur[1]
         Joueur.y = TestPosJoueur[0]
@@ -198,14 +214,15 @@ def playermove(Joueur, Props, LabyOn, Hauteur):
     return (LabyOn)
 
 def capturesaisie(nbl):
-    """Renvoie la touche de clavier pressée"""
+    """Renvoie la ou les touches de clavier pressées.
+    Prend le nombre de touches à renvoyer"""
     orig_settings = termios.tcgetattr(sys.stdin)
     tty.setraw(sys.stdin)
     saisie=sys.stdin.read(nbl)
     termios.tcsetattr(sys.stdin, termios.TCSADRAIN, orig_settings)
     return saisie
 
-def islit(sujet, Joueur):
+def isLit(sujet, Joueur):
     """Calcule si l'objet est éclairé"""
     if ((-1 <= Joueur.x - sujet.x <= 1) and (-2 <= Joueur.y - sujet.y <= 2)) or\
     ((-2 <= Joueur.x - sujet.x <= 2) and (-1 <= Joueur.y - sujet.y <= 1)):
@@ -215,6 +232,6 @@ def islit(sujet, Joueur):
         sujet.lit = False
 
 def brouillard(Joueur, Props):
-    """Liste les choses à reveler"""
+    """Liste les choses à reveler et les passe a la fonction isLit"""
     for item in Props:
-        islit(item, Joueur)
+        isLit(item, Joueur)

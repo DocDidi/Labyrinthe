@@ -204,5 +204,5 @@ def makeMaze(w,h):
 if __name__ == '__main__':
     # rows, columns = os.popen('stty size', 'r').read().split()
     # carte = makeMaze(int(columns),int(rows)-1)
-    carte = makeMaze(40,20)
+    carte = makeMaze(54,27)
     print(carte)

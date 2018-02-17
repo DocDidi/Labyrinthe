@@ -11,13 +11,14 @@ if SYSTEME_D_EXPLOITATION == 'nt':
 
 GameOn = True
 PartieEnCours = repriseSauvegarde()
+selected = 0
 
 while GameOn:
     if PartieEnCours:
         Joueur, Props, Hauteur, Largeur = PartieEnCours
         PartieEnCours = False
     else:
-        laby = choixlaby()
+        laby, selected = choixlaby(selected)
         Joueur, Props, Hauteur, Largeur = labymap(laby)
     verifTailleConsole(Hauteur, Largeur)
     effaceEtAffiche()

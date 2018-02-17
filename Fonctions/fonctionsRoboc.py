@@ -40,17 +40,9 @@ def verifTailleConsole(Hauteur, Largeur):
 
 def afficheLaby(Joueur, Props, Hauteur, Largeur):
     """Affiche le labyrinthe."""
-    # Grid = []
-    # for i in range(Hauteur):
-    #     Grid.append([])
-    #     for j in range(Largeur+1):
-    #         Grid[i].append(' ')
-    # for item in Props:
-    #     Grid[item.y][item.x] = str(item)
     carte = ""
     for item in Props:
         carte = carte + str(item)
-    # carte = convCarteStr(Grid)
     effaceEtAffiche(carte)
     print(Joueur)
     print(WHITE_TEXT + MESSAGEDEMANDEMOUVEMENT.format(Hauteur + 2))
@@ -77,7 +69,7 @@ def repriseSauvegarde():
         PartieEnCours = False
     return (PartieEnCours)
 
-def choixlaby():
+def choixlaby(selected = 0):
     """Menu de selection des cartes.
     Renvoie le nom du fichier choisi ou la carte aléatoire."""
     contenu = glob.glob(EMPLACEMENTCARTES)
@@ -89,7 +81,6 @@ def choixlaby():
     MESSAGECHOIXQUITTER]
     chemin = EMPLACEMENTCARTES.find("*")
     chosen = False
-    selected = 0
     while not chosen:
         effaceEtAffiche(WHITE_TEXT + MESSAGECHOIXCARTE)
         for i, carte in enumerate(contenu):
@@ -116,10 +107,6 @@ def choixlaby():
                 x = x+y
             elif x.lower()=='q':
                 exit()
-            elif x.lower()=='r':
-                rows, columns = os.popen('stty size', 'r').read().split()
-                carte = makeMaze(int(columns)-1,int(rows)-4)
-                return carte
             if x==FLECHE_BAS:
                 if selected < (len(contenu)-1):
                     selected += 1
@@ -130,17 +117,17 @@ def choixlaby():
                 noinput = False
     if os.path.exists(chosen):
         with open(chosen, "r") as carte:
-            return carte.read()
+            return carte.read(), selected
     elif chosen == MESSAGECHOIXCARTEALEATOIREPETITE:
         carte = makeMaze(LARGEURPETITE,HAUTEURPETITE)
-        return carte
+        return carte, selected
     elif chosen == MESSAGECHOIXCARTEALEATOIREGRANDE:
         carte = makeMaze(LARGEURGRANDE,HAUTEURGRANDE)
-        return carte
+        return carte, selected
     elif chosen == MESSAGECHOIXCARTEALEATOIREECRAN:
         rows, columns = os.popen('stty size', 'r').read().split()
         carte = makeMaze(int(columns)-1,int(rows)-4)
-        return carte
+        return carte, selected
     elif chosen == MESSAGECHOIXQUITTER:
         exit()
     else:
@@ -179,6 +166,7 @@ def playermove(Joueur, Props, LabyOn, Hauteur):
     Renvoie LabyOn == True si le jeu continue."""
     noinput = True
     TestPosJoueur = [Joueur.y, Joueur.x]
+    cheatcode = 0
     while noinput:
         x=capturesaisie(1)
         if x == CTRL_C:
@@ -186,6 +174,10 @@ def playermove(Joueur, Props, LabyOn, Hauteur):
         elif x.lower()=='q':
             noinput =  LabyOn = False
         elif x.lower()=='d':
+            cheatcode = 1
+        elif x.lower()=='o' and cheatcode == 1:
+            cheatcode = 2
+        elif x.lower()=='c' and cheatcode == 2:
             for item in Props:
                 item.revealed = True
                 noinput = False

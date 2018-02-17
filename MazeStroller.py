@@ -34,6 +34,14 @@ while GameOn:
                         item.revealed = True
                     effaceEtAffiche()
                     afficheLaby(Joueur, Props, Hauteur, Largeur)
+                    for item in Props:
+                        try:
+                            if item.visited:
+                                print("{0}\033[{1};{2}H{3}".format\
+                                (WHITE_TEXT,item.y+1,item.x+1,\
+                                SYMBOLECOULOIRVISITE))
+                        except:
+                            pass
                     print(WHITE_TEXT + MESSAGEREUSSITELABY.format(Hauteur +2))
                     capturesaisie(1)
                     break

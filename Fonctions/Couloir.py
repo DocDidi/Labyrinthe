@@ -10,8 +10,9 @@ class Couloir:
         self.revealed = False
         self.fin = False
         self.bloc = False
+        self.visited = False
 
-    def __str__(self):
+    def __str__(self, *symbole):
         if self.revealed == True:
             return ("{0}\033[{1};{2}H{3}".format\
             (WHITE_TEXT,self.y+1,self.x+1,SYMBOLECOULOIR))

@@ -40,14 +40,17 @@ def verifTailleConsole(Hauteur, Largeur):
 
 def afficheLaby(Joueur, Props, Hauteur, Largeur):
     """Affiche le labyrinthe."""
-    Grid = []
-    for i in range(Hauteur):
-        Grid.append([])
-        for j in range(Largeur+1):
-            Grid[i].append(' ')
+    # Grid = []
+    # for i in range(Hauteur):
+    #     Grid.append([])
+    #     for j in range(Largeur+1):
+    #         Grid[i].append(' ')
+    # for item in Props:
+    #     Grid[item.y][item.x] = str(item)
+    carte = ""
     for item in Props:
-        Grid[item.y][item.x] = str(item)
-    carte = convCarteStr(Grid)
+        carte = carte + str(item)
+    # carte = convCarteStr(Grid)
     effaceEtAffiche(carte)
     print(Joueur)
     print(WHITE_TEXT + MESSAGEDEMANDEMOUVEMENT.format(Hauteur + 2))
@@ -230,6 +233,8 @@ def isLit(sujet, Joueur):
         sujet.lit = True
     else:
         sujet.lit = False
+    if Joueur.x == sujet.x and Joueur.y == sujet.y:
+        sujet.visited = True
 
 def brouillard(Joueur, Props):
     """Liste les choses à reveler et les passe a la fonction isLit"""

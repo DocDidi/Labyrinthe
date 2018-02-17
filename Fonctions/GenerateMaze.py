@@ -2,7 +2,10 @@
 # coding: utf-8
 
 import random, os
-from Fonctions.var import *
+if __name__ == '__main__':
+    from var import *
+else:
+    from Fonctions.var import *
 
 class Cell:
     def __init__(self, i, j, valeur):
@@ -105,6 +108,30 @@ def grid(w, h):
             valeur += 1
     return Grid
 
+def makeRoom(carte):
+    """Ajoute une ou plusieurs salles dans le labyrinthe."""
+    Gridcount = len(carte)*len(carte[1])
+    for i in range (Gridcount//150):
+        creatingrooms = True
+        a = random.randint(1, ((len(carte)//2))-1)*2
+        b = random.randint(1, ((len(carte[0])//2))-1)*2
+        # print(a,b)
+        carte[a-1][b] = LETTRECOULOIR
+        carte[a][b-1] = LETTRECOULOIR
+        carte[a][b+1] = LETTRECOULOIR
+        carte[a+1][b] = LETTRECOULOIR
+    for x in range(len(carte)-1):
+        for y in range(len(carte[0])-1):
+            if carte[x][y] == LETTREMURS:
+                try:
+                    if carte[x][y-1] == LETTRECOULOIR and \
+                    carte[x][y+1] == LETTRECOULOIR and \
+                    carte[x-1][y] == LETTRECOULOIR and \
+                    carte[x+1][y] == LETTRECOULOIR:
+                        carte[x][y] = LETTRECOULOIR
+                except:
+                    pass
+
 def makeEntranceAndExit(carte):
     """Place l'entrée et la sortie sur la carte"""
     locations = [ "NO", "NE", "SO", "SE"]
@@ -167,6 +194,7 @@ def makeMaze(w,h):
 
             if item.right == False:
                 carte[i*2+1][j*2+2] = LETTRECOULOIR
+    makeRoom(carte)
     makeEntranceAndExit(carte)
     addDoors(carte)
     CarteStr = convCarteStr(carte)
@@ -176,5 +204,5 @@ def makeMaze(w,h):
 if __name__ == '__main__':
     # rows, columns = os.popen('stty size', 'r').read().split()
     # carte = makeMaze(int(columns),int(rows)-1)
-    carte = makeMaze(20,10)
+    carte = makeMaze(40,20)
     print(carte)

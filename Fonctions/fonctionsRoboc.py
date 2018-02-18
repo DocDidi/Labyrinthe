@@ -148,10 +148,8 @@ def labymap(carte):
     """Extrait les données du jeu de la carte (str)
     Renvoie Joueur, Props, Hauteur, Largeur"""
     lines = carte.split("\n")
+    tojoin = (LETTREMURS, LETTREPORTE, LETTREFIN)
     Props = []
-    Murs = []
-    Portes = []
-    Couloirs = []
     for i, line in enumerate(lines):
         for j, letter in enumerate(line):
             if letter is LETTREJOUEUR:
@@ -162,10 +160,23 @@ def labymap(carte):
             elif letter is LETTREPORTE:
                 Props.append(Porte(i,j))
             elif letter is LETTREMURS:
-                Props.append(Mur(i,j))
+                neighbors = ""
+                # input(lines[i][j])
+                if i>0:
+                    if lines[i-1][j] in tojoin:
+                        neighbors += "N"
+                if i<(len(lines)-2):
+                    if lines[i+1][j] in tojoin:
+                        neighbors += "S"
+                if j<(len(lines[0])-1):
+                    if lines[i][j+1] in tojoin:
+                        neighbors += "E"
+                if j>0:
+                    if lines[i][j-1] in tojoin:
+                        neighbors += "O"
+                Props.append(Mur(i,j,neighbors))
             else:
                 Props.append(Couloir(i,j))
-
     try:
         return(Joueur, Props, i, j)
     except:
@@ -190,7 +201,14 @@ def playermove(Joueur, Props, LabyOn, Hauteur):
         elif x.lower()=='c' and cheatcode == 2:
             for item in Props:
                 item.revealed = True
-                noinput = False
+            noinput = False
+        elif x.lower()=='g':
+            for item in Props:
+                try:
+                    item.neighbors = False
+                except:
+                    pass
+            noinput = False
         elif x == ECHAP_CARAC:
             y = capturesaisie(2)
             x = x+y
@@ -246,7 +264,6 @@ def brouillard(Joueur, Props):
 def finishedMenu(laby, Hauteur, Temps):
     """Messages et menu de choix quand le labyrinthe est fini."""
     Temps = convTemps(Temps)
-    # Temps = "{:.2f}".format(Temps)
     print(WHITE_TEXT+MESSAGEREUSSITELABY.format(Hauteur +1,Temps))
     noinput = True
     while noinput:

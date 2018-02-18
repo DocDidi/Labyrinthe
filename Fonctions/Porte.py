@@ -19,12 +19,12 @@ class Porte:
         else:
             color = GREEN_TEXT
             b_color = B_GREEN_TEXT
-        if self.revealed == True and self.lit == False:
-            return ("{0}\033[{1};{2}H{3}".format\
-            (color,self.y+1,self.x+1,SYMBOLEPORTE))
-        elif self.lit == True:
+        if self.lit == True:
             return ("{0}\033[{1};{2}H{3}".format\
             (b_color,self.y+1,self.x+1,SYMBOLEPORTE))
+        elif self.revealed == True:
+            return ("{0}\033[{1};{2}H{3}".format\
+            (color,self.y+1,self.x+1,SYMBOLEPORTE))
         else:
             return ("{0}\033[{1};{2}H{3}".format\
             (WHITE_TEXT,self.y+1,self.x+1,SYMBOLEBROUILLARD))

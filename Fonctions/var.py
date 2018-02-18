@@ -44,11 +44,14 @@ B_MAGENTA_TEXT = "\033[0;1;35m"
 B_CYAN_TEXT = "\033[0;1;36m"
 B_WHITE_TEXT = "\033[0;1;37m"
 
+EMPLACEMENTCARTES = "Cartes/"
+FORMATCARTE = ".txt"
+CHARGEMENTCARTES = EMPLACEMENTCARTES + "*" + FORMATCARTE
 
-EMPLACEMENTCARTES = "Cartes/*.txt"
 
 MESSAGECHOIXCARTE = "Quelle carte voulez-vous jouer ?"
-# MESSAGEAUTRECHOIXCARTE = "\nR - Une carte générée aléatoirement\nQ - Quitter"
+MESSAGECARTEPREDEFINIE = "Une carte prédéfinie \
+(gauche et droite pour choisir) : "
 MESSAGECHOIXCARTEALEATOIREPETITE = "Une carte aléatoire (petite)"
 LARGEURPETITE = 21
 HAUTEURPETITE = 11
@@ -57,13 +60,14 @@ LARGEURGRANDE = 41
 HAUTEURGRANDE = 21
 MESSAGECHOIXCARTEALEATOIREECRAN = "Une carte aléatoire \
 (de la taille de la console)"
-MESSAGECHOIXQUITTER = "Quitter (Q)\n"
-MESSAGEDEMANDEMOUVEMENT = "\033[{}HUtilisez les touches flechées pour \
-vous déplacer. (Q pour quitter) "
-MESSAGEREUSSITELABY = "\033[{}H\033[KBravo ! (pressez une touche pour \
-revenir au menu)"
+MESSAGECHOIXQUITTER = "Quitter [Q]\n"
+MESSAGEDEMANDEMOUVEMENT = "\033[{}HTouches flechées pour \
+vous déplacer. [Q] pour quitter "
+MESSAGEREUSSITELABY = "\033[{0}H\033[KBravo ! Vous avez fini en {1}.\n\
+(pressez [Q] pour revenir au menu, [S] pour sauvegarder ce labyrinthe.)"
+MESSAGESAUVEGARDELABYRINTHE = "Quel nom voulez vous donner à ce labyrinthe ? "
 MESSAGEREPRISESAUVEGARDE = "Il y a une partie sauvegardée,\
- voulez vous la continuer ?"
+ pressez [O] pour la continuer."
 MESSAGEERREURDOSSIER = "Le répertoire {0} est vide ou n'existe pas."
 MESSAGEERREURCHOIXCARTE = "Désolé, votre choix est invalide."
 MESSAGEERREURMOUVEMENT = "Mauvaise direction."

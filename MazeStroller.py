@@ -1,8 +1,9 @@
 #! /usr/bin/env python3
 # coding: utf-8
 
-from Fonctions.fonctionsRoboc import *
+import time
 
+from Fonctions.fonctionsRoboc import *
 from Fonctions.var import *
 
 if SYSTEME_D_EXPLOITATION == 'nt':
@@ -15,7 +16,7 @@ selected = 0
 
 while GameOn:
     if PartieEnCours:
-        Joueur, Props, Hauteur, Largeur = PartieEnCours
+        Joueur, Props, Hauteur, Largeur, laby = PartieEnCours
         PartieEnCours = False
     else:
         laby, selected = choixlaby(selected)
@@ -23,6 +24,7 @@ while GameOn:
     verifTailleConsole(Hauteur, Largeur)
     effaceEtAffiche()
     LabyOn = True
+    Tempsdebut = time.time()
     while LabyOn:
         brouillard(Joueur, Props)
         afficheLaby(Joueur, Props, Hauteur, Largeur)
@@ -43,9 +45,10 @@ while GameOn:
                                 SYMBOLECOULOIRVISITE))
                         except:
                             pass
-                    print(WHITE_TEXT + MESSAGEREUSSITELABY.format(Hauteur +2))
-                    capturesaisie(1)
+                    Tempsfin = time.time()
+                    Temps = Tempsfin - Tempsdebut
+                    finishedMenu(laby, Hauteur, Temps)
                     break
                 else:
                     LabyOn = playermove(Joueur, Props, LabyOn, Hauteur)
-                    sauvegarde(Joueur, Props, Hauteur, Largeur)
+                    sauvegardePartie(Joueur, Props, Hauteur, Largeur, laby)

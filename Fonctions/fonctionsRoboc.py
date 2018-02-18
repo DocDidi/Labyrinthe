@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # coding: utf-8
 
-import os, glob, pickle, sys, time, termios, tty
+import os, glob, pickle, sys, termios, tty
 from Fonctions.var import *
 from Fonctions.Joueur import *
 from Fonctions.Mur import *
@@ -47,10 +47,10 @@ def afficheLaby(Joueur, Props, Hauteur, Largeur):
     print(Joueur)
     print(WHITE_TEXT + MESSAGEDEMANDEMOUVEMENT.format(Hauteur + 2))
 
-def sauvegarde(Joueur, Props, Hauteur, Largeur):
+def sauvegardePartie(Joueur, Props, Hauteur, Largeur, laby):
     """Sauvegarde la partie"""
     with open(FICHIERDESAUVEGARDE, "wb") as Sauvegarde:
-        Sauvegarde.write(pickle.dumps((Joueur, Props, Hauteur, Largeur)))
+        Sauvegarde.write(pickle.dumps((Joueur, Props, Hauteur, Largeur, laby)))
 
 def repriseSauvegarde():
     """Propose de reprendre la partie précedente
@@ -72,18 +72,19 @@ def repriseSauvegarde():
 def choixlaby(selected = 0):
     """Menu de selection des cartes.
     Renvoie le nom du fichier choisi ou la carte aléatoire."""
-    contenu = glob.glob(EMPLACEMENTCARTES)
+    contenu = glob.glob(CHARGEMENTCARTES)
+    indice = 0
     if not contenu:
-        print(WHITE_TEXT = MESSAGEERREURDOSSIER.format(EMPLACEMENTCARTES))
+        print(WHITE_TEXT = MESSAGEERREURDOSSIER.format(CHARGEMENTCARTES))
         exit()
-    contenu = contenu + [MESSAGECHOIXCARTEALEATOIREPETITE,\
-    MESSAGECHOIXCARTEALEATOIREGRANDE, MESSAGECHOIXCARTEALEATOIREECRAN,\
-    MESSAGECHOIXQUITTER]
-    chemin = EMPLACEMENTCARTES.find("*")
+    chemin = CHARGEMENTCARTES.find("*")
     chosen = False
     while not chosen:
+        choix =[MESSAGECARTEPREDEFINIE+contenu[indice][chemin:-4].capitalize()]\
+        + [MESSAGECHOIXCARTEALEATOIREPETITE, MESSAGECHOIXCARTEALEATOIREGRANDE,\
+        MESSAGECHOIXCARTEALEATOIREECRAN, MESSAGECHOIXQUITTER]
         effaceEtAffiche(WHITE_TEXT + MESSAGECHOIXCARTE)
-        for i, carte in enumerate(contenu):
+        for i, carte in enumerate(choix):
             if i == selected:
                 if os.path.exists(carte):
                     print(BLACK_ON_WHITE + carte[chemin:-4].capitalize())
@@ -100,7 +101,7 @@ def choixlaby(selected = 0):
             if x == CTRL_C:
                 exit()
             elif ord(x) == 13:
-                chosen = contenu[selected]
+                chosen = choix[selected]
                 noinput = False
             elif x == ECHAP_CARAC:
                 y = capturesaisie(2)
@@ -108,16 +109,24 @@ def choixlaby(selected = 0):
             elif x.lower()=='q':
                 exit()
             if x==FLECHE_BAS:
-                if selected < (len(contenu)-1):
+                if selected < (len(choix)-1):
                     selected += 1
                 noinput = False
             elif x==FLECHE_HAUT:
                 if selected > 0:
                     selected -= 1
                 noinput = False
-    if os.path.exists(chosen):
-        with open(chosen, "r") as carte:
-            return carte.read(), selected
+            elif x==FLECHE_GAUCHE and indice > 0:
+                indice -= 1
+                noinput = False
+            elif x==FLECHE_DROITE and indice < len(contenu)-1:
+                indice += 1
+                noinput = False
+    if chosen == MESSAGECARTEPREDEFINIE+contenu[indice][chemin:-4].capitalize():
+        chosen = contenu[indice]
+        if os.path.exists(chosen):
+            with open(chosen, "r") as carte:
+                return carte.read(), selected
     elif chosen == MESSAGECHOIXCARTEALEATOIREPETITE:
         carte = makeMaze(LARGEURPETITE,HAUTEURPETITE)
         return carte, selected
@@ -132,6 +141,7 @@ def choixlaby(selected = 0):
         exit()
     else:
         print(WHITE_TEXT + MESSAGEERREURCHOIXCARTE)
+        print(chosen)
         exit()
 
 def labymap(carte):
@@ -232,3 +242,48 @@ def brouillard(Joueur, Props):
     """Liste les choses à reveler et les passe a la fonction isLit"""
     for item in Props:
         isLit(item, Joueur)
+
+def finishedMenu(laby, Hauteur, Temps):
+    """Messages et menu de choix quand le labyrinthe est fini."""
+    Temps = convTemps(Temps)
+    # Temps = "{:.2f}".format(Temps)
+    print(WHITE_TEXT+MESSAGEREUSSITELABY.format(Hauteur +1,Temps))
+    noinput = True
+    while noinput:
+        x = capturesaisie(1)
+        if x == CTRL_C:
+            exit()
+        elif x.lower() == "q":
+            noinput = False
+        elif x.lower() == "s":
+            sauvegardeLaby(laby)
+            noinput = False
+
+def convTemps(Temps):
+    minutes = int(Temps // 60)
+    secondes = int(Temps % 60)
+    heures = minutes // 60
+    minutes == minutes % 60
+    if secondes <= 1:
+        motsec = "seconde"
+    else:
+        motsec = "secondes"
+    if minutes <= 1:
+        motmin = "minute"
+    else:
+        motmin = "minutes"
+    if not minutes and not heures:
+        return "{0} {1}".format(secondes,motsec)
+    elif not heures:
+        return "{0} {1}, {2} {3}".format(minutes,motmin, secondes,motsec)
+    else:
+        return "Plus d'une heure !"
+
+def sauvegardeLaby(laby):
+    """Sauvegarde le labyrinthe"""
+    effaceEtAffiche()
+    fichier = input(laby+MESSAGESAUVEGARDELABYRINTHE)
+    fichier = EMPLACEMENTCARTES + fichier + FORMATCARTE
+    print(type(laby))
+    with open(fichier, "w") as Sauvegarde:
+            Sauvegarde.write(laby)

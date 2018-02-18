@@ -1,58 +1,58 @@
 #! /usr/bin/env python3
 # coding: utf-8
 
-from Fonctions.var import *
+from Fonctions.Var import *
 
-class Mur:
+class Wall:
     def __init__(self, y, x, neighbors = False):
         self.x = x
         self.y = y
         self.revealed = False
         self.lit = False
-        self.fin = False
-        self.bloc = True
+        self.end = False
+        self.block = True
         self.neighbors = neighbors
 
     def __str__(self):
         if self.neighbors == "N":
-            SYMBOLEMUR = SYMBOLEMUR_N
+            SYMBOL_WALL = SYMBOL_WALL_N
         elif self.neighbors == "S":
-            SYMBOLEMUR = SYMBOLEMUR_S
+            SYMBOL_WALL = SYMBOL_WALL_S
         elif self.neighbors == "E":
-            SYMBOLEMUR = SYMBOLEMUR_E
+            SYMBOL_WALL = SYMBOL_WALL_E
         elif self.neighbors == "O":
-            SYMBOLEMUR = SYMBOLEMUR_O
+            SYMBOL_WALL = SYMBOL_WALL_W
         elif self.neighbors == "EO":
-            SYMBOLEMUR = SYMBOLEMUR_EO
+            SYMBOL_WALL = SYMBOL_WALL_EW
         elif self.neighbors == "NS":
-            SYMBOLEMUR = SYMBOLEMUR_NS
+            SYMBOL_WALL = SYMBOL_WALL_NS
         elif self.neighbors == "SE":
-            SYMBOLEMUR = SYMBOLEMUR_SE
+            SYMBOL_WALL = SYMBOL_WALL_SE
         elif self.neighbors == "SO":
-            SYMBOLEMUR = SYMBOLEMUR_SO
+            SYMBOL_WALL = SYMBOL_WALL_SW
         elif self.neighbors == "NE":
-            SYMBOLEMUR = SYMBOLEMUR_NE
+            SYMBOL_WALL = SYMBOL_WALL_NE
         elif self.neighbors == "NO":
-            SYMBOLEMUR = SYMBOLEMUR_NO
+            SYMBOL_WALL = SYMBOL_WALL_NW
         elif self.neighbors == "NSE":
-            SYMBOLEMUR = SYMBOLEMUR_NSE
+            SYMBOL_WALL = SYMBOL_WALL_NSE
         elif self.neighbors == "NSO":
-            SYMBOLEMUR = SYMBOLEMUR_NSO
+            SYMBOL_WALL = SYMBOL_WALL_NSW
         elif self.neighbors == "SEO":
-            SYMBOLEMUR = SYMBOLEMUR_SEO
+            SYMBOL_WALL = SYMBOL_WALL_SEW
         elif self.neighbors == "NEO":
-            SYMBOLEMUR = SYMBOLEMUR_NEO
+            SYMBOL_WALL = SYMBOL_WALL_NEW
         elif self.neighbors == "NSEO":
-            SYMBOLEMUR = SYMBOLEMUR_NSEO
+            SYMBOL_WALL = SYMBOL_WALL_NSEW
         else:
-            SYMBOLEMUR = "\U00002338"
+            SYMBOL_WALL = "\U00002338"
 
         if self.lit == True:
             return ("{0}\033[{1};{2}H{3}".format\
-            (B_WHITE_TEXT,self.y+1,self.x+1,SYMBOLEMUR))
+            (B_WHITE_TEXT,self.y+1,self.x+1,SYMBOL_WALL))
         elif self.revealed == True:
             return ("{0}\033[{1};{2}H{3}".format\
-            (YELLOW_TEXT,self.y+1,self.x+1,SYMBOLEMUR))
+            (YELLOW_TEXT,self.y+1,self.x+1,SYMBOL_WALL))
         else:
             return ("{0}\033[{1};{2}H{3}".format\
-            (WHITE_TEXT,self.y+1,self.x+1,SYMBOLEBROUILLARD))
+            (WHITE_TEXT,self.y+1,self.x+1,SYMBOL_FOG))

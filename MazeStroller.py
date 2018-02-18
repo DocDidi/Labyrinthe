@@ -3,52 +3,52 @@
 
 import time
 
-from Fonctions.fonctionsRoboc import *
-from Fonctions.var import *
+from Fonctions.Fonctions import *
+from Fonctions.Var import *
 
-if SYSTEME_D_EXPLOITATION == 'nt':
-    print(MESSAGEINCOMPATIBILITESYSTEME)
+if OPERATING_SYSTEM == 'nt':
+    print(MESSAGE_OS_INCOMPATIBILITY)
     exit()
 
 GameOn = True
-PartieEnCours = repriseSauvegarde()
+ongoing_game = load_file()
 selected = 0
 
 while GameOn:
-    if PartieEnCours:
-        Joueur, Props, Hauteur, Largeur, laby = PartieEnCours
-        PartieEnCours = False
+    if ongoing_game:
+        player, props, map_height, map_width, maze = ongoing_game
+        ongoing_game = False
     else:
-        laby, selected = choixlaby(selected)
-        Joueur, Props, Hauteur, Largeur = labymap(laby)
-    verifTailleConsole(Hauteur, Largeur)
-    effaceEtAffiche()
+        maze, selected = maze_menu(selected)
+        player, props, map_height, map_width = extract_data_from_map(maze)
+    check_screen_size(map_height, map_width)
+    clear_and_display()
     LabyOn = True
-    Tempsdebut = time.time()
+    start_time = time.time()
     while LabyOn:
-        brouillard(Joueur, Props)
-        afficheLaby(Joueur, Props, Hauteur, Largeur)
-        for porte in Props:
-            if porte.fin:
-                if (Joueur.x, Joueur.y) == (porte.x, porte.y):
+        check_fog(player, props)
+        maze_display(player, props, map_height, map_width)
+        for item_end in props:
+            if item_end.end:
+                if (player.x, player.y) == (item_end.x, item_end.y):
                     LabyOn = False
-                    os.remove(FICHIERDESAUVEGARDE)
-                    for item in Props:
+                    os.remove(SAVE_FILE)
+                    for item in props:
                         item.revealed = True
-                    effaceEtAffiche()
-                    afficheLaby(Joueur, Props, Hauteur, Largeur)
-                    for item in Props:
+                    clear_and_display()
+                    maze_display(player, props, map_height, map_width)
+                    for item in props:
                         try:
                             if item.visited:
                                 print("{0}\033[{1};{2}H{3}".format\
                                 (WHITE_TEXT,item.y+1,item.x+1,\
-                                SYMBOLECOULOIRVISITE))
+                                SYMBOL_CORRIDOR_VISITED))
                         except:
                             pass
-                    Tempsfin = time.time()
-                    Temps = Tempsfin - Tempsdebut
-                    finishedMenu(laby, Hauteur, Temps)
+                    end_time = time.time()
+                    time_spent = end_time - start_time
+                    finished_menu(maze, map_height, time_spent)
                     break
                 else:
-                    LabyOn = playermove(Joueur, Props, LabyOn, Hauteur)
-                    sauvegardePartie(Joueur, Props, Hauteur, Largeur, laby)
+                    LabyOn = player_move(player, props, LabyOn, map_height)
+                    save_game(player, props, map_height, map_width, maze)

@@ -3,49 +3,90 @@
 
 import os
 
-LETTREMURS = "X"
-LETTREJOUEUR = "O"
-LETTREFIN = "_"
-LETTREPORTE = "#"
-LETTRECOULOIR = " "
-CTRL_C = '\x03'
-ECHAP_CARAC = '\x1b'
-FLECHE_HAUT = '\x1b[A'
-FLECHE_BAS = '\x1b[B'
-FLECHE_DROITE = '\x1b[C'
-FLECHE_GAUCHE = '\x1b[D'
-EFFACE_ECRAN = '\033[2J'
-RESET_CURSEUR = '\033[H'
+OPERATING_SYSTEM = os.name
+SMALL_WIDTH = 21
+SMALL_HEIGHT = 11
+BIG_WIDTH = 41
+BIG_HEIGHT = 21
+MAPS_DIRECTORY = "Cartes/"
+MAPS_FORMAT = ".txt"
+MAPS_LOAD = MAPS_DIRECTORY + "*" + MAPS_FORMAT
+SAVE_FILE = os.environ['HOME']+"/LabyrintheEnCours.save"
 
-SYSTEME_D_EXPLOITATION = os.name
-MESSAGEINCOMPATIBILITESYSTEME = "Désolé, \
+MESSAGE_OS_INCOMPATIBILITY = "Désolé, \
 ce programme n'est pas compatible avec Windows."
+MESSAGE_MAP_CHOICE = "Quelle carte voulez-vous jouer ?"
+MESSAGE_MAP_LOAD = "Une carte prédéfinie \
+(gauche et droite pour choisir) : "
+MESSAGE_MAP_CHOICE_RANDOM_SMALL = "Une carte aléatoire (petite)"
+MESSAGE_MAP_CHOICE_RANDOM_BIG = "Une carte aléatoire (grande)"
+MESSAGE_MAP_CHOICE_RANDOM_SCREEN = "Une carte aléatoire \
+(de la taille de la console)"
+MESSAGE_MAP_CHOICE_QUIT = "Quitter [Q]\n"
+MESSAGE_MOVES = "\033[{}HTouches flechées pour \
+vous déplacer. [Q] pour quitter "
+MESSAGE_WIN = "\033[{0}H\033[KBravo ! Vous avez fini en {1}.\n\
+(pressez [Q] pour revenir au menu, [S] pour sauvegarder ce labyrinthe.)"
+MESSAGE_SAVE_MAZE = "Quel nom voulez vous donner à ce labyrinthe ? "
+MESSAGE_LOAD_MAZE = "Il y a une partie sauvegardée,\
+ pressez [O] pour la continuer."
+MESSAGE_ERROR_DIRECTORY = "Le répertoire {0} est vide ou n'existe pas."
+MESSAGE_ERROR_MAP_CHOICE = "Désolé, votre choix est invalide."
+MESSAGE_ERROR_SCREEN_HEIGHT = "Votre console est trop petite. \
+Veuillez l'agrandir verticalement."
+MESSAGE_ERROR_SCREEN_WIDTH = "Votre console est trop petite. \
+Veuillez l'agrandir horizontalement."
+MESSAGE_SCREEN_CORRECT = "C'est bon ! Pressez entrée pour continuer."
+WORD_SECONDS = "secondes"
+WORD_SECOND = "seconde"
+WORD_MINUTES = "minutes"
+WORD_MINUTE = "minute"
+MESSAGE_HOUR_LONG = "plus d'une heure !"
 
-FICHIERDESAUVEGARDE = os.environ['HOME']+"/LabyrintheEnCours.save"
-SYMBOLEMUR = "\U00002338"
-SYMBOLEMUR_N = "\U0000257d"
-SYMBOLEMUR_S = "\U0000257f"
-SYMBOLEMUR_E = "\U0000257e"
-SYMBOLEMUR_O = "\U0000257c"
-SYMBOLEMUR_EO = "\U00002501"
-SYMBOLEMUR_NS = "\U00002503"
-SYMBOLEMUR_SE = "\U0000250f"
-SYMBOLEMUR_SO = "\U00002513"
-SYMBOLEMUR_NE = "\U00002517"
-SYMBOLEMUR_NO = "\U0000251b"
-SYMBOLEMUR_NSE = "\U00002523"
-SYMBOLEMUR_NSO = "\U0000252b"
-SYMBOLEMUR_SEO = "\U00002533"
-SYMBOLEMUR_NEO = "\U0000253b"
-SYMBOLEMUR_NSEO = "\U0000254b"
-# SYMBOLEPORTE = "\U000022c2"
-SYMBOLEPORTE = "\U00002504"
-# SYMBOLEJOUEUR = "\U0000229b"
-SYMBOLEJOUEUR = "\U0000229a"
-SYMBOLECOULOIR = " "
-SYMBOLECOULOIRVISITE = "\U000022C5"
-# SYMBOLEBROUILLARD = "\U0000223F"
-SYMBOLEBROUILLARD = "\U00002425"
+DEFAULT_MAP = "\
+XXXXXXXXXXXXXXXXXXXXXXX\n\
+X                     X\n\
+X   XXX X X XXX XXX   X\n\
+X   X X X X X X X     X\n\
+X   X_X XOX XXX XXX   X\n\
+X   X X X X X     X   X\n\
+X   XXX XXX X   XXX   X\n\
+X                     X\n\
+XXXXXXXXXXXXXXXXXXXXXXX\n"
+
+LETTER_WALL = "X"
+LETTER_PLAYER = "O"
+LETTER_END = "_"
+LETTER_DOOR = "#"
+LETTER_CORRIDOR = " "
+CTRL_C = '\x03'
+ESCAPE_CHARACTER = '\x1b'
+ARROW_UP = '\x1b[A'
+ARROW_DOWN = '\x1b[B'
+ARROW_RIGHT = '\x1b[C'
+ARROW_LEFT = '\x1b[D'
+CLEAR_SCREEN = '\033[2J'
+CURSOR_RESET = '\033[H'
+SYMBOL_WALL_N = "\U0000257d"
+SYMBOL_WALL_S = "\U0000257f"
+SYMBOL_WALL_E = "\U0000257e"
+SYMBOL_WALL_W = "\U0000257c"
+SYMBOL_WALL_EW = "\U00002501"
+SYMBOL_WALL_NS = "\U00002503"
+SYMBOL_WALL_SE = "\U0000250f"
+SYMBOL_WALL_SW = "\U00002513"
+SYMBOL_WALL_NE = "\U00002517"
+SYMBOL_WALL_NW = "\U0000251b"
+SYMBOL_WALL_NSE = "\U00002523"
+SYMBOL_WALL_NSW = "\U0000252b"
+SYMBOL_WALL_SEW = "\U00002533"
+SYMBOL_WALL_NEW = "\U0000253b"
+SYMBOL_WALL_NSEW = "\U0000254b"
+SYMBOL_DOOR = "\U00002504"
+SYMBOL_PLAYER = "\U0000229a"
+SYMBOL_CORRIDOR = " "
+SYMBOL_CORRIDOR_VISITED = "\U000022C5"
+SYMBOL_FOG = "\U00002425"
 BLACK_ON_WHITE = "\033[0;1;30;47m"
 RED_TEXT = "\033[0;31m"
 GREEN_TEXT = "\033[0;32m"
@@ -61,46 +102,3 @@ B_BLUE_TEXT = "\033[0;1;34m"
 B_MAGENTA_TEXT = "\033[0;1;35m"
 B_CYAN_TEXT = "\033[0;1;36m"
 B_WHITE_TEXT = "\033[0;1;37m"
-
-EMPLACEMENTCARTES = "Cartes/"
-FORMATCARTE = ".txt"
-CHARGEMENTCARTES = EMPLACEMENTCARTES + "*" + FORMATCARTE
-
-
-MESSAGECHOIXCARTE = "Quelle carte voulez-vous jouer ?"
-MESSAGECARTEPREDEFINIE = "Une carte prédéfinie \
-(gauche et droite pour choisir) : "
-MESSAGECHOIXCARTEALEATOIREPETITE = "Une carte aléatoire (petite)"
-LARGEURPETITE = 21
-HAUTEURPETITE = 11
-MESSAGECHOIXCARTEALEATOIREGRANDE = "Une carte aléatoire (grande)"
-LARGEURGRANDE = 41
-HAUTEURGRANDE = 21
-MESSAGECHOIXCARTEALEATOIREECRAN = "Une carte aléatoire \
-(de la taille de la console)"
-MESSAGECHOIXQUITTER = "Quitter [Q]\n"
-MESSAGEDEMANDEMOUVEMENT = "\033[{}HTouches flechées pour \
-vous déplacer. [Q] pour quitter "
-MESSAGEREUSSITELABY = "\033[{0}H\033[KBravo ! Vous avez fini en {1}.\n\
-(pressez [Q] pour revenir au menu, [S] pour sauvegarder ce labyrinthe.)"
-MESSAGESAUVEGARDELABYRINTHE = "Quel nom voulez vous donner à ce labyrinthe ? "
-MESSAGEREPRISESAUVEGARDE = "Il y a une partie sauvegardée,\
- pressez [O] pour la continuer."
-MESSAGEERREURDOSSIER = "Le répertoire {0} est vide ou n'existe pas."
-MESSAGEERREURCHOIXCARTE = "Désolé, votre choix est invalide."
-MESSAGEERREURMOUVEMENT = "Mauvaise direction."
-MESSAGEHAUTEURECRANINCORRECT = "Votre console est trop petite. \
-Veuillez l'agrandir verticalement."
-MESSAGELARGEURECRANINCORRECT = "Votre console est trop petite. \
-Veuillez l'agrandir horizontalement."
-MESSAGEECRANCORRECT = "C'est bon ! Pressez entrée pour continuer."
-CARTEDEFAUT = "\
-XXXXXXXXXXXXXXXXXXXXXXX\n\
-X                     X\n\
-X   XXX X X XXX XXX   X\n\
-X   X X X X X X X     X\n\
-X   X_X XOX XXX XXX   X\n\
-X   X X X X X     X   X\n\
-X   XXX XXX X   XXX   X\n\
-X                     X\n\
-XXXXXXXXXXXXXXXXXXXXXXX\n"

@@ -1,19 +1,19 @@
 #! /usr/bin/env python3
 # coding: utf-8
 
-from Fonctions.var import *
+from Fonctions.Var import *
 
-class Porte:
-    def __init__(self, y, x, fin = False):
+class Door:
+    def __init__(self, y, x, end = False):
         self.x = x
         self.y = y
         self.revealed = False
         self.lit = False
-        self.fin = fin
-        self.bloc = False
+        self.end = end
+        self.block = False
 
     def __str__(self):
-        if self.fin == True:
+        if self.end == True:
             color = RED_TEXT
             b_color = B_RED_TEXT
         else:
@@ -21,10 +21,10 @@ class Porte:
             b_color = B_GREEN_TEXT
         if self.lit == True:
             return ("{0}\033[{1};{2}H{3}".format\
-            (b_color,self.y+1,self.x+1,SYMBOLEPORTE))
+            (b_color,self.y+1,self.x+1,SYMBOL_DOOR))
         elif self.revealed == True:
             return ("{0}\033[{1};{2}H{3}".format\
-            (color,self.y+1,self.x+1,SYMBOLEPORTE))
+            (color,self.y+1,self.x+1,SYMBOL_DOOR))
         else:
             return ("{0}\033[{1};{2}H{3}".format\
-            (WHITE_TEXT,self.y+1,self.x+1,SYMBOLEBROUILLARD))
+            (WHITE_TEXT,self.y+1,self.x+1,SYMBOL_FOG))

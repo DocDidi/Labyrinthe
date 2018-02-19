@@ -92,7 +92,6 @@ def make_str_from_2d_array(maze_map):
         groundwork_str += "\n"
     return groundwork_str
 
-
 def make_grid(w, h):
     """Défini la grid de cells"""
     index_value = 0
@@ -186,43 +185,6 @@ def add_doors(maze_map):
                             maze_map[x+1][y] = LETTER_DOOR
                             door_added = True
 
-
-    # for x in range(len(maze_map)-1):
-    #     for y in range(len(maze_map[0])-1):
-    #         if maze_map[x][y] == LETTER_CORRIDOR:
-    #             if maze_map[x][y-1] == LETTER_WALL and\
-    #             maze_map[x][y+1] == LETTER_WALL and\
-    #             maze_map[x-1][y] == LETTER_CORRIDOR and\
-    #             maze_map[x+1][y] == LETTER_CORRIDOR:
-    #                 if not (maze_map[x-1][y-1] == LETTER_WALL and\
-    #                 maze_map[x+1][y-1] == LETTER_WALL and\
-    #                 maze_map[x-1][y+1] == LETTER_WALL and\
-    #                 maze_map[x+1][y+1] == LETTER_WALL):
-    #                     maze_map[x][y] = LETTER_DOOR
-    #
-    #
-    #             if maze_map[x-1][y] == LETTER_WALL and\
-    #             maze_map[x+1][y] == LETTER_WALL and\
-    #             maze_map[x][y-1] == LETTER_CORRIDOR and\
-    #             maze_map[x][y+1] == LETTER_CORRIDOR:
-    #                 if not (maze_map[x-1][y-1] == LETTER_WALL and\
-    #                 maze_map[x+1][y-1] == LETTER_WALL and\
-    #                 maze_map[x-1][y+1] == LETTER_WALL and\
-    #                 maze_map[x+1][y+1] == LETTER_WALL):
-    #                     maze_map[x][y] = LETTER_DOOR
-
-
-
-    # for i in range((len(maze_map)*len(maze_map[1]))//5):
-    #     x = random.randint(0, len(maze_map[1])-1)
-    #     y = random.randint(0, len(maze_map)-1)
-    #     if maze_map[y][x] == LETTER_CORRIDOR:
-    #         if maze_map[y][x-1] == LETTER_WALL\
-    #         and maze_map[y][x+1] == LETTER_WALL\
-    #         and maze_map[y-1][x] == LETTER_CORRIDOR\
-    #         and maze_map[y+1][x] == LETTER_CORRIDOR:
-    #             maze_map[y][x] = LETTER_DOOR
-
 def make_maze(w,h):
     """Fonction principale.
     Construit un labyrinthe à la taille demandée."""
@@ -242,13 +204,10 @@ def make_maze(w,h):
             maze_map[i*2+1][j*2+1] = LETTER_CORRIDOR
             if item.up == False:
                 maze_map[i*2][j*2+1] = LETTER_CORRIDOR
-
             if item.down == False:
                 maze_map[i*2+2][j*2+1] = LETTER_CORRIDOR
-
             if item.left == False:
                 maze_map[i*2+1][j*2] = LETTER_CORRIDOR
-
             if item.right == False:
                 maze_map[i*2+1][j*2+2] = LETTER_CORRIDOR
     make_room(maze_map)

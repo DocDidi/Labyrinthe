@@ -4,7 +4,7 @@
 import time
 
 from Fonctions.Fonctions import *
-from Fonctions.Var import *
+from Fonctions.Variables import *
 
 if OPERATING_SYSTEM == 'nt':
     print(MESSAGE_OS_INCOMPATIBILITY)

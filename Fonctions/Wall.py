@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # coding: utf-8
 
-from Fonctions.Var import *
+from Fonctions.Variables import *
 
 class Wall:
     def __init__(self, y, x, neighbors = False):
@@ -20,29 +20,29 @@ class Wall:
             SYMBOL_WALL = SYMBOL_WALL_S
         elif self.neighbors == "E":
             SYMBOL_WALL = SYMBOL_WALL_E
-        elif self.neighbors == "O":
+        elif self.neighbors == "W":
             SYMBOL_WALL = SYMBOL_WALL_W
-        elif self.neighbors == "EO":
+        elif self.neighbors == "EW":
             SYMBOL_WALL = SYMBOL_WALL_EW
         elif self.neighbors == "NS":
             SYMBOL_WALL = SYMBOL_WALL_NS
         elif self.neighbors == "SE":
             SYMBOL_WALL = SYMBOL_WALL_SE
-        elif self.neighbors == "SO":
+        elif self.neighbors == "SW":
             SYMBOL_WALL = SYMBOL_WALL_SW
         elif self.neighbors == "NE":
             SYMBOL_WALL = SYMBOL_WALL_NE
-        elif self.neighbors == "NO":
+        elif self.neighbors == "NW":
             SYMBOL_WALL = SYMBOL_WALL_NW
         elif self.neighbors == "NSE":
             SYMBOL_WALL = SYMBOL_WALL_NSE
-        elif self.neighbors == "NSO":
+        elif self.neighbors == "NSW":
             SYMBOL_WALL = SYMBOL_WALL_NSW
-        elif self.neighbors == "SEO":
+        elif self.neighbors == "SEW":
             SYMBOL_WALL = SYMBOL_WALL_SEW
-        elif self.neighbors == "NEO":
+        elif self.neighbors == "NEW":
             SYMBOL_WALL = SYMBOL_WALL_NEW
-        elif self.neighbors == "NSEO":
+        elif self.neighbors == "NSEW":
             SYMBOL_WALL = SYMBOL_WALL_NSEW
         else:
             SYMBOL_WALL = "\U00002338"

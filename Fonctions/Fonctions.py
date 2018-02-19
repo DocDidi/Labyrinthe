@@ -2,7 +2,7 @@
 # coding: utf-8
 
 import os, glob, pickle, sys, termios, tty
-from Fonctions.Var import *
+from Fonctions.Variables import *
 from Fonctions.Player import *
 from Fonctions.Wall import *
 from Fonctions.Door import *

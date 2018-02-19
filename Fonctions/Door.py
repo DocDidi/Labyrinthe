@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # coding: utf-8
 
-from Fonctions.Var import *
+from Fonctions.Variables import *
 
 class Door:
     def __init__(self, y, x, end = False):

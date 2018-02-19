@@ -3,9 +3,9 @@
 
 import random, os
 if __name__ == '__main__':
-    from Var import *
+    from Variables import *
 else:
-    from Fonctions.Var import *
+    from Fonctions.Variables import *
 
 class Cell:
     def __init__(self, i, j, index_value):

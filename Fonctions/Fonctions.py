@@ -253,9 +253,11 @@ def keyboard_input(nbl):
 
 def check_if_lit(item, player):
     """Calcule si l'objet est éclairé"""
+    if ((-2 <= player.x - item.x <= 2) and (-3 <= player.y - item.y <= 3)) or\
+    ((-3 <= player.x - item.x <= 3) and (-2 <= player.y - item.y <= 2)):
+        item.revealed = True
     if ((-1 <= player.x - item.x <= 1) and (-2 <= player.y - item.y <= 2)) or\
     ((-2 <= player.x - item.x <= 2) and (-1 <= player.y - item.y <= 1)):
-        item.revealed = True
         item.lit = True
     else:
         item.lit = False

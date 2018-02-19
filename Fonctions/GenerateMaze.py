@@ -19,103 +19,99 @@ class Cell:
     def __str__(self):
         return str(self.i)+str(self.j)+str(self.index_value)
     def __repr__(self):
-        chaine = ""
-        if self.up: chaine+="U"
-        if self.down: chaine+="D"
-        if self.left: chaine+="L"
-        if self.right: chaine+="R"
-        return chaine
+        str_dir = ""
+        if self.up: str_dir+="U"
+        if self.down: str_dir+="D"
+        if self.left: str_dir+="L"
+        if self.right: str_dir+="R"
+        return str_dir
 
-    def testMur(self, Grid):
+    def wall_test(self, grid):
         """Choisi une direction au hasard et casse le mur si c'est possible"""
         x=random.randint(1,4)
         if x == 1: # Up
             if self.i-1 > 0:
-                cible = Grid[self.i-1][self.j]
-                if cible.index_value != self.index_value:
-                    modifValeurs(cible.index_value,self.index_value,Grid)
+                target_cell = grid[self.i-1][self.j]
+                if target_cell.index_value != self.index_value:
+                    change_index(target_cell.index_value,self.index_value,grid)
                     self.up = False
         if x == 2: # Down
             try:
-                cible = Grid[self.i+1][self.j]
-                if cible.index_value != self.index_value:
-                    modifValeurs(cible.index_value,self.index_value,Grid)
+                target_cell = grid[self.i+1][self.j]
+                if target_cell.index_value != self.index_value:
+                    change_index(target_cell.index_value,self.index_value,grid)
                     self.down = False
             except:
                 pass
         if x == 3: # Left
             if self.j-1 > 0:
-                cible = Grid[self.i][self.j-1]
-                if cible.index_value != self.index_value:
-                    modifValeurs(cible.index_value,self.index_value,Grid)
+                target_cell = grid[self.i][self.j-1]
+                if target_cell.index_value != self.index_value:
+                    change_index(target_cell.index_value,self.index_value,grid)
                     self.left = False
         if x == 4: # Right
             try:
-                cible = Grid[self.i][self.j+1]
-                if cible.index_value != self.index_value:
-                    modifValeurs(cible.index_value,self.index_value,Grid)
+                target_cell = grid[self.i][self.j+1]
+                if target_cell.index_value != self.index_value:
+                    change_index(target_cell.index_value,self.index_value,grid)
                     self.right = False
             except:
                 pass
 
-def modifValeurs(a, b, Grid):
+def change_index(a, b, grid):
     """Modifie les index après le cassage d'un mur"""
-    NouvelleValeur = min(a, b)
-    AncienneValeur = max(a, b)
-    for i in Grid:
+    for i in grid:
         for j in i:
-            if j.index_value == AncienneValeur:
-                j.index_value = NouvelleValeur
+            if j.index_value == max(a, b):
+                j.index_value = min(a, b)
 
-def roundToSupOdd(x):
+def round_to_sup_odd(x):
     """Arrondi au chiffre impair supérieur"""
     if x % 2 == 1:
         return x
     else:
         return x + 1
 
-def canevas(w,h):
+def groundwork(w,h):
     """Prépare un canevas de la bonne taille pour y graver la carte"""
-    w = roundToSupOdd(w)
-    h = roundToSupOdd(h)
-    canevas = []
+    w = round_to_sup_odd(w)
+    h = round_to_sup_odd(h)
+    groundwork = []
     for i in range(h):
-        canevas.append([])
+        groundwork.append([])
         for j in range(w):
-            canevas[i].append(LETTER_WALL)
-    return canevas
+            groundwork[i].append(LETTER_WALL)
+    return groundwork
 
-def convCarteStr(maze_map):
+def make_str_from_2d_array(maze_map):
     """Converti la carte (liste) en chaine de caracteres"""
-    chainecanevas=""
+    groundwork_str=""
     for line in maze_map:
         for letter in line:
-            chainecanevas += letter
-        chainecanevas += "\n"
-    return chainecanevas
+            groundwork_str += letter
+        groundwork_str += "\n"
+    return groundwork_str
 
 
-def grid(w, h):
-    """Défini la Grid de cells"""
+def make_grid(w, h):
+    """Défini la grid de cells"""
     index_value = 0
     w = w//2
     h = h//2
-    Grid = []
+    new_grid = []
     for i in range(h):
-        Grid.append([])
+        new_grid.append([])
         for j in range(w):
-            Grid[i].append(Cell(i,j,index_value))
+            new_grid[i].append(Cell(i,j,index_value))
             index_value += 1
-    return Grid
+    return new_grid
 
-def makeRoom(maze_map):
+def make_room(maze_map):
     """Ajoute une ou plusieurs salles dans le labyrinthe."""
-    Gridcount = len(maze_map)*len(maze_map[1])
-    for i in range (Gridcount//150):
-        creatingrooms = True
+    total_cells = len(maze_map)*len(maze_map[1])
+    for i in range (total_cells//150):
         a = random.randint(1, ((len(maze_map)//2))-1)*2
         b = random.randint(1, ((len(maze_map[0])//2))-1)*2
-        # print(a,b)
         maze_map[a-1][b] = LETTER_CORRIDOR
         maze_map[a][b-1] = LETTER_CORRIDOR
         maze_map[a][b+1] = LETTER_CORRIDOR
@@ -132,57 +128,116 @@ def makeRoom(maze_map):
                 except:
                     pass
 
-def makeEntranceAndExit(maze_map):
+def make_entrance_and_exit(maze_map):
     """Place l'entrée et la sortie sur la carte"""
-    locations = [ "NO", "NE", "SO", "SE"]
-    ChoixD = locations.pop(random.randint(0, len(locations)-1))
-    # print(ChoixD, locations)
-    if ChoixD == "NO":
+    locations = [ "NW", "NE", "SO", "SE"]
+    position_start = locations.pop(random.randint(0, len(locations)-1))
+    if position_start == "NW":
         maze_map[1][1] = LETTER_PLAYER
-    elif ChoixD == "NE":
+    elif position_start == "NE":
         maze_map[1][len(maze_map[1])-2] = LETTER_PLAYER
-    elif ChoixD == "SO":
+    elif position_start == "SO":
         maze_map[len(maze_map)-2][1] = LETTER_PLAYER
-    elif ChoixD == "SE":
+    elif position_start == "SE":
         maze_map[len(maze_map)-2][len(maze_map[1])-2] = LETTER_PLAYER
-    ChoixA = locations.pop(random.randint(0, len(locations)-1))
-    # print(ChoixA, locations)
-    if ChoixA == "NO":
+    position_end = locations.pop(random.randint(0, len(locations)-1))
+    if position_end == "NW":
         maze_map[0][1] = LETTER_END
-    elif ChoixA == "NE":
+    elif position_end == "NE":
         maze_map[0][len(maze_map[1])-2] = LETTER_END
-    elif ChoixA == "SO":
+    elif position_end == "SO":
         maze_map[len(maze_map)-1][1] = LETTER_END
-    elif ChoixA == "SE":
+    elif position_end == "SE":
         maze_map[len(maze_map)-1][len(maze_map[1])-2] = LETTER_END
 
-def addDoors(maze_map):
+def add_doors(maze_map):
     """Ajoute des portes sur la carte"""
-    for i in range((len(maze_map)*len(maze_map[1]))//5):
-        x = random.randint(0, len(maze_map[1])-1)
-        y = random.randint(0, len(maze_map)-1)
-        if maze_map[y][x] == LETTER_CORRIDOR:
-            if maze_map[y][x-1] == LETTER_WALL\
-            and maze_map[y][x+1] == LETTER_WALL\
-            and maze_map[y-1][x] == LETTER_CORRIDOR\
-            and maze_map[y+1][x] == LETTER_CORRIDOR:
-                maze_map[y][x] = LETTER_DOOR
+    for x in range(2,len(maze_map)-2):
+        for y in range(2,len(maze_map[0])-2):
+            if maze_map[x][y] == LETTER_WALL:
+                empty_spaces = []
+                if maze_map[x][y-1] == LETTER_CORRIDOR:
+                    empty_spaces.append("W")
+                if maze_map[x][y+1] == LETTER_CORRIDOR:
+                    empty_spaces.append("E")
+                if maze_map[x-1][y] == LETTER_CORRIDOR:
+                    empty_spaces.append("N")
+                if maze_map[x+1][y] == LETTER_CORRIDOR:
+                    empty_spaces.append("S")
+                if len(empty_spaces) == 3:
+                    door_added = False
+                    while not door_added:
+                        door_try = empty_spaces\
+                        .pop(random.randint(0, len(empty_spaces)-1))
+                        if door_try == "W" and\
+                        maze_map[x][y-2] == LETTER_WALL:
+                            maze_map[x][y-1] = LETTER_DOOR
+                            door_added = True
+                        if door_try == "E" and\
+                        maze_map[x][y+2] == LETTER_WALL:
+                            maze_map[x][y+1] = LETTER_DOOR
+                            door_added = True
+                        if door_try == "N" and\
+                        maze_map[x-2][y] == LETTER_WALL:
+                            maze_map[x-1][y] = LETTER_DOOR
+                            door_added = True
+                        if door_try == "S" and\
+                        maze_map[x+2][y] == LETTER_WALL:
+                            maze_map[x+1][y] = LETTER_DOOR
+                            door_added = True
 
-def makeMaze(w,h):
+
+    # for x in range(len(maze_map)-1):
+    #     for y in range(len(maze_map[0])-1):
+    #         if maze_map[x][y] == LETTER_CORRIDOR:
+    #             if maze_map[x][y-1] == LETTER_WALL and\
+    #             maze_map[x][y+1] == LETTER_WALL and\
+    #             maze_map[x-1][y] == LETTER_CORRIDOR and\
+    #             maze_map[x+1][y] == LETTER_CORRIDOR:
+    #                 if not (maze_map[x-1][y-1] == LETTER_WALL and\
+    #                 maze_map[x+1][y-1] == LETTER_WALL and\
+    #                 maze_map[x-1][y+1] == LETTER_WALL and\
+    #                 maze_map[x+1][y+1] == LETTER_WALL):
+    #                     maze_map[x][y] = LETTER_DOOR
+    #
+    #
+    #             if maze_map[x-1][y] == LETTER_WALL and\
+    #             maze_map[x+1][y] == LETTER_WALL and\
+    #             maze_map[x][y-1] == LETTER_CORRIDOR and\
+    #             maze_map[x][y+1] == LETTER_CORRIDOR:
+    #                 if not (maze_map[x-1][y-1] == LETTER_WALL and\
+    #                 maze_map[x+1][y-1] == LETTER_WALL and\
+    #                 maze_map[x-1][y+1] == LETTER_WALL and\
+    #                 maze_map[x+1][y+1] == LETTER_WALL):
+    #                     maze_map[x][y] = LETTER_DOOR
+
+
+
+    # for i in range((len(maze_map)*len(maze_map[1]))//5):
+    #     x = random.randint(0, len(maze_map[1])-1)
+    #     y = random.randint(0, len(maze_map)-1)
+    #     if maze_map[y][x] == LETTER_CORRIDOR:
+    #         if maze_map[y][x-1] == LETTER_WALL\
+    #         and maze_map[y][x+1] == LETTER_WALL\
+    #         and maze_map[y-1][x] == LETTER_CORRIDOR\
+    #         and maze_map[y+1][x] == LETTER_CORRIDOR:
+    #             maze_map[y][x] = LETTER_DOOR
+
+def make_maze(w,h):
     """Fonction principale.
     Construit un labyrinthe à la taille demandée."""
-    Grid = grid(w,h)
-    maze_map = canevas(w,h)
+    grid = make_grid(w,h)
+    maze_map = groundwork(w,h)
     while True:
-        ActiveCell = random.choice(random.choice(Grid))
-        ActiveCell.testMur(Grid)
-        Test = 0
-        for i in Grid:
+        cell_active = random.choice(random.choice(grid))
+        cell_active.wall_test(grid)
+        test_finished = 0
+        for i in grid:
             for j in i:
-                Test += j.index_value
-        if Test == 0:
+                test_finished += j.index_value
+        if test_finished == 0:
             break
-    for i, line in enumerate(Grid):
+    for i, line in enumerate(grid):
         for j, item in enumerate(line):
             maze_map[i*2+1][j*2+1] = LETTER_CORRIDOR
             if item.up == False:
@@ -196,15 +251,15 @@ def makeMaze(w,h):
 
             if item.right == False:
                 maze_map[i*2+1][j*2+2] = LETTER_CORRIDOR
-    makeRoom(maze_map)
-    makeEntranceAndExit(maze_map)
-    addDoors(maze_map)
-    CarteStr = convCarteStr(maze_map)
-    return CarteStr
+    make_room(maze_map)
+    make_entrance_and_exit(maze_map)
+    add_doors(maze_map)
+    map_finished = make_str_from_2d_array(maze_map)
+    return map_finished
 
 
 if __name__ == '__main__':
     # rows, columns = os.popen('stty size', 'r').read().split()
-    # maze_map = makeMaze(int(columns),int(rows)-1)
-    maze_map = makeMaze(54,27)
+    # maze_map = make_maze(int(columns),int(rows)-1)
+    maze_map = make_maze(54,27)
     print(maze_map)

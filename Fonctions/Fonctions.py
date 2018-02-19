@@ -131,14 +131,14 @@ def maze_menu(selected = 0):
             with open(chosen, "r") as maze_map:
                 return maze_map.read(), selected
     elif chosen == MESSAGE_MAP_CHOICE_RANDOM_SMALL:
-        maze_map = makeMaze(SMALL_WIDTH,SMALL_HEIGHT)
+        maze_map = make_maze(SMALL_WIDTH,SMALL_HEIGHT)
         return maze_map, selected
     elif chosen == MESSAGE_MAP_CHOICE_RANDOM_BIG:
-        maze_map = makeMaze(BIG_WIDTH,BIG_HEIGHT)
+        maze_map = make_maze(BIG_WIDTH,BIG_HEIGHT)
         return maze_map, selected
     elif chosen == MESSAGE_MAP_CHOICE_RANDOM_SCREEN:
         rows, columns = os.popen('stty size', 'r').read().split()
-        maze_map = makeMaze(int(columns)-1,int(rows)-4)
+        maze_map = make_maze(int(columns)-1,int(rows)-4)
         return maze_map, selected
     elif chosen == MESSAGE_MAP_CHOICE_QUIT:
         exit()
@@ -151,7 +151,7 @@ def extract_data_from_map(maze_map):
     """Extrait les données du jeu de la carte (str)
     Renvoie player, props, map_height, map_width"""
     lines = maze_map.split("\n")
-    tojoin = (LETTER_WALL, LETTER_DOOR, LETTER_END)
+    join_with = (LETTER_WALL, LETTER_DOOR, LETTER_END)
     props = []
     for i, line in enumerate(lines):
         for j, letter in enumerate(line):
@@ -159,23 +159,26 @@ def extract_data_from_map(maze_map):
                 player = Player(i,j)
                 props.append(Corridor(i,j))
             elif letter is LETTER_END:
-                props.append(Door(i,j,end = True))
+                props.append(Door(i,j,False,end = True))
             elif letter is LETTER_DOOR:
-                props.append(Door(i,j))
+                vertical = False
+                if lines[i][j+1] == LETTER_CORRIDOR\
+                or lines[i][j-1] == LETTER_CORRIDOR:
+                    vertical = True
+                props.append(Door(i,j,vertical))
             elif letter is LETTER_WALL:
                 neighbors = ""
-                # input(lines[i][j])
                 if i>0:
-                    if lines[i-1][j] in tojoin:
+                    if lines[i-1][j] in join_with:
                         neighbors += "N"
                 if i<(len(lines)-2):
-                    if lines[i+1][j] in tojoin:
+                    if lines[i+1][j] in join_with:
                         neighbors += "S"
                 if j<(len(lines[0])-1):
-                    if lines[i][j+1] in tojoin:
+                    if lines[i][j+1] in join_with:
                         neighbors += "E"
                 if j>0:
-                    if lines[i][j-1] in tojoin:
+                    if lines[i][j-1] in join_with:
                         neighbors += "W"
                 props.append(Wall(i,j,neighbors))
             else:

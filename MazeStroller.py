@@ -38,15 +38,10 @@ while GameOn:
                     clear_and_display()
                     maze_display(player, props, map_height, map_width)
                     for item in props:
-                        try:
-                            if item.visited:
-                                item_type = type(item)
-                                if item_type != Door:
-                                    print("{0}\033[{1};{2}H{3}".format\
-                                    (WHITE_TEXT,item.y+1,item.x+1,\
-                                    SYMBOL_CORRIDOR_VISITED))
-                        except:
-                            pass
+                        if (type(item) == Corridor) and item.visited:
+                            print("{0}\033[{1};{2}H{3}".format\
+                            (B_BLUE_TEXT,item.y+1,item.x+1,\
+                            SYMBOL_CORRIDOR_VISITED))
                     end_time = time.time()
                     time_spent = end_time - start_time
                     finished_menu(maze, map_height, time_spent)

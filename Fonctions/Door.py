@@ -12,11 +12,15 @@ class Door:
         self.end = end
         self.block = False
         self.vertical = vertical
+        self.visited = False
 
     def __str__(self):
         if self.end == True:
             color = RED_TEXT
             b_color = B_RED_TEXT
+        elif self.visited == True:
+            color = MAGENTA_TEXT
+            b_color = B_MAGENTA_TEXT
         else:
             color = GREEN_TEXT
             b_color = B_GREEN_TEXT

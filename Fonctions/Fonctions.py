@@ -79,14 +79,16 @@ def maze_menu(selected = 0):
     Renvoie le nom du maze_file choisi ou la carte aléatoire."""
     directory_content = glob.glob(MAPS_LOAD)
     file_index = 0
-    if not directory_content:
-        print(WHITE_TEXT = MESSAGE_ERROR_DIRECTORY.format(MAPS_LOAD))
-        exit()
+    file_index_min = 0
     file_path = MAPS_LOAD.find("*")
     chosen = False
     while not chosen:
-        choice = [MESSAGE_MAP_LOAD+directory_content[file_index][file_path:-4]\
-        .capitalize()] + [MESSAGE_MAP_CHOICE_RANDOM_SMALL,\
+        if not directory_content:
+            saved_maps = (MESSAGE_ERROR_DIRECTORY.format(MAPS_DIRECTORY))
+        else:
+            saved_maps = MESSAGE_MAP_LOAD+directory_content[file_index]\
+            [file_path:-4].capitalize()
+        choice = [saved_maps] + [MESSAGE_MAP_CHOICE_RANDOM_SMALL,\
         MESSAGE_MAP_CHOICE_RANDOM_BIG, MESSAGE_MAP_CHOICE_RANDOM_SCREEN,\
         MESSAGE_MAP_CHOICE_RANDOM_BIG_MULTIPLAYER, MESSAGE_MAP_CHOICE_QUIT]
         clear_and_display(WHITE_TEXT + MESSAGE_MAP_CHOICE)
@@ -128,31 +130,28 @@ def maze_menu(selected = 0):
             elif x==ARROW_RIGHT and file_index < len(directory_content)-1:
                 file_index += 1
                 no_input = False
-    if chosen == MESSAGE_MAP_LOAD+directory_content\
-    [file_index][file_path:-4].capitalize():
-        chosen = directory_content[file_index]
-        if os.path.exists(chosen):
-            with open(chosen, "r") as maze_map:
-                return maze_map.read(), selected
-    elif chosen == MESSAGE_MAP_CHOICE_RANDOM_SMALL:
-        maze_map = make_maze(SMALL_WIDTH,SMALL_HEIGHT)
-        return maze_map, selected
-    elif chosen == MESSAGE_MAP_CHOICE_RANDOM_BIG:
-        maze_map = make_maze(BIG_WIDTH,BIG_HEIGHT)
-        return maze_map, selected
-    elif chosen == MESSAGE_MAP_CHOICE_RANDOM_SCREEN:
-        rows, columns = os.popen('stty size', 'r').read().split()
-        maze_map = make_maze(int(columns)-1,int(rows)-4)
-        return maze_map, selected
-    elif chosen == MESSAGE_MAP_CHOICE_RANDOM_BIG_MULTIPLAYER:
-        maze_map = make_maze(BIG_WIDTH,BIG_HEIGHT, number_of_players = 2)
-        return maze_map, selected
-    elif chosen == MESSAGE_MAP_CHOICE_QUIT:
-        exit()
-    else:
-        print(WHITE_TEXT + MESSAGE_ERROR_MAP_CHOICE)
-        print(chosen)
-        exit()
+        if chosen == saved_maps and directory_content:
+            chosen = directory_content[file_index]
+            if os.path.exists(chosen):
+                with open(chosen, "r") as maze_map:
+                    return maze_map.read(), selected
+        elif chosen == MESSAGE_MAP_CHOICE_RANDOM_SMALL:
+            maze_map = make_maze(SMALL_WIDTH,SMALL_HEIGHT)
+            return maze_map, selected
+        elif chosen == MESSAGE_MAP_CHOICE_RANDOM_BIG:
+            maze_map = make_maze(BIG_WIDTH,BIG_HEIGHT)
+            return maze_map, selected
+        elif chosen == MESSAGE_MAP_CHOICE_RANDOM_SCREEN:
+            rows, columns = os.popen('stty size', 'r').read().split()
+            maze_map = make_maze(int(columns)-1,int(rows)-4)
+            return maze_map, selected
+        elif chosen == MESSAGE_MAP_CHOICE_RANDOM_BIG_MULTIPLAYER:
+            maze_map = make_maze(BIG_WIDTH,BIG_HEIGHT, number_of_players = 2)
+            return maze_map, selected
+        elif chosen == MESSAGE_MAP_CHOICE_QUIT:
+            exit()
+        else:
+            chosen = False
 
 def extract_data_from_map(maze_map):
     """Extrait les données du jeu de la carte (str)
@@ -205,9 +204,6 @@ def player_move(players, props, LabyOn, map_height):
     no_input = True
     player_to_move = 0
     movement = ""
-    # test_player_position = []
-    # for player in players:
-    #     test_player_position.append[player.y, player.x]
     cheatcode = 0
     while no_input:
         x=keyboard_input(1)
@@ -290,8 +286,6 @@ def check_if_lit(item, players):
         if ((-1 <= player.x - item.x <= 1) and (-2 <= player.y - item.y <= 2))\
         or ((-2 <= player.x - item.x <= 2) and (-1 <= player.y - item.y <= 1)):
             item.lit = True
-        # else:
-        #     item.lit = False
         if player.x == item.x and player.y == item.y:
             item.visited = True
 

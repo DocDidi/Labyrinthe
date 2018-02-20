@@ -92,7 +92,6 @@ MESSAGE_SAVE_MAZE = "Quel nom voulez vous donner à ce labyrinthe ? "
 MESSAGE_LOAD_MAZE = "Il y a une partie sauvegardée,\
  pressez [O] pour la continuer."
 MESSAGE_ERROR_DIRECTORY = "Le répertoire {0} est vide ou n'existe pas."
-MESSAGE_ERROR_MAP_CHOICE = "Désolé, votre choix est invalide."
 MESSAGE_ERROR_SCREEN_HEIGHT = "Votre console est trop petite. \
 Veuillez l'agrandir verticalement."
 MESSAGE_ERROR_SCREEN_WIDTH = "Votre console est trop petite. \

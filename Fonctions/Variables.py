@@ -79,6 +79,8 @@ MESSAGE_MAP_CHOICE_RANDOM_SCREEN = "Une carte aléatoire \
 (de la taille de la console)"
 MESSAGE_MAP_CHOICE_RANDOM_BIG_MULTIPLAYER =\
 "Une carte aléatoire (grande) 2 JOUEURS"
+MESSAGE_MAP_CHOICE_RANDOM_SCREEN_MULTIPLAYER =\
+"Une carte aléatoire (de la taille de la console) 2 JOUEURS"
 MESSAGE_MAP_CHOICE_QUIT = "Quitter [Q]\n"
 MESSAGE_MOVES = "\033[{}HTouches flechées pour \
 vous déplacer. [Q] pour quitter "

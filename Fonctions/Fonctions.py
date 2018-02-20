@@ -89,8 +89,11 @@ def maze_menu(selected = 0):
             saved_maps = MESSAGE_MAP_LOAD+directory_content[file_index]\
             [file_path:-4].capitalize()
         choice = [saved_maps] + [MESSAGE_MAP_CHOICE_RANDOM_SMALL,\
-        MESSAGE_MAP_CHOICE_RANDOM_BIG, MESSAGE_MAP_CHOICE_RANDOM_SCREEN,\
-        MESSAGE_MAP_CHOICE_RANDOM_BIG_MULTIPLAYER, MESSAGE_MAP_CHOICE_QUIT]
+        MESSAGE_MAP_CHOICE_RANDOM_BIG,\
+        MESSAGE_MAP_CHOICE_RANDOM_SCREEN,\
+        MESSAGE_MAP_CHOICE_RANDOM_BIG_MULTIPLAYER,\
+        MESSAGE_MAP_CHOICE_RANDOM_SCREEN_MULTIPLAYER,\
+        MESSAGE_MAP_CHOICE_QUIT]
         clear_and_display(WHITE_TEXT + MESSAGE_MAP_CHOICE)
         for i, maze_map in enumerate(choice):
             if i == selected:
@@ -146,7 +149,11 @@ def maze_menu(selected = 0):
             maze_map = make_maze(int(columns)-1,int(rows)-4)
             return maze_map, selected
         elif chosen == MESSAGE_MAP_CHOICE_RANDOM_BIG_MULTIPLAYER:
-            maze_map = make_maze(BIG_WIDTH,BIG_HEIGHT, number_of_players = 2)
+            maze_map = make_maze(BIG_WIDTH,BIG_HEIGHT, number_of_players=2)
+            return maze_map, selected
+        elif chosen == MESSAGE_MAP_CHOICE_RANDOM_SCREEN_MULTIPLAYER:
+            rows, columns = os.popen('stty size', 'r').read().split()
+            maze_map = make_maze(int(columns)-1,int(rows)-4,number_of_players=2)
             return maze_map, selected
         elif chosen == MESSAGE_MAP_CHOICE_QUIT:
             exit()

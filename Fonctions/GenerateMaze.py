@@ -105,16 +105,8 @@ def make_grid(w, h):
             index_value += 1
     return new_grid
 
-def make_room(maze_map):
-    """Ajoute une ou plusieurs salles dans le labyrinthe."""
-    total_cells = len(maze_map)*len(maze_map[1])
-    for i in range (total_cells//150):
-        a = random.randint(1, ((len(maze_map)//2))-1)*2
-        b = random.randint(1, ((len(maze_map[0])//2))-1)*2
-        maze_map[a-1][b] = LETTER_CORRIDOR
-        maze_map[a][b-1] = LETTER_CORRIDOR
-        maze_map[a][b+1] = LETTER_CORRIDOR
-        maze_map[a+1][b] = LETTER_CORRIDOR
+def delete_isolated_wall(maze_map):
+    """Supprime les murs isolés"""
     for x in range(len(maze_map)-1):
         for y in range(len(maze_map[0])-1):
             if maze_map[x][y] == LETTER_WALL:
@@ -126,6 +118,18 @@ def make_room(maze_map):
                         maze_map[x][y] = LETTER_CORRIDOR
                 except:
                     pass
+
+def make_room(maze_map):
+    """Ajoute une ou plusieurs salles dans le labyrinthe."""
+    total_cells = len(maze_map)*len(maze_map[1])
+    for i in range (total_cells//80):
+        a = random.randint(1, ((len(maze_map)//2))-1)*2
+        b = random.randint(1, ((len(maze_map[0])//2))-1)*2
+        maze_map[a-1][b] = LETTER_CORRIDOR
+        maze_map[a][b-1] = LETTER_CORRIDOR
+        maze_map[a][b+1] = LETTER_CORRIDOR
+        maze_map[a+1][b] = LETTER_CORRIDOR
+    delete_isolated_wall(maze_map)
 
 def make_entrance_and_exit(maze_map, number_of_players):
     """Place l'entrée et la sortie sur la carte"""
@@ -167,6 +171,14 @@ def add_doors(maze_map):
                 if len(empty_spaces) == 3:
                     door_added = False
                     while not door_added:
+                        if len(empty_spaces) == 0:
+                            maze_map[x][y] = LETTER_CORRIDOR
+                            maze_map[x-1][y] = LETTER_CORRIDOR
+                            maze_map[x+1][y] = LETTER_CORRIDOR
+                            maze_map[x][y-1] = LETTER_CORRIDOR
+                            maze_map[x][y+1] = LETTER_CORRIDOR
+                            delete_isolated_wall(maze_map)
+                            break
                         door_try = empty_spaces\
                         .pop(random.randint(0, len(empty_spaces)-1))
                         if door_try == "W" and\

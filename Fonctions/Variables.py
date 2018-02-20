@@ -14,52 +14,6 @@ MAPS_FORMAT = ".txt"
 MAPS_LOAD = MAPS_DIRECTORY + "*" + MAPS_FORMAT
 SAVE_FILE = os.environ['HOME']+"/MazeStroller_current.save"
 
-MESSAGE_OS_INCOMPATIBILITY = "Désolé, \
-ce programme n'est pas compatible avec Windows."
-MESSAGE_MAP_CHOICE = "Quelle carte voulez-vous jouer ?"
-MESSAGE_MAP_LOAD = "Une carte prédéfinie \
-(gauche et droite pour choisir) : "
-MESSAGE_MAP_CHOICE_RANDOM_SMALL = "Une carte aléatoire (petite)"
-MESSAGE_MAP_CHOICE_RANDOM_BIG = "Une carte aléatoire (grande)"
-MESSAGE_MAP_CHOICE_RANDOM_SCREEN = "Une carte aléatoire \
-(de la taille de la console)"
-MESSAGE_MAP_CHOICE_RANDOM_BIG_MULTIPLAYER =\
-"Une carte aléatoire (grande) 2 JOUEURS"
-MESSAGE_MAP_CHOICE_QUIT = "Quitter [Q]\n"
-MESSAGE_MOVES = "\033[{}HTouches flechées pour \
-vous déplacer. [Q] pour quitter "
-MESSAGE_MOVES_MULTI = "\033[{}HJoueur 1 : Touches flechées, \
-Joueur 2 [I][J][K][L]. [Q] pour quitter "
-MESSAGE_WIN = "\033[{0}H\033[KBravo ! \
-Vous avez fini en {1}. Vous avez fait {2} pas.\n\
-(pressez [Q] pour revenir au menu, [S] pour sauvegarder ce labyrinthe.)"
-MESSAGE_SAVE_MAZE = "Quel nom voulez vous donner à ce labyrinthe ? "
-MESSAGE_LOAD_MAZE = "Il y a une partie sauvegardée,\
- pressez [O] pour la continuer."
-MESSAGE_ERROR_DIRECTORY = "Le répertoire {0} est vide ou n'existe pas."
-MESSAGE_ERROR_MAP_CHOICE = "Désolé, votre choix est invalide."
-MESSAGE_ERROR_SCREEN_HEIGHT = "Votre console est trop petite. \
-Veuillez l'agrandir verticalement."
-MESSAGE_ERROR_SCREEN_WIDTH = "Votre console est trop petite. \
-Veuillez l'agrandir horizontalement."
-MESSAGE_SCREEN_CORRECT = "C'est bon ! Pressez entrée pour continuer."
-WORD_SECONDS = "secondes"
-WORD_SECOND = "seconde"
-WORD_MINUTES = "minutes"
-WORD_MINUTE = "minute"
-MESSAGE_HOUR_LONG = "plus d'une heure !"
-
-DEFAULT_MAP = "\
-XXXXXXXXXXXXXXXXXXXXXXX\n\
-X                     X\n\
-X   XXX X X XXX XXX   X\n\
-X   X X X X X X X     X\n\
-X   X_X XOX XXX XXX   X\n\
-X   X X X X X     X   X\n\
-X   XXX XXX X   XXX   X\n\
-X                     X\n\
-XXXXXXXXXXXXXXXXXXXXXXX\n"
-
 LETTER_WALL = "X"
 LETTER_PLAYER = "OI" #Player1 = O, player2 = I
 LETTER_END = "_"
@@ -110,3 +64,53 @@ B_BLUE_TEXT = "\033[0;1;34m"
 B_MAGENTA_TEXT = "\033[0;1;35m"
 B_CYAN_TEXT = "\033[0;1;36m"
 B_WHITE_TEXT = "\033[0;1;37m"
+
+COLOR_PLAYER_1 = B_BLUE_TEXT
+COLOR_PLAYER_2 = B_RED_TEXT
+
+MESSAGE_OS_INCOMPATIBILITY = "Désolé, \
+ce programme n'est pas compatible avec Windows."
+MESSAGE_MAP_CHOICE = "Quelle carte voulez-vous jouer ?"
+MESSAGE_MAP_LOAD = "Une carte prédéfinie \
+(gauche et droite pour choisir) : "
+MESSAGE_MAP_CHOICE_RANDOM_SMALL = "Une carte aléatoire (petite)"
+MESSAGE_MAP_CHOICE_RANDOM_BIG = "Une carte aléatoire (grande)"
+MESSAGE_MAP_CHOICE_RANDOM_SCREEN = "Une carte aléatoire \
+(de la taille de la console)"
+MESSAGE_MAP_CHOICE_RANDOM_BIG_MULTIPLAYER =\
+"Une carte aléatoire (grande) 2 JOUEURS"
+MESSAGE_MAP_CHOICE_QUIT = "Quitter [Q]\n"
+MESSAGE_MOVES = "\033[{}HTouches flechées pour \
+vous déplacer. [Q] pour quitter "
+MESSAGE_MOVES_MULTI = "\033[{}H" + "{1}Touches flechées \
+{2}[I][J][K][L]".format('', COLOR_PLAYER_1, COLOR_PLAYER_2) +\
+WHITE_TEXT + " [Q] pour quitter "
+MESSAGE_WIN = "\033[{0}H\033[KBravo ! \
+Vous avez fini en {1}. Vous avez fait {2} pas.\n\
+(pressez [Q] pour revenir au menu, [S] pour sauvegarder ce labyrinthe.)"
+MESSAGE_SAVE_MAZE = "Quel nom voulez vous donner à ce labyrinthe ? "
+MESSAGE_LOAD_MAZE = "Il y a une partie sauvegardée,\
+ pressez [O] pour la continuer."
+MESSAGE_ERROR_DIRECTORY = "Le répertoire {0} est vide ou n'existe pas."
+MESSAGE_ERROR_MAP_CHOICE = "Désolé, votre choix est invalide."
+MESSAGE_ERROR_SCREEN_HEIGHT = "Votre console est trop petite. \
+Veuillez l'agrandir verticalement."
+MESSAGE_ERROR_SCREEN_WIDTH = "Votre console est trop petite. \
+Veuillez l'agrandir horizontalement."
+MESSAGE_SCREEN_CORRECT = "C'est bon ! Pressez entrée pour continuer."
+WORD_SECONDS = "secondes"
+WORD_SECOND = "seconde"
+WORD_MINUTES = "minutes"
+WORD_MINUTE = "minute"
+MESSAGE_HOUR_LONG = "plus d'une heure !"
+
+DEFAULT_MAP = "\
+XXXXXXXXXXXXXXXXXXXXXXX\n\
+X                     X\n\
+X   XXX X X XXX XXX   X\n\
+X   X X X X X X X     X\n\
+X   X_X XOX XXX XXX   X\n\
+X   X X X X X     X   X\n\
+X   XXX XXX X   XXX   X\n\
+X                     X\n\
+XXXXXXXXXXXXXXXXXXXXXXX\n"

@@ -47,7 +47,7 @@ def maze_display(players, props, map_height, map_width):
     for player in players:
         print(player)
     if len(players)>1:
-        print(WHITE_TEXT + MESSAGE_MOVES_MULTI.format(map_height + 2))
+        print(MESSAGE_MOVES_MULTI.format(map_height + 2))
     else:
         print(WHITE_TEXT + MESSAGE_MOVES.format(map_height + 2))
 

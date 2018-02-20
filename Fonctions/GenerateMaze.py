@@ -127,18 +127,19 @@ def make_room(maze_map):
                 except:
                     pass
 
-def make_entrance_and_exit(maze_map):
+def make_entrance_and_exit(maze_map, number_of_players):
     """Place l'entrée et la sortie sur la carte"""
     locations = [ "NW", "NE", "SO", "SE"]
-    position_start = locations.pop(random.randint(0, len(locations)-1))
-    if position_start == "NW":
-        maze_map[1][1] = LETTER_PLAYER
-    elif position_start == "NE":
-        maze_map[1][len(maze_map[1])-2] = LETTER_PLAYER
-    elif position_start == "SO":
-        maze_map[len(maze_map)-2][1] = LETTER_PLAYER
-    elif position_start == "SE":
-        maze_map[len(maze_map)-2][len(maze_map[1])-2] = LETTER_PLAYER
+    for i in range(number_of_players):
+        position_start = locations.pop(random.randint(0, len(locations)-1))
+        if position_start == "NW":
+            maze_map[1][1] = LETTER_PLAYER[i]
+        elif position_start == "NE":
+            maze_map[1][len(maze_map[1])-2] = LETTER_PLAYER[i]
+        elif position_start == "SO":
+            maze_map[len(maze_map)-2][1] = LETTER_PLAYER[i]
+        elif position_start == "SE":
+            maze_map[len(maze_map)-2][len(maze_map[1])-2] = LETTER_PLAYER[i]
     position_end = locations.pop(random.randint(0, len(locations)-1))
     if position_end == "NW":
         maze_map[0][1] = LETTER_END
@@ -185,7 +186,7 @@ def add_doors(maze_map):
                             maze_map[x+1][y] = LETTER_DOOR
                             door_added = True
 
-def make_maze(w,h):
+def make_maze(w,h, number_of_players = 1):
     """Fonction principale.
     Construit un labyrinthe à la taille demandée."""
     grid = make_grid(w,h)
@@ -211,7 +212,7 @@ def make_maze(w,h):
             if item.right == False:
                 maze_map[i*2+1][j*2+2] = LETTER_CORRIDOR
     make_room(maze_map)
-    make_entrance_and_exit(maze_map)
+    make_entrance_and_exit(maze_map, number_of_players)
     add_doors(maze_map)
     map_finished = make_str_from_2d_array(maze_map)
     return map_finished
@@ -220,5 +221,5 @@ def make_maze(w,h):
 if __name__ == '__main__':
     # rows, columns = os.popen('stty size', 'r').read().split()
     # maze_map = make_maze(int(columns),int(rows)-1)
-    maze_map = make_maze(54,27)
+    maze_map = make_maze(54,27,number_of_players = 2)
     print(maze_map)

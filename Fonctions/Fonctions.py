@@ -38,24 +38,28 @@ def check_screen_size(map_height, map_width):
         clear_and_display(MESSAGE_SCREEN_CORRECT)
         input()
 
-def maze_display(player, props, map_height, map_width):
+def maze_display(players, props, map_height, map_width):
     """Affiche le labyrinthe."""
     maze_map = ""
     for item in props:
         maze_map = maze_map + str(item)
     clear_and_display(maze_map)
-    print(player)
-    print(WHITE_TEXT + MESSAGE_MOVES.format(map_height + 2))
+    for player in players:
+        print(player)
+    if len(players)>1:
+        print(WHITE_TEXT + MESSAGE_MOVES_MULTI.format(map_height + 2))
+    else:
+        print(WHITE_TEXT + MESSAGE_MOVES.format(map_height + 2))
 
-def save_game(player, props, map_height, map_width, maze):
+def save_game(players, props, map_height, map_width, maze):
     """Sauvegarde la partie"""
     with open(SAVE_FILE, "wb") as save_file:
         save_file.write\
-        (pickle.dumps((player, props, map_height, map_width, maze)))
+        (pickle.dumps((players, props, map_height, map_width, maze)))
 
 def load_file():
     """Propose de reprendre la partie précedente
-    Renvoie un Tuple contenant les player, props, map_height, map_width
+    Renvoie un Tuple contenant les players, props, map_height, map_width
     qui étaient dans le maze_file"""
     if os.path.exists(SAVE_FILE):
         print(WHITE_TEXT + MESSAGE_LOAD_MAZE)
@@ -84,7 +88,7 @@ def maze_menu(selected = 0):
         choice = [MESSAGE_MAP_LOAD+directory_content[file_index][file_path:-4]\
         .capitalize()] + [MESSAGE_MAP_CHOICE_RANDOM_SMALL,\
         MESSAGE_MAP_CHOICE_RANDOM_BIG, MESSAGE_MAP_CHOICE_RANDOM_SCREEN,\
-        MESSAGE_MAP_CHOICE_QUIT]
+        MESSAGE_MAP_CHOICE_RANDOM_BIG_MULTIPLAYER, MESSAGE_MAP_CHOICE_QUIT]
         clear_and_display(WHITE_TEXT + MESSAGE_MAP_CHOICE)
         for i, maze_map in enumerate(choice):
             if i == selected:
@@ -140,6 +144,9 @@ def maze_menu(selected = 0):
         rows, columns = os.popen('stty size', 'r').read().split()
         maze_map = make_maze(int(columns)-1,int(rows)-4)
         return maze_map, selected
+    elif chosen == MESSAGE_MAP_CHOICE_RANDOM_BIG_MULTIPLAYER:
+        maze_map = make_maze(BIG_WIDTH,BIG_HEIGHT, number_of_players = 2)
+        return maze_map, selected
     elif chosen == MESSAGE_MAP_CHOICE_QUIT:
         exit()
     else:
@@ -149,14 +156,18 @@ def maze_menu(selected = 0):
 
 def extract_data_from_map(maze_map):
     """Extrait les données du jeu de la carte (str)
-    Renvoie player, props, map_height, map_width"""
+    Renvoie players, props, map_height, map_width"""
     lines = maze_map.split("\n")
     join_with = (LETTER_WALL, LETTER_DOOR, LETTER_END)
     props = []
+    players = []
     for i, line in enumerate(lines):
         for j, letter in enumerate(line):
-            if letter is LETTER_PLAYER:
-                player = Player(i,j)
+            if letter is LETTER_PLAYER[0]:
+                players.append(Player(i,j))
+                props.append(Corridor(i,j))
+            if letter is LETTER_PLAYER[1]:
+                players.append(Player(i,j,player_number = 2))
                 props.append(Corridor(i,j))
             elif letter is LETTER_END:
                 props.append(Door(i,j,False,end = True))
@@ -184,22 +195,26 @@ def extract_data_from_map(maze_map):
             else:
                 props.append(Corridor(i,j))
     try:
-        return(player, props, i, j)
+        return(players, props, i, j)
     except:
         return extract_data_from_map(DEFAULT_MAP)
 
-def player_move(player, props, LabyOn, map_height):
+def player_move(players, props, LabyOn, map_height):
     """Fait bouger le joueur
     Renvoie LabyOn == True si le jeu continue."""
     no_input = True
-    test_player_position = [player.y, player.x]
+    player_to_move = 0
+    movement = ""
+    # test_player_position = []
+    # for player in players:
+    #     test_player_position.append[player.y, player.x]
     cheatcode = 0
     while no_input:
         x=keyboard_input(1)
         if x == CTRL_C:
             exit()
         elif x.lower()=='q':
-            no_input =  LabyOn = False
+            no_input = LabyOn = False
         elif x.lower()=='d':
             cheatcode = 1
         elif x.lower()=='o' and cheatcode == 1:
@@ -215,30 +230,44 @@ def player_move(player, props, LabyOn, map_height):
                 except:
                     pass
             no_input = False
+        elif x.lower()=='i':
+            player_to_move = 2
+            movement = "U"
+            no_input = False
+        elif x.lower()=='k':
+            player_to_move = 2
+            movement = "D"
+            no_input = False
+        elif x.lower()=='l':
+            player_to_move = 2
+            movement = "R"
+            no_input = False
+        elif x.lower()=='j':
+            player_to_move = 2
+            movement = "L"
+            no_input = False
         elif x == ESCAPE_CHARACTER:
             y = keyboard_input(2)
             x = x+y
         if x==ARROW_UP:
-            test_player_position = [player.y-1,player.x]
+            player_to_move = 1
+            movement = "U"
             no_input = False
         elif x==ARROW_DOWN:
-            test_player_position = [player.y+1,player.x]
+            player_to_move = 1
+            movement = "D"
             no_input = False
         elif x==ARROW_RIGHT:
-            test_player_position = [player.y,player.x+1]
+            player_to_move = 1
+            movement = "R"
             no_input = False
         elif x==ARROW_LEFT:
-            test_player_position = [player.y,player.x-1]
+            player_to_move = 1
+            movement = "L"
             no_input = False
 
-    block = False
-    for item in props:
-        if (test_player_position[1], test_player_position[0])==(item.x, item.y)\
-        and item.block == True:
-            block = True
-    if block == False:
-        player.x = test_player_position[1]
-        player.y = test_player_position[0]
+    for player in players:
+        player.move(player_to_move, movement,props)
 
     return (LabyOn)
 
@@ -251,28 +280,30 @@ def keyboard_input(nbl):
     termios.tcsetattr(sys.stdin, termios.TCSADRAIN, orig_settings)
     return text_grab
 
-def check_if_lit(item, player):
+def check_if_lit(item, players):
     """Calcule si l'objet est éclairé"""
-    if ((-2 <= player.x - item.x <= 2) and (-3 <= player.y - item.y <= 3)) or\
-    ((-3 <= player.x - item.x <= 3) and (-2 <= player.y - item.y <= 2)):
-        item.revealed = True
-    if ((-1 <= player.x - item.x <= 1) and (-2 <= player.y - item.y <= 2)) or\
-    ((-2 <= player.x - item.x <= 2) and (-1 <= player.y - item.y <= 1)):
-        item.lit = True
-    else:
-        item.lit = False
-    if player.x == item.x and player.y == item.y:
-        item.visited = True
+    item.lit = False
+    for player in players:
+        if ((-2 <= player.x - item.x <= 2) and (-3 <= player.y - item.y <= 3))\
+        or ((-3 <= player.x - item.x <= 3) and (-2 <= player.y - item.y <= 2)):
+            item.revealed = True
+        if ((-1 <= player.x - item.x <= 1) and (-2 <= player.y - item.y <= 2))\
+        or ((-2 <= player.x - item.x <= 2) and (-1 <= player.y - item.y <= 1)):
+            item.lit = True
+        # else:
+        #     item.lit = False
+        if player.x == item.x and player.y == item.y:
+            item.visited = True
 
-def check_fog(player, props):
+def check_fog(players, props):
     """Liste les choses à reveler et les passe a la fonction check_if_lit"""
     for item in props:
-        check_if_lit(item, player)
+        check_if_lit(item, players)
 
-def finished_menu(maze, map_height, time_spent):
+def finished_menu(maze, map_height, time_spent, steps):
     """Messages et menu de choix quand le labyrinthe est fini."""
     time_spent = str_time(time_spent)
-    print(WHITE_TEXT+MESSAGE_WIN.format(map_height +1,time_spent))
+    print(WHITE_TEXT+MESSAGE_WIN.format(map_height +1,time_spent, steps))
     no_input = True
     while no_input:
         x = keyboard_input(1)

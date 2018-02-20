@@ -23,10 +23,15 @@ MESSAGE_MAP_CHOICE_RANDOM_SMALL = "Une carte aléatoire (petite)"
 MESSAGE_MAP_CHOICE_RANDOM_BIG = "Une carte aléatoire (grande)"
 MESSAGE_MAP_CHOICE_RANDOM_SCREEN = "Une carte aléatoire \
 (de la taille de la console)"
+MESSAGE_MAP_CHOICE_RANDOM_BIG_MULTIPLAYER =\
+"Une carte aléatoire (grande) 2 JOUEURS"
 MESSAGE_MAP_CHOICE_QUIT = "Quitter [Q]\n"
 MESSAGE_MOVES = "\033[{}HTouches flechées pour \
 vous déplacer. [Q] pour quitter "
-MESSAGE_WIN = "\033[{0}H\033[KBravo ! Vous avez fini en {1}.\n\
+MESSAGE_MOVES_MULTI = "\033[{}HJoueur 1 : Touches flechées, \
+Joueur 2 [I][J][K][L]. [Q] pour quitter "
+MESSAGE_WIN = "\033[{0}H\033[KBravo ! \
+Vous avez fini en {1}. Vous avez fait {2} pas.\n\
 (pressez [Q] pour revenir au menu, [S] pour sauvegarder ce labyrinthe.)"
 MESSAGE_SAVE_MAZE = "Quel nom voulez vous donner à ce labyrinthe ? "
 MESSAGE_LOAD_MAZE = "Il y a une partie sauvegardée,\
@@ -56,7 +61,7 @@ X                     X\n\
 XXXXXXXXXXXXXXXXXXXXXXX\n"
 
 LETTER_WALL = "X"
-LETTER_PLAYER = "O"
+LETTER_PLAYER = "OI" #Player1 = O, player2 = I
 LETTER_END = "_"
 LETTER_DOOR = "#"
 LETTER_CORRIDOR = " "

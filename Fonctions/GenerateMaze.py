@@ -122,37 +122,86 @@ def delete_isolated_wall(maze_map):
 def make_room(maze_map):
     """Ajoute une ou plusieurs salles dans le labyrinthe."""
     total_cells = len(maze_map)*len(maze_map[1])
-    for i in range (total_cells//80):
+    key_placed = False
+    for i in range (total_cells//40):
         a = random.randint(1, ((len(maze_map)//2))-1)*2
         b = random.randint(1, ((len(maze_map[0])//2))-1)*2
         maze_map[a-1][b] = LETTER_CORRIDOR
-        maze_map[a][b-1] = LETTER_CORRIDOR
-        maze_map[a][b+1] = LETTER_CORRIDOR
         maze_map[a+1][b] = LETTER_CORRIDOR
+        if i%3 == 0:
+            maze_map[a][b-1] = LETTER_CORRIDOR
+            maze_map[a][b+1] = LETTER_CORRIDOR
+            if not key_placed:
+                maze_map[a][b]=LETTER_KEY
+                key_placed = True
+
     delete_isolated_wall(maze_map)
+
+def find_eligible_exit(maze_map,corner):
+    """Retourne une liste d'emplacement pour la sortie"""
+    eligible_exits = []
+    map_width = len(maze_map[0]) - 1
+    map_height = len(maze_map) - 1
+    if corner == "NW":
+        for i in range(1, map_width//2):
+            if maze_map[1][i] != LETTER_WALL:
+                eligible_exits.append((0,i))
+        for j in range(1, map_height//2):
+            if maze_map[j][1] != LETTER_WALL:
+                eligible_exits.append((j,0))
+        return eligible_exits
+    if corner == "NE":
+        for i in range(map_width//2, map_width):
+            if maze_map[1][i] != LETTER_WALL:
+                eligible_exits.append((0,i))
+        for j in range(1, map_height//2):
+            if maze_map[j][map_width-1] != LETTER_WALL:
+                eligible_exits.append((j,map_width))
+        return eligible_exits
+    if corner == "SW":
+        for i in range(1, map_width//2):
+            if maze_map[map_height-1][i] != LETTER_WALL:
+                eligible_exits.append((map_height,i))
+        for j in range(map_height//2, map_height):
+            if maze_map[j][1] != LETTER_WALL:
+                eligible_exits.append((j,0))
+        return eligible_exits
+    if corner == "SE":
+        for i in range(map_width//2, map_width):
+            if maze_map[map_height-1][i] != LETTER_WALL:
+                eligible_exits.append((map_height,i))
+        for j in range(map_height//2, map_height):
+            if maze_map[j][map_width-1] != LETTER_WALL:
+                eligible_exits.append((j,map_width))
+        return eligible_exits
+
 
 def make_entrance_and_exit(maze_map, number_of_players):
     """Place l'entrée et la sortie sur la carte"""
-    locations = [ "NW", "NE", "SO", "SE"]
+    locations = [ "NW", "NE", "SW", "SE"]
     for i in range(number_of_players):
         position_start = locations.pop(random.randint(0, len(locations)-1))
         if position_start == "NW":
             maze_map[1][1] = LETTER_PLAYER[i]
         elif position_start == "NE":
             maze_map[1][len(maze_map[1])-2] = LETTER_PLAYER[i]
-        elif position_start == "SO":
+        elif position_start == "SW":
             maze_map[len(maze_map)-2][1] = LETTER_PLAYER[i]
         elif position_start == "SE":
             maze_map[len(maze_map)-2][len(maze_map[1])-2] = LETTER_PLAYER[i]
-    position_end = locations.pop(random.randint(0, len(locations)-1))
-    if position_end == "NW":
-        maze_map[0][1] = LETTER_END
-    elif position_end == "NE":
-        maze_map[0][len(maze_map[1])-2] = LETTER_END
-    elif position_end == "SO":
-        maze_map[len(maze_map)-1][1] = LETTER_END
-    elif position_end == "SE":
-        maze_map[len(maze_map)-1][len(maze_map[1])-2] = LETTER_END
+    corner_end = locations.pop(random.randint(0, len(locations)-1))
+    eligible_exits = find_eligible_exit(maze_map, corner_end)
+    exit_location = eligible_exits.pop(random.randint(0, len(eligible_exits)-1))
+    maze_map[exit_location[0]][exit_location[1]] = LETTER_END
+
+    # if position_end == "NW":
+    #     maze_map[0][1] = LETTER_END
+    # elif position_end == "NE":
+    #     maze_map[0][len(maze_map[1])-2] = LETTER_END
+    # elif position_end == "SW":
+    #     maze_map[len(maze_map)-1][1] = LETTER_END
+    # elif position_end == "SE":
+    #     maze_map[len(maze_map)-1][len(maze_map[1])-2] = LETTER_END
 
 def add_doors(maze_map):
     """Ajoute des portes sur la carte"""
@@ -226,6 +275,7 @@ def make_maze(w,h, number_of_players = 1):
     make_room(maze_map)
     make_entrance_and_exit(maze_map, number_of_players)
     add_doors(maze_map)
+    # add_doors(maze_map)
     map_finished = make_str_from_2d_array(maze_map)
     return map_finished
 

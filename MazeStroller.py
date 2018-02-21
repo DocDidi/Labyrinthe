@@ -24,15 +24,24 @@ while GameOn:
     check_screen_size(map_height, map_width)
     clear_and_display()
     LabyOn = True
+    player_have_key = False
     start_time = time.time()
     check_fog(players, props)
     maze_display(players, props, map_height, map_width)
     while LabyOn:
         LabyOn = player_move(players, props, LabyOn, map_height)
-        for item_end in props:
-            if item_end.end:
+        save_game(players, props, map_height, map_width, maze)
+        for item in props:
+            if player_have_key and item.end:
+                item.block = False
+            if item.has_key:
                 for player in players:
-                    if (player.x, player.y) == (item_end.x, item_end.y):
+                    if (player.x, player.y) == (item.x, item.y):
+                        item.has_key = False
+                        player_have_key = True
+            if item.end:
+                for player in players:
+                    if (player.x, player.y) == (item.x, item.y):
                         LabyOn = False
                         os.remove(SAVE_FILE)
                         for item in props:
@@ -44,6 +53,8 @@ while GameOn:
                                 print("{0}\033[{1};{2}H{3}".format\
                                 (B_BLUE_TEXT,item.y+1,item.x+1,\
                                 SYMBOL_CORRIDOR_VISITED))
+                        for player in players:
+                            print(player)
                         end_time = time.time()
                         time_spent = end_time - start_time
                         steps = 0
@@ -53,4 +64,3 @@ while GameOn:
                         break
         check_fog(players, props)
         maze_display(players, props, map_height, map_width)
-        save_game(players, props, map_height, map_width, maze)

@@ -176,7 +176,10 @@ def extract_data_from_map(maze_map):
                 players.append(Player(i,j,player_number = 2))
                 props.append(Corridor(i,j))
             elif letter is LETTER_END:
-                props.append(Door(i,j,False,end = True))
+                vertical = False
+                if j == 0 or j == len(line)-1:
+                    vertical = True
+                props.append(Door(i,j,vertical,end = True))
             elif letter is LETTER_DOOR:
                 vertical = False
                 if lines[i][j+1] == LETTER_CORRIDOR\
@@ -198,6 +201,8 @@ def extract_data_from_map(maze_map):
                     if lines[i][j-1] in join_with:
                         neighbors += "W"
                 props.append(Wall(i,j,neighbors))
+            elif letter is LETTER_KEY:
+                props.append(Corridor(i,j,has_key=True))
             else:
                 props.append(Corridor(i,j))
     try:

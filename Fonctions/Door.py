@@ -10,9 +10,10 @@ class Door:
         self.revealed = False
         self.lit = False
         self.end = end
-        self.block = False
+        self.block = end
         self.vertical = vertical
         self.visited = False
+        self.has_key = False
 
     def __str__(self):
         if self.end == True:

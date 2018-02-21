@@ -12,6 +12,8 @@ class Wall:
         self.end = False
         self.block = True
         self.neighbors = neighbors
+        self.has_key = False
+
 
     def __str__(self):
         if self.neighbors == "N":

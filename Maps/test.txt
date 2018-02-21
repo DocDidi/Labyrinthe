@@ -1,5 +1,5 @@
 XXXXXXXXXXXXXXXXXXXXXX
-XO      X     X    X X
+XO      X     X    X@X
 X XXXXX#X XXXXXXXX#X X
 X     X X X      X X X
 XXXXX X X X XXXX   X X

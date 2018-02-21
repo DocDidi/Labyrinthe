@@ -64,3 +64,7 @@ while GameOn:
                         break
         check_fog(players, props)
         maze_display(players, props, map_height, map_width)
+        if player_have_key:
+            print("\033[{0}H{1}\033[1B".format(map_height + 1, SYMBOL_KEY))
+        else:
+            print("\033[{0}H{1}\033[1B".format(map_height + 1, MESSAGE_KEY))

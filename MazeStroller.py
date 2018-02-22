@@ -60,7 +60,8 @@ while GameOn:
                         steps = 0
                         for player in players:
                             steps += player.step
-                        finished_menu(maze, map_height, time_spent, steps)
+                        finished_menu\
+                        (maze, map_height, time_spent, steps, selected)
                         break
         check_fog(players, props)
         maze_display(players, props, map_height, map_width)

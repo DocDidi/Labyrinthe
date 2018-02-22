@@ -3,6 +3,7 @@
 
 import os, glob, pickle, sys, termios, tty
 from Fonctions.Variables import *
+from Fonctions.Variables_Map_Building import *
 from Fonctions.Player import *
 from Fonctions.Wall import *
 from Fonctions.Door import *
@@ -14,7 +15,7 @@ def clear_and_display(*str_value):
     Peut prendre en entrée une chaine de caracteres à afficher"""
     print(CLEAR_SCREEN)
     if str_value == ():
-        print(CURSOR_RESET, end = "")
+        print(CURSOR_RESET)
     else:
         print(CURSOR_RESET + WHITE_TEXT + str_value[0])
 
@@ -64,7 +65,9 @@ def load_file():
     if os.path.exists(SAVE_FILE):
         print(WHITE_TEXT + MESSAGE_LOAD_MAZE)
         choice = keyboard_input(1)
-        if choice.lower() == "o":
+        if choice == 'CTRL_C':
+            exit()
+        elif choice.lower() == ('o' or 'y'):
             with open(SAVE_FILE, "rb") as save_file:
                 ongoing_game = pickle.loads(save_file.read())
         else:
@@ -306,8 +309,11 @@ def check_fog(players, props):
     for item in props:
         check_if_lit(item, players)
 
-def finished_menu(maze, map_height, time_spent, steps):
+def finished_menu(maze, map_height, time_spent, steps, selected):
     """Messages et menu de choix quand le labyrinthe est fini."""
+    map_already_saved = False
+    if selected == 0:
+        map_already_saved = True
     time_spent = str_time(time_spent)
     print(WHITE_TEXT+MESSAGE_WIN.format(map_height +1,time_spent, steps))
     no_input = True
@@ -318,8 +324,11 @@ def finished_menu(maze, map_height, time_spent, steps):
         elif x.lower() == "q":
             no_input = False
         elif x.lower() == "s":
-            save_maze(maze)
-            no_input = False
+            if map_already_saved:
+                print(MESSAGE_MAP_ALREADY_SAVED.format(map_height+1))
+            else:
+                save_maze(maze)
+                no_input = False
 
 def str_time(time_spent):
     minutes = int(time_spent // 60)
@@ -344,8 +353,22 @@ def str_time(time_spent):
 
 def save_maze(maze):
     """Sauvegarde le labyrinthe"""
-    clear_and_display()
-    maze_file = input(maze+MESSAGE_SAVE_MAZE)
-    maze_file = MAPS_DIRECTORY + maze_file + MAPS_FORMAT
-    with open(maze_file, "w") as save_file:
+    go_for_save = False
+    while not go_for_save:
+        clear_and_display()
+        maze_file = input(maze+MESSAGE_SAVE_MAZE)
+        maze_file = MAPS_DIRECTORY + maze_file + MAPS_FORMAT
+        if os.path.exists(maze_file):
+            print(MESSAGE_SAVE_OVERWRITE)
+            choice = keyboard_input(1)
+            if choice == 'CTRL_C':
+                exit()
+            if choice.lower() == ('o' or 'y'):
+                go_for_save = True
+            if choice.lower() == 'q':
+                break
+        else:
+            go_for_save = True
+    if go_for_save:
+        with open(maze_file, "w") as save_file:
             save_file.write(maze)

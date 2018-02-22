@@ -7,6 +7,6 @@ Now two players can play simutaneously
 This game is console-based and works only on linux.
 Requires Python 3.x
 
-![MazeStroller](MazeStroller.png?raw=true "MazeStroller")
+![MazeStroller](img_MazeStroller.png?raw=true "MazeStroller")
 
 Launch MazeStroller.py to play.

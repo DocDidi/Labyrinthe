@@ -26,7 +26,10 @@ WHITE_TEXT + " [Q] pour quitter "
 MESSAGE_WIN = "\033[{0}H\033[KBravo ! \
 Vous avez fini en {1}. Vous avez fait {2} pas.\n\
 pressez [Q] pour revenir au menu, [S] pour sauvegarder ce labyrinthe."
+MESSAGE_MAP_ALREADY_SAVED = "\033[{0}H\033[KCette carte est déjà sauvegardée."
 MESSAGE_SAVE_MAZE = "Quel nom voulez vous donner à ce labyrinthe ? "
+MESSAGE_SAVE_OVERWRITE = "Ce fichier existe. L'écraser ?\n\
+[O] Oui, [Q] Quitter, Une autre touche pour renommer."
 MESSAGE_LOAD_MAZE = "Il y a une partie sauvegardée,\
  pressez [O] pour la continuer."
 MESSAGE_ERROR_DIRECTORY = "Le répertoire {0} est vide ou n'existe pas."

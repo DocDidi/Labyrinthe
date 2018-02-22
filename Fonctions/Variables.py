@@ -3,6 +3,8 @@
 
 import os
 
+
+
 OPERATING_SYSTEM = os.name
 SMALL_WIDTH = 21
 SMALL_HEIGHT = 11
@@ -13,12 +15,6 @@ MAPS_FORMAT = ".txt"
 MAPS_LOAD = MAPS_DIRECTORY + "*" + MAPS_FORMAT
 SAVE_FILE = os.environ['HOME']+"/MazeStroller_current.save"
 
-LETTER_WALL = "X"
-LETTER_PLAYER = "OI" #Player1 = O, player2 = I
-LETTER_END = "_"
-LETTER_DOOR = "#"
-LETTER_CORRIDOR = " "
-LETTER_KEY = "@"
 CTRL_C = '\x03'
 ESCAPE_CHARACTER = '\x1b'
 ARROW_UP = '\x1b[A'

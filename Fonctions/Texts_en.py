@@ -22,8 +22,11 @@ WHITE_TEXT + " [Q] to quit "
 MESSAGE_WIN = "\033[{0}H\033[KCongratulations ! You escaped in {1}. \
 You walked {2} steps.\n\
 Press [Q] to quit, [S] to save this maze."
+MESSAGE_MAP_ALREADY_SAVED = "\033[{0}H\033[KThis map is already saved."
 MESSAGE_SAVE_MAZE = "Give a name to this maze : "
-MESSAGE_LOAD_MAZE = "There is a saved game, press [O] to resume \
+MESSAGE_SAVE_OVERWRITE = "This file already exists. Overwrite ?\n\
+[Y] Yes, [Q] Quit, any other key to change the name."
+MESSAGE_LOAD_MAZE = "There is a saved game, press [Y] to resume \
 or any other key to go to the menu."
 MESSAGE_ERROR_DIRECTORY = "{0} is empty or does not exists."
 MESSAGE_ERROR_SCREEN_HEIGHT = "Your console is too small. \

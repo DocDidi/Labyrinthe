@@ -29,14 +29,11 @@ class Door:
             symbol = SYMBOL_DOOR_VERTICAL
         else :
             symbol = SYMBOL_DOOR
+        if self.lit:
+            color = b_color
+        if not self.revealed:
+            color = WHITE_TEXT
+            symbol = SYMBOL_FOG
 
-
-        if self.lit == True:
-            return ("{0}\033[{1};{2}H{3}".format\
-            (b_color,self.y+1,self.x+1,symbol))
-        elif self.revealed == True:
-            return ("{0}\033[{1};{2}H{3}".format\
-            (color,self.y+1,self.x+1,symbol))
-        else:
-            return ("{0}\033[{1};{2}H{3}".format\
-            (WHITE_TEXT,self.y+1,self.x+1,SYMBOL_FOG))
+        return ("{0}\033[{1};{2}H{3}".format\
+        (color,self.y+1,self.x+1,symbol))

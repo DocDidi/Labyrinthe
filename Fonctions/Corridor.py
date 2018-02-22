@@ -19,9 +19,9 @@ class Corridor:
         if self.has_key:
             color = B_WHITE_TEXT
             symbol = SYMBOL_KEY
-        if self.revealed == True:
-            return ("{0}\033[{1};{2}H{3}".format\
-            (color,self.y+1,self.x+1,symbol))
-        else:
-            return ("{0}\033[{1};{2}H{3}".format\
-            (WHITE_TEXT,self.y+1,self.x+1,SYMBOL_FOG))
+        if not self.revealed:
+            color = WHITE_TEXT
+            symbol = SYMBOL_FOG
+
+        return ("{0}\033[{1};{2}H{3}".format\
+        (color,self.y+1,self.x+1,symbol))

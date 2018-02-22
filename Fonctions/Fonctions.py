@@ -170,11 +170,15 @@ def extract_data_from_map(maze_map):
     join_with = (LETTER_WALL, LETTER_DOOR, LETTER_END)
     props = []
     players = []
+    check_player = False
+    check_end = False
+    check_key = False
     for i, line in enumerate(lines):
         for j, letter in enumerate(line):
             if letter is LETTER_PLAYER[0]:
                 players.append(Player(i,j))
                 props.append(Corridor(i,j))
+                check_player = True
             if letter is LETTER_PLAYER[1]:
                 players.append(Player(i,j,player_number = 2))
                 props.append(Corridor(i,j))
@@ -183,6 +187,7 @@ def extract_data_from_map(maze_map):
                 if j == 0 or j == len(line)-1:
                     vertical = True
                 props.append(Door(i,j,vertical,end = True))
+                check_end = True
             elif letter is LETTER_DOOR:
                 vertical = False
                 if lines[i][j+1] == LETTER_CORRIDOR\
@@ -206,11 +211,12 @@ def extract_data_from_map(maze_map):
                 props.append(Wall(i,j,neighbors))
             elif letter is LETTER_KEY:
                 props.append(Corridor(i,j,has_key=True))
+                check_key = True
             else:
                 props.append(Corridor(i,j))
-    try:
+    if check_player and check_end and check_key:
         return(players, props, i, j)
-    except:
+    else:
         return extract_data_from_map(DEFAULT_MAP)
 
 def player_move(players, props, LabyOn, map_height):

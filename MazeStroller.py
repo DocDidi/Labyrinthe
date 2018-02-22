@@ -12,14 +12,14 @@ if OPERATING_SYSTEM == 'nt':
 
 GameOn = True
 ongoing_game = load_file()
-selected = 0
+map_choice_menu = [0,False,0]
 
 while GameOn:
     if ongoing_game:
         players, props, map_height, map_width, maze = ongoing_game
         ongoing_game = False
     else:
-        maze, selected = maze_menu(selected)
+        maze, map_choice_menu = maze_menu(map_choice_menu)
         players, props, map_height, map_width = extract_data_from_map(maze)
     check_screen_size(map_height, map_width)
     clear_and_display()
@@ -29,7 +29,8 @@ while GameOn:
     check_fog(players, props)
     maze_display(players, props, map_height, map_width)
     while LabyOn:
-        LabyOn = player_move(players, props, LabyOn, map_height)
+        LabyOn, map_choice_menu =\
+        player_move(players, props, LabyOn, map_height, map_choice_menu)
         save_game(players, props, map_height, map_width, maze)
         for item in props:
             if player_have_key and item.end:
@@ -60,8 +61,8 @@ while GameOn:
                         steps = 0
                         for player in players:
                             steps += player.step
-                        finished_menu\
-                        (maze, map_height, time_spent, steps, selected)
+                        map_choice_menu = finished_menu\
+                        (maze, map_height, time_spent, steps, map_choice_menu)
                         break
         check_fog(players, props)
         maze_display(players, props, map_height, map_width)

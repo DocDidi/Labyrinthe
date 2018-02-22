@@ -25,7 +25,8 @@ MESSAGE_MOVES_MULTI = "\033[{}H" + "{1}Touches flechées \
 WHITE_TEXT + " [Q] pour quitter "
 MESSAGE_WIN = "\033[{0}H\033[KBravo ! \
 Vous avez fini en {1}. Vous avez fait {2} pas.\n\
-pressez [Q] pour revenir au menu, [S] pour sauvegarder ce labyrinthe."
+pressez [Q] pour revenir au menu, [S] pour sauvegarder ce labyrinthe, \
+[ENTREE] pour rejouer."
 MESSAGE_MAP_ALREADY_SAVED = "\033[{0}H\033[KCette carte est déjà sauvegardée."
 MESSAGE_SAVE_MAZE = "Quel nom voulez vous donner à ce labyrinthe ? "
 MESSAGE_SAVE_OVERWRITE = "Ce fichier existe. L'écraser ?\n\

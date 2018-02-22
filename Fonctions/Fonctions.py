@@ -77,19 +77,21 @@ def load_file():
         ongoing_game = False
     return (ongoing_game)
 
-def maze_menu(selected = 0):
+def maze_menu(map_choice_menu):
     """Menu de selection des cartes.
     Renvoie le nom du maze_file choisi ou la carte aléatoire."""
     directory_content = glob.glob(MAPS_LOAD)
-    file_index = 0
-    file_index_min = 0
     file_path = MAPS_LOAD.find("*")
-    chosen = False
-    while not chosen:
+    if not directory_content:
+        saved_maps = (MESSAGE_ERROR_DIRECTORY.format(MAPS_DIRECTORY))
+    else:
+        saved_maps = MESSAGE_MAP_LOAD+directory_content[map_choice_menu[2]]\
+        [file_path:-4].capitalize()
+    while not map_choice_menu[1]:
         if not directory_content:
             saved_maps = (MESSAGE_ERROR_DIRECTORY.format(MAPS_DIRECTORY))
         else:
-            saved_maps = MESSAGE_MAP_LOAD+directory_content[file_index]\
+            saved_maps = MESSAGE_MAP_LOAD+directory_content[map_choice_menu[2]]\
             [file_path:-4].capitalize()
         choice = [saved_maps] + [MESSAGE_MAP_CHOICE_RANDOM_SMALL,\
         MESSAGE_MAP_CHOICE_RANDOM_BIG,\
@@ -99,7 +101,7 @@ def maze_menu(selected = 0):
         MESSAGE_MAP_CHOICE_QUIT]
         clear_and_display(WHITE_TEXT + MESSAGE_MAP_CHOICE)
         for i, maze_map in enumerate(choice):
-            if i == selected:
+            if i == map_choice_menu[0]:
                 if os.path.exists(maze_map):
                     print(BLACK_ON_WHITE + maze_map[file_path:-4].capitalize())
                 else:
@@ -115,7 +117,7 @@ def maze_menu(selected = 0):
             if x == CTRL_C:
                 exit()
             elif ord(x) == 13:
-                chosen = choice[selected]
+                map_choice_menu[1] = choice[map_choice_menu[0]]
                 no_input = False
             elif x == ESCAPE_CHARACTER:
                 y = keyboard_input(2)
@@ -123,45 +125,43 @@ def maze_menu(selected = 0):
             elif x.lower()=='q':
                 exit()
             if x==ARROW_DOWN:
-                if selected < (len(choice)-1):
-                    selected += 1
+                if map_choice_menu[0] < (len(choice)-1):
+                    map_choice_menu[0] += 1
                 no_input = False
             elif x==ARROW_UP:
-                if selected > 0:
-                    selected -= 1
+                if map_choice_menu[0] > 0:
+                    map_choice_menu[0] -= 1
                 no_input = False
-            elif x==ARROW_LEFT and file_index > 0:
-                file_index -= 1
+            elif x==ARROW_LEFT and map_choice_menu[2] > 0:
+                map_choice_menu[2] -= 1
                 no_input = False
-            elif x==ARROW_RIGHT and file_index < len(directory_content)-1:
-                file_index += 1
+            elif x==ARROW_RIGHT and map_choice_menu[2]<len(directory_content)-1:
+                map_choice_menu[2] += 1
                 no_input = False
-        if chosen == saved_maps and directory_content:
-            chosen = directory_content[file_index]
-            if os.path.exists(chosen):
-                with open(chosen, "r") as maze_map:
-                    return maze_map.read(), selected
-        elif chosen == MESSAGE_MAP_CHOICE_RANDOM_SMALL:
-            maze_map = make_maze(SMALL_WIDTH,SMALL_HEIGHT)
-            return maze_map, selected
-        elif chosen == MESSAGE_MAP_CHOICE_RANDOM_BIG:
-            maze_map = make_maze(BIG_WIDTH,BIG_HEIGHT)
-            return maze_map, selected
-        elif chosen == MESSAGE_MAP_CHOICE_RANDOM_SCREEN:
-            rows, columns = os.popen('stty size', 'r').read().split()
-            maze_map = make_maze(int(columns)-1,int(rows)-4)
-            return maze_map, selected
-        elif chosen == MESSAGE_MAP_CHOICE_RANDOM_BIG_MULTIPLAYER:
-            maze_map = make_maze(BIG_WIDTH,BIG_HEIGHT, number_of_players=2)
-            return maze_map, selected
-        elif chosen == MESSAGE_MAP_CHOICE_RANDOM_SCREEN_MULTIPLAYER:
-            rows, columns = os.popen('stty size', 'r').read().split()
-            maze_map = make_maze(int(columns)-1,int(rows)-4,number_of_players=2)
-            return maze_map, selected
-        elif chosen == MESSAGE_MAP_CHOICE_QUIT:
-            exit()
-        else:
-            chosen = False
+    if map_choice_menu[1] == saved_maps and directory_content:
+        map_choice_menu[1] = directory_content[map_choice_menu[2]]
+        if os.path.exists(map_choice_menu[1]):
+            with open(map_choice_menu[1], "r") as maze_map:
+                return maze_map.read(), map_choice_menu
+    elif map_choice_menu[1] == MESSAGE_MAP_CHOICE_RANDOM_SMALL:
+        maze_map = make_maze(SMALL_WIDTH,SMALL_HEIGHT)
+        return maze_map, map_choice_menu
+    elif map_choice_menu[1] == MESSAGE_MAP_CHOICE_RANDOM_BIG:
+        maze_map = make_maze(BIG_WIDTH,BIG_HEIGHT)
+        return maze_map, map_choice_menu
+    elif map_choice_menu[1] == MESSAGE_MAP_CHOICE_RANDOM_SCREEN:
+        rows, columns = os.popen('stty size', 'r').read().split()
+        maze_map = make_maze(int(columns)-1,int(rows)-4)
+        return maze_map, map_choice_menu
+    elif map_choice_menu[1] == MESSAGE_MAP_CHOICE_RANDOM_BIG_MULTIPLAYER:
+        maze_map = make_maze(BIG_WIDTH,BIG_HEIGHT, number_of_players=2)
+        return maze_map, map_choice_menu
+    elif map_choice_menu[1] == MESSAGE_MAP_CHOICE_RANDOM_SCREEN_MULTIPLAYER:
+        rows, columns = os.popen('stty size', 'r').read().split()
+        maze_map = make_maze(int(columns)-1,int(rows)-4,number_of_players=2)
+        return maze_map, map_choice_menu
+    elif map_choice_menu[1] == MESSAGE_MAP_CHOICE_QUIT:
+        exit()
 
 def extract_data_from_map(maze_map):
     """Extrait les données du jeu de la carte (str)
@@ -219,7 +219,7 @@ def extract_data_from_map(maze_map):
     else:
         return extract_data_from_map(DEFAULT_MAP)
 
-def player_move(players, props, LabyOn, map_height):
+def player_move(players, props, LabyOn, map_height, map_choice_menu):
     """Fait bouger le joueur
     Renvoie LabyOn == True si le jeu continue."""
     no_input = True
@@ -232,6 +232,7 @@ def player_move(players, props, LabyOn, map_height):
             exit()
         elif x.lower()=='q':
             no_input = LabyOn = False
+            map_choice_menu = [map_choice_menu[0],False,map_choice_menu[2]]
         elif x.lower()=='d':
             cheatcode = 1
         elif x.lower()=='o' and cheatcode == 1:
@@ -286,7 +287,7 @@ def player_move(players, props, LabyOn, map_height):
     for player in players:
         player.move(player_to_move, movement,props)
 
-    return (LabyOn)
+    return (LabyOn, map_choice_menu)
 
 def keyboard_input(nbl):
     """Renvoie la ou les touches de clavier pressées.
@@ -315,10 +316,10 @@ def check_fog(players, props):
     for item in props:
         check_if_lit(item, players)
 
-def finished_menu(maze, map_height, time_spent, steps, selected):
+def finished_menu(maze, map_height, time_spent, steps, map_choice_menu):
     """Messages et menu de choix quand le labyrinthe est fini."""
     map_already_saved = False
-    if selected == 0:
+    if map_choice_menu[0] == 0:
         map_already_saved = True
     time_spent = str_time(time_spent)
     print(WHITE_TEXT+MESSAGE_WIN.format(map_height +1,time_spent, steps))
@@ -329,12 +330,17 @@ def finished_menu(maze, map_height, time_spent, steps, selected):
             exit()
         elif x.lower() == "q":
             no_input = False
+            return [map_choice_menu[0],False,0]
+        elif ord(x) == 13:
+            no_input = False
+            return map_choice_menu
         elif x.lower() == "s":
             if map_already_saved:
                 print(MESSAGE_MAP_ALREADY_SAVED.format(map_height+1))
             else:
                 save_maze(maze)
                 no_input = False
+            return [map_choice_menu[0],False,0]
 
 def str_time(time_spent):
     minutes = int(time_spent // 60)

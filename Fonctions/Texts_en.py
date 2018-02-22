@@ -21,7 +21,7 @@ MESSAGE_MOVES_MULTI = "\033[{}H" + "{1}ARROWS \
 WHITE_TEXT + " [Q] to quit "
 MESSAGE_WIN = "\033[{0}H\033[KCongratulations ! You escaped in {1}. \
 You walked {2} steps.\n\
-Press [Q] to quit, [S] to save this maze."
+Press [Q] to quit, [S] to save this maze, [ENTER] to play again."
 MESSAGE_MAP_ALREADY_SAVED = "\033[{0}H\033[KThis map is already saved."
 MESSAGE_SAVE_MAZE = "Give a name to this maze : "
 MESSAGE_SAVE_OVERWRITE = "This file already exists. Overwrite ?\n\

@@ -23,8 +23,8 @@ class Door:
             color = MAGENTA_TEXT
             b_color = B_MAGENTA_TEXT
         else:
-            color = GREEN_TEXT
-            b_color = B_GREEN_TEXT
+            color = YELLOW_TEXT
+            b_color = B_WHITE_TEXT
         if self.vertical == True :
             symbol = SYMBOL_DOOR_VERTICAL
         else :

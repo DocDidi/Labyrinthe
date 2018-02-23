@@ -12,6 +12,8 @@ class StartMenu():
         self.file_index = 0
         self.choice = []
         self.file_path = MAPS_LOAD.find("*")
+
+    def __str__(self):
         self.directory_content = glob.glob(MAPS_LOAD)
         self.min_choice = 0
         if not self.directory_content:
@@ -20,16 +22,6 @@ class StartMenu():
             self.min_choice = 1
         else:
             self.saved_maps = MESSAGE_MAP_LOAD+self.directory_content\
-            [self.file_index][self.file_path:-4].capitalize()
-
-
-    def __str__(self):
-        if not self.directory_content:
-            self.saved_maps = \
-            (B_RED_TEXT + MESSAGE_ERROR_DIRECTORY.format(MAPS_DIRECTORY))
-        else:
-            self.saved_maps = \
-            MESSAGE_MAP_LOAD+self.directory_content\
             [self.file_index][self.file_path:-4].capitalize()
         self.choice = [self.saved_maps] + [MESSAGE_MAP_CHOICE_RANDOM_SMALL,\
         MESSAGE_MAP_CHOICE_RANDOM_BIG,\

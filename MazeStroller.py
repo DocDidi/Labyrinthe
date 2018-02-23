@@ -26,9 +26,13 @@ while GameOn:
     LabyOn = True
     player_have_key = False
     start_time = time.time()
-    check_fog(players, props)
-    maze_display(players, props, map_height, map_width)
     while LabyOn:
+        check_fog(players, props)
+        maze_display(players, props, map_height, map_width)
+        if player_have_key:
+            print("\033[{0}H{1}\033[1B".format(map_height + 1, SYMBOL_KEY))
+        else:
+            print("\033[{0}H{1}\033[1B".format(map_height + 1, MESSAGE_KEY))
         LabyOn = player_move(players, props, LabyOn, map_height, maze_menu_obj)
         save_game(players, props, map_height, map_width, maze)
         for item in props:
@@ -48,13 +52,7 @@ while GameOn:
                             item.revealed = True
                         clear_and_display()
                         maze_display(players, props, map_height, map_width)
-                        for item in props:
-                            if (type(item) == Corridor) and item.visited:
-                                print("{0}\033[{1};{2}H{3}".format\
-                                (B_BLUE_TEXT,item.y+1,item.x+1,\
-                                SYMBOL_CORRIDOR_VISITED))
-                        for player in players:
-                            print(player)
+                        print_path_taken(props, players)
                         end_time = time.time()
                         time_spent = end_time - start_time
                         steps = 0
@@ -62,10 +60,3 @@ while GameOn:
                             steps += player.step
                         finished_menu(maze, map_height, time_spent, steps,\
                         maze_menu_obj)
-                        break
-        check_fog(players, props)
-        maze_display(players, props, map_height, map_width)
-        if player_have_key:
-            print("\033[{0}H{1}\033[1B".format(map_height + 1, SYMBOL_KEY))
-        else:
-            print("\033[{0}H{1}\033[1B".format(map_height + 1, MESSAGE_KEY))

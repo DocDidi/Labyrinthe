@@ -114,31 +114,6 @@ def maze_menu(maze_menu_obj):
                 maze_menu_obj.file_index += 1
                 no_input = False
     return maze_menu_obj.getmap()
-    # if maze_menu_obj.chosen == mazesaved_maps and maze_menu_obj.directory_content:
-    #     maze_menu_obj.chosen =\
-    #     maze_menu_obj.directory_content[maze_menu_obj.file_index]
-    #     if os.path.exists(maze_menu_obj.chosen):
-    #         with open(maze_menu_obj.chosen, "r") as maze_map:
-    #             return maze_map.read(), map_choice_menu
-    # elif maze_menu_obj.chosen == MESSAGE_MAP_CHOICE_RANDOM_SMALL:
-    #     maze_map = make_maze(SMALL_WIDTH,SMALL_HEIGHT)
-    #     return maze_map, map_choice_menu
-    # elif maze_menu_obj.chosen == MESSAGE_MAP_CHOICE_RANDOM_BIG:
-    #     maze_map = make_maze(BIG_WIDTH,BIG_HEIGHT)
-    #     return maze_map, map_choice_menu
-    # elif maze_menu_obj.chosen == MESSAGE_MAP_CHOICE_RANDOM_SCREEN:
-    #     rows, columns = os.popen('stty size', 'r').read().split()
-    #     maze_map = make_maze(int(columns)-1,int(rows)-4)
-    #     return maze_map, map_choice_menu
-    # elif maze_menu_obj.chosen == MESSAGE_MAP_CHOICE_RANDOM_BIG_MULTIPLAYER:
-    #     maze_map = make_maze(BIG_WIDTH,BIG_HEIGHT, number_of_players=2)
-    #     return maze_map, map_choice_menu
-    # elif maze_menu_obj.chosen == MESSAGE_MAP_CHOICE_RANDOM_SCREEN_MULTIPLAYER:
-    #     rows, columns = os.popen('stty size', 'r').read().split()
-    #     maze_map = make_maze(int(columns)-1,int(rows)-4,number_of_players=2)
-    #     return maze_map, map_choice_menu
-    # elif maze_menu_obj.chosen == MESSAGE_MAP_CHOICE_QUIT:
-    #     exit()
 
 def extract_data_from_map(maze_map):
     """Extrait les données du jeu de la carte (str)
@@ -361,3 +336,13 @@ def save_maze(maze):
     if go_for_save:
         with open(maze_file, "w") as save_file:
             save_file.write(maze)
+
+def print_path_taken(props, players):
+    """Affiche le chemin parcouru par les joueurs"""
+    for item in props:
+        if (type(item) == Corridor) and item.visited:
+            print("{0}\033[{1};{2}H{3}".format\
+            (B_BLUE_TEXT,item.y+1,item.x+1,\
+            SYMBOL_CORRIDOR_VISITED))
+    for player in players:
+        print(player)

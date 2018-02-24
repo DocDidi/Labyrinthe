@@ -16,10 +16,10 @@ def clear_and_display(*str_value):
     else:
         print(CURSOR_RESET + WHITE_TEXT + str(str_value[0]))
 
-def save_game(game_screen):
-    """Sauvegarde la partie"""
-    with open(SAVE_FILE, "wb") as save_file:
-        save_file.write(pickle.dumps(game_screen))
+# def save_game(game_screen):
+#     """Sauvegarde la partie"""
+#     with open(SAVE_FILE, "wb") as save_file:
+#         save_file.write(pickle.dumps(game_screen))
 
 def load_file():
     """Propose de reprendre la partie précedente
@@ -155,80 +155,80 @@ def keyboard_input(nbl):
     termios.tcsetattr(sys.stdin, termios.TCSADRAIN, orig_settings)
     return text_grab
 
-def finished_menu(maze, map_height, time_spent, steps, maze_menu_obj):
-    """Messages et menu de choix quand le labyrinthe est fini."""
-    map_already_saved = False
-    if maze_menu_obj.selected == 0:
-        map_already_saved = True
-    time_spent = str_time(time_spent)
-    print(WHITE_TEXT+MESSAGE_WIN.format(map_height +1,time_spent, steps))
-    no_input = True
-    while no_input:
-        x = keyboard_input(1)
-        if x == CTRL_C:
-            exit()
-        elif x.lower() == "q":
-            no_input = False
-            maze_menu_obj.chosen = False
-        elif ord(x) == 13 and not map_already_saved:
-            no_input = False
-        elif x.lower() == "s":
-            if map_already_saved:
-                print(MESSAGE_MAP_ALREADY_SAVED.format(map_height+1))
-            else:
-                save_maze(maze)
-                no_input = False
-            maze_menu_obj.chosen = False
+# def finished_menu(maze, map_height, time_spent, steps, maze_menu_obj):
+#     """Messages et menu de choix quand le labyrinthe est fini."""
+#     map_already_saved = False
+#     if maze_menu_obj.selected == 0:
+#         map_already_saved = True
+#     time_spent = str_time(time_spent)
+#     print(WHITE_TEXT+MESSAGE_WIN.format(map_height +1,time_spent, steps))
+#     no_input = True
+#     while no_input:
+#         x = keyboard_input(1)
+#         if x == CTRL_C:
+#             exit()
+#         elif x.lower() == "q":
+#             no_input = False
+#             maze_menu_obj.chosen = False
+#         elif ord(x) == 13 and not map_already_saved:
+#             no_input = False
+#         elif x.lower() == "s":
+#             if map_already_saved:
+#                 print(MESSAGE_MAP_ALREADY_SAVED.format(map_height+1))
+#             else:
+#                 save_maze(maze)
+#                 no_input = False
+#             maze_menu_obj.chosen = False
 
-def str_time(time_spent):
-    minutes = int(time_spent // 60)
-    seconds = int(time_spent % 60)
-    hours = minutes // 60
-    minutes == minutes % 60
-    if seconds <= 1:
-        word_seconds = WORD_SECOND
-    else:
-        word_seconds = WORD_SECONDS
-    if minutes <= 1:
-        word_minutes = WORD_MINUTE
-    else:
-        word_minutes = WORD_MINUTES
-    if not minutes and not hours:
-        return "{0} {1}".format(seconds,word_seconds)
-    elif not hours:
-        return "{0} {1}, {2} {3}"\
-        .format(minutes,word_minutes, seconds,word_seconds)
-    else:
-        return MESSAGE_HOUR_LONG
+# def str_time(time_spent):
+#     minutes = int(time_spent // 60)
+#     seconds = int(time_spent % 60)
+#     hours = minutes // 60
+#     minutes == minutes % 60
+#     if seconds <= 1:
+#         word_seconds = WORD_SECOND
+#     else:
+#         word_seconds = WORD_SECONDS
+#     if minutes <= 1:
+#         word_minutes = WORD_MINUTE
+#     else:
+#         word_minutes = WORD_MINUTES
+#     if not minutes and not hours:
+#         return "{0} {1}".format(seconds,word_seconds)
+#     elif not hours:
+#         return "{0} {1}, {2} {3}"\
+#         .format(minutes,word_minutes, seconds,word_seconds)
+#     else:
+#         return MESSAGE_HOUR_LONG
 
-def save_maze(maze):
-    """Sauvegarde le labyrinthe"""
-    go_for_save = False
-    while not go_for_save:
-        clear_and_display()
-        maze_file = input(maze+MESSAGE_SAVE_MAZE)
-        maze_file = MAPS_DIRECTORY + maze_file + MAPS_FORMAT
-        if os.path.exists(maze_file):
-            print(MESSAGE_SAVE_OVERWRITE)
-            choice = keyboard_input(1)
-            if choice == 'CTRL_C':
-                exit()
-            if choice.lower() == ('o' or 'y'):
-                go_for_save = True
-            if choice.lower() == 'q':
-                break
-        else:
-            go_for_save = True
-    if go_for_save:
-        with open(maze_file, "w") as save_file:
-            save_file.write(maze)
+# def save_maze(maze):
+#     """Sauvegarde le labyrinthe"""
+#     go_for_save = False
+#     while not go_for_save:
+#         clear_and_display()
+#         maze_file = input(maze+MESSAGE_SAVE_MAZE)
+#         maze_file = MAPS_DIRECTORY + maze_file + MAPS_FORMAT
+#         if os.path.exists(maze_file):
+#             print(MESSAGE_SAVE_OVERWRITE)
+#             choice = keyboard_input(1)
+#             if choice == 'CTRL_C':
+#                 exit()
+#             if choice.lower() == ('o' or 'y'):
+#                 go_for_save = True
+#             if choice.lower() == 'q':
+#                 break
+#         else:
+#             go_for_save = True
+#     if go_for_save:
+#         with open(maze_file, "w") as save_file:
+#             save_file.write(maze)
 
-def print_path_taken(props, players):
-    """Affiche le chemin parcouru par les joueurs"""
-    for item in props:
-        if (type(item) == Corridor) and item.visited:
-            print("{0}\033[{1};{2}H{3}".format\
-            (B_BLUE_TEXT,item.y+1,item.x+1,\
-            SYMBOL_CORRIDOR_VISITED))
-    for player in players:
-        print(player)
+# def print_path_taken(props, players):
+#     """Affiche le chemin parcouru par les joueurs"""
+#     for item in props:
+#         if (type(item) == Corridor) and item.visited:
+#             print("{0}\033[{1};{2}H{3}".format\
+#             (B_BLUE_TEXT,item.y+1,item.x+1,\
+#             SYMBOL_CORRIDOR_VISITED))
+#     for player in players:
+#         print(player)

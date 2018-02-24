@@ -21,13 +21,11 @@ while GameOn:
     else:
         maze = maze_menu(maze_menu_obj)
         game_screen = GameScreen(maze)
-    game_screen.maze_on = True
-    game_screen.player_have_key = False
-    start_time = time.time()
+    game_screen.start()
     while game_screen.maze_on:
         game_screen.display()
         player_move(game_screen, maze_menu_obj)
-        save_game(game_screen)
+        # save_game(game_screen)
         for item in game_screen.props:
             if game_screen.player_have_key and item.end:
                 item.block = False
@@ -43,13 +41,13 @@ while GameOn:
                         os.remove(SAVE_FILE)
                         for item in game_screen.props:
                             item.revealed = True
-                        clear_and_display()
+                        # clear_and_display()
                         game_screen.display()
-                        print_path_taken(game_screen.props, game_screen.players)
-                        end_time = time.time()
-                        time_spent = end_time - start_time
-                        steps = 0
-                        for player in game_screen.players:
-                            steps += player.step
-                        finished_menu(game_screen.maze, game_screen.height, \
-                        time_spent, steps, maze_menu_obj)
+                        # print_path_taken(game_screen.props, game_screen.players)
+                        # game_screen.stop_timer()
+                        # end_time = time.time()
+                        # time_spent = end_time - start_time
+                        # steps = 0
+                        # for player in game_screen.players:
+                        #     steps += player.step
+                        game_screen.finished_menu(maze_menu_obj)

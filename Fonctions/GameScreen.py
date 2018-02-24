@@ -1,10 +1,10 @@
 #! /usr/bin/env python3
 # coding: utf-8
 
-import os, time
+import os, time, pickle, termios, tty, sys
 from Fonctions.Variables import *
 from Fonctions.Variables_Map_Building import *
-from Fonctions.Fonctions import *
+# from Fonctions.Fonctions import *
 from Fonctions.Player import *
 from Fonctions.Wall import *
 from Fonctions.Door import *
@@ -178,7 +178,7 @@ class GameScreen:
             maze_file = MAPS_DIRECTORY + maze_file + MAPS_FORMAT
             if os.path.exists(maze_file):
                 print(MESSAGE_SAVE_OVERWRITE)
-                choice = keyboard_input(1)
+                choice = self.keyboard_input(1)
                 if choice == 'CTRL_C':
                     exit()
                 if choice.lower() == ('o' or 'y'):
@@ -212,6 +212,10 @@ class GameScreen:
 
     def finished_menu(self, maze_menu_obj):
         """Messages et menu de choix quand le labyrinthe est fini."""
+        for item in self.props:
+            item.revealed = True
+        self.display()
+        os.remove(SAVE_FILE)
         self.stop_timer()
         self.print_path_taken()
         steps = 0

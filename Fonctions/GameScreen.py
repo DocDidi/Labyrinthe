@@ -90,6 +90,128 @@ class GameScreen:
 
     def display(self):
         self.check_screen_size()
+        w = self.width + 1
+        if self.maze_on:
+            for player in self.players:
+                x = player.x
+                y = player.y
+                self.props[(y * w) + (x)].revealed = True
+                i = 1
+                side1 = side2 = lenght =  100
+                while i < lenght:
+                    item = self.props[(y * w) + (x - i)]
+                    if item.sight:
+                        i+=1
+                    else:
+                        lenght = i
+                    item.revealed = True
+                    j=1
+                    while j < side1:
+                        side_item = self.props[((y - j) * w) + (x - i)]
+                        if side_item.sight:
+                            side_item.revealed = True
+                            j+=1
+                        else:
+                            side_item.revealed = True
+                            side1 = j + 1
+                            break
+                    j=1
+                    while j < side2:
+                        side_item = self.props[((y + j) * w) + (x - i)]
+                        if side_item.sight:
+                            side_item.revealed = True
+                            j+=1
+                        else:
+                            side_item.revealed = True
+                            side2 = j + 1
+                            break
+                i = 1
+                side1 = side2 = lenght =  100
+                while i < lenght:
+                    item = self.props[(y * w) + (x + i)]
+                    if item.sight:
+                        i+=1
+                    else:
+                        lenght = i
+                    item.revealed = True
+                    j=1
+                    while j < side1:
+                        side_item = self.props[((y - j) * w) + (x + i)]
+                        if side_item.sight:
+                            side_item.revealed = True
+                            j+=1
+                        else:
+                            side_item.revealed = True
+                            side1 = j + 1
+                            break
+                    j=1
+                    while j < side2:
+                        side_item = self.props[((y + j) * w) + (x + i)]
+                        if side_item.sight:
+                            side_item.revealed = True
+                            j+=1
+                        else:
+                            side_item.revealed = True
+                            side2 = j + 1
+                            break
+                i = 1
+                side1 = side2 = lenght =  100
+                while i < lenght:
+                    item = self.props[((y - i)* w) + (x)]
+                    if item.sight:
+                        i+=1
+                    else:
+                        lenght = i
+                    item.revealed = True
+                    j=1
+                    while j < side1:
+                        side_item = self.props[((y - i)* w) + (x - j)]
+                        if side_item.sight:
+                            side_item.revealed = True
+                            j+=1
+                        else:
+                            side_item.revealed = True
+                            side1 = j + 1
+                            break
+                    j=1
+                    while j < side2:
+                        side_item = self.props[((y - i)* w) + (x + j)]
+                        if side_item.sight:
+                            side_item.revealed = True
+                            j+=1
+                        else:
+                            side_item.revealed = True
+                            side2 = j + 1
+                            break
+                i = 1
+                side1 = side2 = lenght =  100
+                while i < lenght:
+                    item = self.props[((y + i)* w) + (x)]
+                    if item.sight:
+                        i+=1
+                    else:
+                        lenght = i
+                    item.revealed = True
+                    j=1
+                    while j < side1:
+                        side_item = self.props[((y + i)* w) + (x - j)]
+                        if side_item.sight:
+                            side_item.revealed = True
+                            j+=1
+                        else:
+                            side_item.revealed = True
+                            side1 = j + 1
+                            break
+                    j=1
+                    while j < side2:
+                        side_item = self.props[((y + i)* w) + (x + j)]
+                        if side_item.sight:
+                            side_item.revealed = True
+                            j+=1
+                        else:
+                            side_item.revealed = True
+                            side2 = j + 1
+                            break
         for item in self.props:
             item.lit = False
             for player in self.players:
@@ -105,6 +227,19 @@ class GameScreen:
                     item.lit = True
                 if player.x == item.x and player.y == item.y:
                     item.visited = True
+            if item.has_key and (time.time()-self.time_start > 30):
+                item.revealed = True
+                for i in range(-1,2):
+                    for j in range(-1,2):
+                        self.props[((item.y + i) * w) + (item.x + j)]\
+                        .revealed = True
+            if item.end and (time.time()-self.time_start > 60):
+                item.revealed = True
+                for i in range(-1,2):
+                    if item.vertical:
+                        self.props[((item.y+i)*w)+(item.x)].revealed = True
+                    else:
+                        self.props[((item.y)*w)+(item.x+i)].revealed = True
         maze_map = CLEAR_SCREEN + CURSOR_RESET
         for item in self.props:
             maze_map += str(item)

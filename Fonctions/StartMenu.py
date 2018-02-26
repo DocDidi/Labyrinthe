@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # coding: utf-8
 
-import glob
+import glob, termios, tty, sys
 from Fonctions.Variables import *
 from Fonctions.GenerateMaze import *
 
@@ -42,6 +42,45 @@ class StartMenu():
             result_str += "\n"
         return result_str
 
+    def maze_menu(self):
+        """Menu de selection des cartes.
+        Renvoie le nom du maze_file choisi ou la carte aléatoire."""
+        while not self.chosen:
+            print(CLEAR_SCREEN+CURSOR_RESET + B_BLUE_TEXT + MESSAGE_MAP_CHOICE)
+            print(self)
+            no_input = True
+            while no_input:
+                choice = self.keyboard_input(1)
+                if choice == CTRL_C:
+                    exit()
+                elif ord(choice) == 13:
+                    self.chosen = \
+                    self.choice[self.selected]
+                    no_input = False
+                elif choice == ESCAPE_CHARACTER:
+                    addendum = self.keyboard_input(2)
+                    choice = choice + addendum
+                elif choice.lower()=='q':
+                    exit()
+                if choice==ARROW_DOWN:
+                    if self.selected < (len(self.choice)-1):
+                        self.selected += 1
+                    no_input = False
+                elif choice==ARROW_UP:
+                    if self.selected > self.min_choice:
+                        self.selected -= 1
+                    no_input = False
+                elif choice==ARROW_LEFT and self.file_index > 0:
+                    self.file_index -= 1
+                    no_input = False
+                elif choice==ARROW_RIGHT \
+                and self.file_index<len(self.directory_content)-1:
+                    self.file_index += 1
+                    no_input = False
+        return self.getmap()
+
+
+
     def getmap(self):
         if self.chosen == self.saved_maps and self.directory_content:
             self.chosen =\
@@ -68,3 +107,12 @@ class StartMenu():
             return maze_map
         elif self.chosen == MESSAGE_MAP_CHOICE_QUIT:
             exit()
+
+    def keyboard_input(self, nbl):
+        """Renvoie la ou les touches de clavier pressées.
+        Prend le nombre de touches à renvoyer"""
+        orig_settings = termios.tcgetattr(sys.stdin)
+        tty.setraw(sys.stdin)
+        text_grab=sys.stdin.read(nbl)
+        termios.tcsetattr(sys.stdin, termios.TCSADRAIN, orig_settings)
+        return text_grab

@@ -13,7 +13,7 @@ from Fonctions.Corridor import *
 
 class GameScreen:
 
-    def __init__(self, maze):
+    def __init__(self, maze, start_menu):
         """Extrait les données du jeu de la carte (str)"""
         lines = maze.split("\n")
         join_with = (LETTER_WALL, LETTER_DOOR, LETTER_END)
@@ -72,6 +72,7 @@ class GameScreen:
         else:
             self.__init__(DEFAULT_MAP)
 
+        self.start_menu = start_menu
         self.player_have_key = False
         self.maze_on = True
         self.time_start = 0
@@ -121,6 +122,92 @@ class GameScreen:
         else:
             print(WHITE_TEXT + MESSAGE_MOVES.format(self.height + 2))
         self.save_game()
+
+    def player_move(self):
+        """Capture les touches pour faire bouger le joueur"""
+        no_input = True
+        player_to_move = 0
+        movement = ""
+        cheatcode = 0
+        while no_input:
+            choice = self.keyboard_input(1)
+            if choice == CTRL_C:
+                exit()
+            elif choice.lower()=='q':
+                no_input = False
+                self.maze_on = False
+                self.start_menu.chosen = False
+            elif choice.lower()=='d':
+                cheatcode = 1
+            elif choice.lower()=='o' and cheatcode == 1:
+                cheatcode = 2
+            elif choice.lower()=='c' and cheatcode == 2:
+                for item in self.props:
+                    item.revealed = True
+                no_input = False
+            elif choice.lower()=='g':
+                for item in self.props:
+                    try:
+                        item.neighbors = False
+                    except:
+                        pass
+                no_input = False
+            elif choice.lower()=='i':
+                player_to_move = 2
+                movement = "U"
+                no_input = False
+            elif choice.lower()=='k':
+                player_to_move = 2
+                movement = "D"
+                no_input = False
+            elif choice.lower()=='l':
+                player_to_move = 2
+                movement = "R"
+                no_input = False
+            elif choice.lower()=='j':
+                player_to_move = 2
+                movement = "L"
+                no_input = False
+            elif choice == ESCAPE_CHARACTER:
+                addendum = self.keyboard_input(2)
+                choice = choice + addendum
+            if choice==ARROW_UP:
+                player_to_move = 1
+                movement = "U"
+                no_input = False
+            elif choice==ARROW_DOWN:
+                player_to_move = 1
+                movement = "D"
+                no_input = False
+            elif choice==ARROW_RIGHT:
+                player_to_move = 1
+                movement = "R"
+                no_input = False
+            elif choice==ARROW_LEFT:
+                player_to_move = 1
+                movement = "L"
+                no_input = False
+
+        for player in self.players:
+            player.move(player_to_move, movement,self.props)
+
+    def tests(self):
+        """Déverouille la porte si la clé a été ramassée
+        et vérifie que le jeu n'est pas encore fini."""
+        for item in self.props:
+            if self.player_have_key and item.end:
+                item.block = False
+            if item.has_key:
+                for player in self.players:
+                    if (player.x, player.y) == (item.x, item.y):
+                        item.has_key = False
+                        self.player_have_key = True
+            if item.end:
+                for player in self.players:
+                    if (player.x, player.y) == (item.x, item.y):
+                        self.maze_on = False
+                        self.finished_menu()
+
 
     def check_screen_size(self):
         """Demande à l'utilisateur d'agrandir sa console si besoin."""
@@ -210,7 +297,7 @@ class GameScreen:
         termios.tcsetattr(sys.stdin, termios.TCSADRAIN, orig_settings)
         return text_grab
 
-    def finished_menu(self, maze_menu_obj):
+    def finished_menu(self):
         """Messages et menu de choix quand le labyrinthe est fini."""
         for item in self.props:
             item.revealed = True
@@ -222,7 +309,7 @@ class GameScreen:
         for player in self.players:
             steps += player.step
         map_already_saved = False
-        if maze_menu_obj.selected == 0:
+        if self.start_menu.selected == 0:
             map_already_saved = True
         print(WHITE_TEXT + \
         MESSAGE_WIN.format(self.height +1,self.time_spent, steps))
@@ -233,7 +320,7 @@ class GameScreen:
                 exit()
             elif x.lower() == "q":
                 no_input = False
-                maze_menu_obj.chosen = False
+                self.start_menu.chosen = False
             elif ord(x) == 13 and not map_already_saved:
                 no_input = False
             elif x.lower() == "s":
@@ -242,4 +329,4 @@ class GameScreen:
                 else:
                     self.save_maze()
                     no_input = False
-                maze_menu_obj.chosen = False
+                self.start_menu.chosen = False

@@ -91,127 +91,104 @@ class GameScreen:
     def display(self):
         self.check_screen_size()
         w = self.width + 1
+        max_sight = 20
         if self.maze_on:
             for player in self.players:
                 x = player.x
                 y = player.y
                 self.props[(y * w) + (x)].revealed = True
+                # left
                 i = 1
-                side1 = side2 = lenght =  100
+                side1 = side2 = lenght =  max_sight
                 while i < lenght:
                     item = self.props[(y * w) + (x - i)]
-                    if item.sight:
-                        i+=1
-                    else:
+                    if not item.sight:
                         lenght = i
                     item.revealed = True
                     j=1
                     while j < side1:
                         side_item = self.props[((y - j) * w) + (x - i)]
-                        if side_item.sight:
-                            side_item.revealed = True
-                            j+=1
-                        else:
-                            side_item.revealed = True
-                            side1 = j + 1
-                            break
+                        j+=1
+                        if not side_item.sight:
+                            side1 = j
+                        side_item.revealed = True
                     j=1
                     while j < side2:
                         side_item = self.props[((y + j) * w) + (x - i)]
-                        if side_item.sight:
-                            side_item.revealed = True
-                            j+=1
-                        else:
-                            side_item.revealed = True
-                            side2 = j + 1
-                            break
+                        j+=1
+                        if not side_item.sight:
+                            side2 = j
+                        side_item.revealed = True
+                    i+=1
+                # right
                 i = 1
-                side1 = side2 = lenght =  100
+                side1 = side2 = lenght =  max_sight
                 while i < lenght:
                     item = self.props[(y * w) + (x + i)]
-                    if item.sight:
-                        i+=1
-                    else:
+                    if not item.sight:
                         lenght = i
                     item.revealed = True
                     j=1
                     while j < side1:
                         side_item = self.props[((y - j) * w) + (x + i)]
-                        if side_item.sight:
-                            side_item.revealed = True
-                            j+=1
-                        else:
-                            side_item.revealed = True
-                            side1 = j + 1
-                            break
+                        j+=1
+                        if not side_item.sight:
+                            side1 = j
+                        side_item.revealed = True
                     j=1
                     while j < side2:
                         side_item = self.props[((y + j) * w) + (x + i)]
-                        if side_item.sight:
-                            side_item.revealed = True
-                            j+=1
-                        else:
-                            side_item.revealed = True
-                            side2 = j + 1
-                            break
+                        j+=1
+                        if not side_item.sight:
+                            side2 = j
+                        side_item.revealed = True
+                    i+=1
+                # up
                 i = 1
-                side1 = side2 = lenght =  100
+                side1 = side2 = lenght =  max_sight
                 while i < lenght:
                     item = self.props[((y - i)* w) + (x)]
-                    if item.sight:
-                        i+=1
-                    else:
+                    if not item.sight:
                         lenght = i
                     item.revealed = True
                     j=1
                     while j < side1:
                         side_item = self.props[((y - i)* w) + (x - j)]
-                        if side_item.sight:
-                            side_item.revealed = True
-                            j+=1
-                        else:
-                            side_item.revealed = True
-                            side1 = j + 1
-                            break
+                        j+=1
+                        if not side_item.sight:
+                            side1 = j
+                        side_item.revealed = True
                     j=1
                     while j < side2:
                         side_item = self.props[((y - i)* w) + (x + j)]
-                        if side_item.sight:
-                            side_item.revealed = True
-                            j+=1
-                        else:
-                            side_item.revealed = True
-                            side2 = j + 1
-                            break
+                        j+=1
+                        if not side_item.sight:
+                            side2 = j
+                        side_item.revealed = True
+                    i+=1
+                # down
                 i = 1
-                side1 = side2 = lenght =  100
+                side1 = side2 = lenght =  max_sight
                 while i < lenght:
                     item = self.props[((y + i)* w) + (x)]
-                    if item.sight:
-                        i+=1
-                    else:
+                    if not item.sight:
                         lenght = i
                     item.revealed = True
                     j=1
                     while j < side1:
                         side_item = self.props[((y + i)* w) + (x - j)]
-                        if side_item.sight:
-                            side_item.revealed = True
-                            j+=1
-                        else:
-                            side_item.revealed = True
-                            side1 = j + 1
-                            break
+                        j+=1
+                        if not side_item.sight:
+                            side1 = j
+                        side_item.revealed = True
                     j=1
                     while j < side2:
                         side_item = self.props[((y + i)* w) + (x + j)]
-                        if side_item.sight:
-                            side_item.revealed = True
-                            j+=1
-                        else:
-                            side_item.revealed = True
-                            side2 = j + 1
-                            break
+                        j+=1
+                        if not side_item.sight:
+                            side2 = j
+                        side_item.revealed = True
+                    i+=1
         for item in self.props:
             item.lit = False
             for player in self.players:

@@ -12,6 +12,7 @@ class Corridor:
         self.block = False
         self.visited = False
         self.has_key = has_key
+        self.sight = True
 
     def __str__(self):
         color = WHITE_TEXT
@@ -23,5 +24,4 @@ class Corridor:
             color = WHITE_TEXT
             symbol = SYMBOL_FOG
 
-        return ("{0}\033[{1};{2}H{3}".format\
-        (color,self.y+1,self.x+1,symbol))
+        return color+symbol

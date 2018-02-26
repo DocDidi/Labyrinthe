@@ -60,7 +60,7 @@ class StartMenu():
                 elif choice == ESCAPE_CHARACTER:
                     addendum = self.keyboard_input(2)
                     choice = choice + addendum
-                elif choice.lower()=='q':
+                elif ord(choice) == 127:
                     exit()
                 if choice==ARROW_DOWN:
                     if self.selected < (len(self.choice)-1):

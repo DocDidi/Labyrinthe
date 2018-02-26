@@ -13,6 +13,8 @@ class Wall:
         self.block = True
         self.neighbors = neighbors
         self.has_key = False
+        self.sight = False
+
         if self.neighbors == "N":
             self.symbol = SYMBOL_WALL_N
         elif self.neighbors == "S":
@@ -60,5 +62,4 @@ class Wall:
             color = WHITE_TEXT
             symbol = SYMBOL_FOG
 
-        return ("{0}\033[{1};{2}H{3}".format\
-        (color,self.y+1,self.x+1,symbol))
+        return color+symbol

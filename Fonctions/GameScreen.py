@@ -28,7 +28,7 @@ class GameScreen:
                     players.append(Player(i,j))
                     props.append(Corridor(i,j))
                     check_player = True
-                if letter is LETTER_PLAYER[1]:
+                elif letter is LETTER_PLAYER[1]:
                     players.append(Player(i,j,player_number = 2))
                     props.append(Corridor(i,j))
                 elif letter is LETTER_END:
@@ -105,10 +105,12 @@ class GameScreen:
                     item.lit = True
                 if player.x == item.x and player.y == item.y:
                     item.visited = True
-        maze_map = ""
+        maze_map = CLEAR_SCREEN + CURSOR_RESET
         for item in self.props:
-            maze_map = maze_map + str(item)
-        print(CLEAR_SCREEN + maze_map)
+            maze_map += str(item)
+            if item.x == self.width:
+                maze_map += "\n"
+        print(maze_map)
         for player in self.players:
             print(player)
         if self.player_have_key:
@@ -133,15 +135,19 @@ class GameScreen:
             choice = self.keyboard_input(1)
             if choice == CTRL_C:
                 exit()
-            elif choice.lower()=='q':
+            elif ord(choice) == 127:
                 no_input = False
                 self.maze_on = False
                 self.start_menu.chosen = False
-            elif choice.lower()=='d':
+            elif choice.lower()=='p':
                 cheatcode = 1
             elif choice.lower()=='o' and cheatcode == 1:
                 cheatcode = 2
-            elif choice.lower()=='c' and cheatcode == 2:
+            elif choice.lower()=='u' and cheatcode == 2:
+                cheatcode = 3
+            elif choice.lower()=='e' and cheatcode == 3:
+                cheatcode = 4
+            elif choice.lower()=='t' and cheatcode == 4:
                 for item in self.props:
                     item.revealed = True
                 no_input = False
@@ -152,19 +158,19 @@ class GameScreen:
                     except:
                         pass
                 no_input = False
-            elif choice.lower()=='i':
+            elif choice.lower()=='z':
                 player_to_move = 2
                 movement = "U"
                 no_input = False
-            elif choice.lower()=='k':
+            elif choice.lower()=='s':
                 player_to_move = 2
                 movement = "D"
                 no_input = False
-            elif choice.lower()=='l':
+            elif choice.lower()=='d':
                 player_to_move = 2
                 movement = "R"
                 no_input = False
-            elif choice.lower()=='j':
+            elif choice.lower()=='q':
                 player_to_move = 2
                 movement = "L"
                 no_input = False
@@ -270,7 +276,7 @@ class GameScreen:
                     exit()
                 if choice.lower() == ('o' or 'y'):
                     go_for_save = True
-                if choice.lower() == 'q':
+                if ord(choice) == 127:
                     break
             else:
                 go_for_save = True
@@ -315,15 +321,15 @@ class GameScreen:
         MESSAGE_WIN.format(self.height +1,self.time_spent, steps))
         no_input = True
         while no_input:
-            x = self.keyboard_input(1)
-            if x == CTRL_C:
+            choice = self.keyboard_input(1)
+            if choice == CTRL_C:
                 exit()
-            elif x.lower() == "q":
+            elif ord(choice) == 127:
                 no_input = False
                 self.start_menu.chosen = False
-            elif ord(x) == 13 and not map_already_saved:
+            elif ord(choice) == 13 and not map_already_saved:
                 no_input = False
-            elif x.lower() == "s":
+            elif choice.lower() == "s":
                 if map_already_saved:
                     print(MESSAGE_MAP_ALREADY_SAVED.format(self.height+1))
                 else:

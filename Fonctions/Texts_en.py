@@ -17,7 +17,7 @@ MESSAGE_MAP_CHOICE_RANDOM_SCREEN_MULTIPLAYER =\
 MESSAGE_MAP_CHOICE_QUIT = "Quit [Q]\n"
 MESSAGE_MOVES = "\033[{}HUse arrows to move, [Q] to quit"
 MESSAGE_MOVES_MULTI = "\033[{}H" + "{1}ARROWS \
-{2}[I][J][K][L]".format('', COLOR_PLAYER_1, COLOR_PLAYER_2) +\
+{2}[Z][Q][S][D]".format('', COLOR_PLAYER_1, COLOR_PLAYER_2) +\
 WHITE_TEXT + " [Q] to quit "
 MESSAGE_WIN = "\033[{0}H\033[KCongratulations ! You escaped in {1}. \
 You walked {2} steps.\n\

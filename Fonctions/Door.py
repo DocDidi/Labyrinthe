@@ -14,6 +14,7 @@ class Door:
         self.vertical = vertical
         self.visited = False
         self.has_key = False
+        self.sight = False
 
     def __str__(self):
         if self.end == True:
@@ -35,5 +36,4 @@ class Door:
             color = WHITE_TEXT
             symbol = SYMBOL_FOG
 
-        return ("{0}\033[{1};{2}H{3}".format\
-        (color,self.y+1,self.x+1,symbol))
+        return color+symbol

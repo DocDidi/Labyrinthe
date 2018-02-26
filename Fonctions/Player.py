@@ -42,3 +42,4 @@ class Player:
                 self.step += 1
                 self.x = test_player_position[1]
                 self.y = test_player_position[0]
+        

@@ -18,11 +18,10 @@ MESSAGE_MAP_CHOICE_RANDOM_BIG_MULTIPLAYER =\
 MESSAGE_MAP_CHOICE_RANDOM_SCREEN_MULTIPLAYER =\
 "Une carte aléatoire (de la taille de la console) 2 JOUEURS"
 MESSAGE_MAP_CHOICE_QUIT = "Quitter [Ret.Arr.]\n"
-MESSAGE_MOVES = "\033[{}HTouches flechées pour \
+MESSAGE_MOVES = "Touches flechées pour \
 vous déplacer. [Ret.Arr] pour quitter "
-MESSAGE_MOVES_MULTI = "\033[{}H" + "{1}Touches flechées \
-{2}[Z][Q][S][D]".format('', COLOR_PLAYER_1, COLOR_PLAYER_2) +\
-WHITE_TEXT + " [Ret.Arr] pour quitter "
+MESSAGE_MOVES_MULTI = "{0}Touches flechées {1}[Z][Q][S][D] \
+{2}[Ret.Arr] pour quitter ".format(COLOR_PLAYER_1, COLOR_PLAYER_2, WHITE_TEXT)
 MESSAGE_WIN = "\033[{0}H\033[KBravo ! \
 Vous avez fini en {1}. Vous avez fait {2} pas.\n\
 pressez [Ret.Arr] pour revenir au menu, [S] pour sauvegarder ce labyrinthe, \

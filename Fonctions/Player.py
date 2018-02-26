@@ -10,14 +10,13 @@ class Player:
         self.step = 0
         self.player_number = player_number
 
-    def __str__(self):
+    def display(self, margin):
         if self.player_number == 1:
             color = B_BLUE_TEXT
         else:
             color = B_RED_TEXT
-
-        return ("{0}\033[{1};{2}H{3}".format\
-        (color,self.y+1,self.x+1,SYMBOL_PLAYER))
+        print("{0}\033[{1};{2}H{3}".format\
+        (color,self.y+1,self.x+1+len(margin),SYMBOL_PLAYER))
 
     def move(self,player_to_move, movement, props):
         test_player_position = [self.y, self.x]

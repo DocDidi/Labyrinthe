@@ -4,7 +4,6 @@
 import os, time, pickle, termios, tty, sys
 from Fonctions.Variables import *
 from Fonctions.Variables_Map_Building import *
-# from Fonctions.Fonctions import *
 from Fonctions.Player import *
 from Fonctions.Wall import *
 from Fonctions.Door import *
@@ -70,13 +69,14 @@ class GameScreen:
             self.width = j
             self.maze = maze
         else:
-            self.__init__(DEFAULT_MAP)
+            self.__init__(DEFAULT_MAP, start_menu)
 
         self.start_menu = start_menu
         self.player_have_key = False
         self.maze_on = True
         self.time_start = 0
         self.time_spent = ""
+        self.margin = ""
 
     def start(self):
         self.maze_on = True
@@ -89,7 +89,13 @@ class GameScreen:
             save_file.write(pickle.dumps(self))
 
     def display(self):
-        self.check_screen_size()
+        offset = 3
+        if self.width < len(MESSAGE_MOVES):
+            offset = 4
+        rows, columns = os.popen('stty size', 'r').read().split()
+        if (int(rows) < self.height + offset) or (int(columns) < self.width):
+            print("\033[8;{0};{1}t".format(self.height + offset, self.width))
+        # self.check_screen_size()
         w = self.width + 1
         max_sight = 20
         matrice = (((0,0,-1,0),(0,-1,-1,0),(0,1,-1,0)),\
@@ -156,24 +162,31 @@ class GameScreen:
                         self.props[((item.y+i)*w)+(item.x)].revealed = True
                     else:
                         self.props[((item.y)*w)+(item.x+i)].revealed = True
-        maze_map = CLEAR_SCREEN + CURSOR_RESET
+        self.margin = " " * ((int(columns) - self.width)//2)
+        maze_map = CLEAR_SCREEN + CURSOR_RESET + self.margin
         for item in self.props:
             maze_map += str(item)
             if item.x == self.width:
-                maze_map += "\n"
+                maze_map += "\n" + self.margin
         print(maze_map)
         for player in self.players:
-            print(player)
+            player.display(self.margin)
         if self.player_have_key:
-            print(WHITE_TEXT + "\033[{0}H{1}\033[1B"\
-            .format(self.height + 1, SYMBOL_KEY))
+            margin = " " * ((int(columns) - len(SYMBOL_KEY))//2)
+            print(WHITE_TEXT + "\033[{0}H{1}{2}\033[1B"\
+            .format(self.height + 1, margin, SYMBOL_KEY))
         else:
-            print(WHITE_TEXT + "\033[{0}H{1}\033[1B"\
-            .format(self.height + 1, MESSAGE_KEY))
+            margin = " " * ((int(columns) - len(MESSAGE_KEY))//2)
+            print(WHITE_TEXT + "\033[{0}H{1}{2}\033[1B"\
+            .format(self.height + 1, margin, MESSAGE_KEY))
         if len(self.players)>1:
-            print(MESSAGE_MOVES_MULTI.format(self.height + 2))
+            margin = " " * ((int(columns) - len(MESSAGE_MOVES_MULTI))//2)
+            message_moves = MESSAGE_MOVES_MULTI
         else:
-            print(WHITE_TEXT + MESSAGE_MOVES.format(self.height + 2))
+            margin = " " * ((int(columns) - len(MESSAGE_MOVES))//2)
+            message_moves = MESSAGE_MOVES
+        print("\033[{0}H{1}{2}"\
+        .format(self.height+2,margin,message_moves))
         self.save_game()
 
     def player_move(self):
@@ -266,25 +279,14 @@ class GameScreen:
                         self.finished_menu()
 
 
-    def check_screen_size(self):
-        """Demande à l'utilisateur d'agrandir sa console si besoin."""
-        CORRECT_HEIGHT = True
-        CORRECT_WIDTH = True
-        rows, columns = os.popen('stty size', 'r').read().split()
-        while int(rows) < self.height + 3:
-            CORRECT_HEIGHT = False
-            rows, columns = os.popen('stty size', 'r').read().split()
-            print(CLEAR_SCREEN + MESSAGE_ERROR_SCREEN_HEIGHT)
-        if CORRECT_HEIGHT == False:
-            print(CLEAR_SCREEN + MESSAGE_SCREEN_CORRECT)
-            input()
-        while int(columns) < self.width:
-            CORRECT_WIDTH = False
-            rows, columns = os.popen('stty size', 'r').read().split()
-            print(CLEAR_SCREEN + MESSAGE_ERROR_SCREEN_WIDTH)
-        if CORRECT_WIDTH == False:
-            print(CLEAR_SCREEN + MESSAGE_SCREEN_CORRECT)
-            input()
+    # def check_screen_size(self):
+    #     """Demande à l'utilisateur d'agrandir sa console si besoin."""
+    #     offset = 3
+    #     if self.width < len(MESSAGE_MOVES):
+    #         offset = 4
+    #     rows, columns = os.popen('stty size', 'r').read().split()
+    #     if (int(rows) < self.height + offset) or (int(columns) < self.width):
+    #         print("\033[8;{0};{1}t".format(self.height + offset, self.width))
 
     def start_timer(self):
         """Démarre le chrono"""
@@ -340,10 +342,10 @@ class GameScreen:
         for item in self.props:
             if (type(item) == Corridor) and item.visited:
                 print("{0}\033[{1};{2}H{3}".format\
-                (B_BLUE_TEXT,item.y+1,item.x+1,\
+                (B_BLUE_TEXT,item.y+1,item.x+1+len(self.margin),\
                 SYMBOL_CORRIDOR_VISITED))
         for player in self.players:
-            print(player)
+            player.display(self.margin)
 
     def keyboard_input(self, nbl):
         """Renvoie la ou les touches de clavier pressées.

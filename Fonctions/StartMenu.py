@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # coding: utf-8
 
-import glob, termios, tty, sys
+import glob, termios, tty, sys, os
 from Fonctions.Variables import *
 from Fonctions.GenerateMaze import *
 from Fonctions.GameScreen import *
@@ -71,7 +71,7 @@ class StartMenu():
             while no_input:
                 choice = self.keyboard_input(1)
                 if choice == CTRL_C:
-                    print(CLEAR_SCREEN + CURSOR_RESET)
+                    os.system('clear')
                     exit()
                 elif ord(choice) == 13:
                     self.chosen = \
@@ -81,7 +81,7 @@ class StartMenu():
                     addendum = self.keyboard_input(2)
                     choice = choice + addendum
                 elif ord(choice) == 127:
-                    print(CLEAR_SCREEN + CURSOR_RESET)
+                    os.system('clear')
                     exit()
                 if choice==ARROW_DOWN:
                     if self.selected < (len(self.choice)-1):
@@ -127,7 +127,7 @@ class StartMenu():
             maze_map = make_maze(int(columns)-1,int(rows)-4,number_of_players=2)
             return maze_map
         elif self.chosen == MESSAGE_MAP_CHOICE_QUIT:
-            print(CLEAR_SCREEN + CURSOR_RESET)
+            os.system('clear')
             exit()
 
     def keyboard_input(self, nbl):

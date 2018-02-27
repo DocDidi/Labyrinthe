@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # coding: utf-8
 
-import os, pickle, sys, termios, tty
+import os, pickle, sys, termios, tty, os
 from Fonctions.Variables import *
 
 def load_file():
@@ -9,7 +9,8 @@ def load_file():
     if os.path.exists(SAVE_FILE):
         print(WHITE_TEXT + MESSAGE_LOAD_MAZE)
         choice = keyboard_input(1)
-        if choice == 'CTRL_C':
+        if choice == CTRL_C:
+            os.system('clear')
             exit()
         elif choice.lower() == ('o' or 'y'):
             with open(SAVE_FILE, "rb") as save_file:

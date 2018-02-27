@@ -150,13 +150,14 @@ class GameScreen:
                     item.lit = True
                 if player.x == item.x and player.y == item.y:
                     item.visited = True
-            if item.has_key and (time.time()-self.time_start > 30):
+            time_limit = ((self.height * self.width)//40) + 25
+            if item.has_key and (time.time()-self.time_start > time_limit):
                 item.revealed = True
                 for i in range(-1,2):
                     for j in range(-1,2):
                         self.props[((item.y + i) * w) + (item.x + j)]\
                         .revealed = True
-            if item.end and (time.time()-self.time_start > 60):
+            if item.end and (time.time()-self.time_start > (time_limit * 2)):
                 item.revealed = True
                 for i in range(-1,2):
                     if item.vertical:
@@ -176,18 +177,24 @@ class GameScreen:
             player.display(self.margin, self.margin_v)
         if self.player_have_key:
             margin = ((int(self.columns) - len(SYMBOL_KEY) + 4)//2)
+            if margin < 0:
+                margin = 0
             print(WHITE_TEXT + "\033[{0};{1}H{2}\033[1B"\
             .format(self.height + self.margin_v, margin, SYMBOL_KEY))
         else:
             margin = ((int(self.columns) - len(MESSAGE_KEY) + 4)//2)
+            if margin < 0:
+                margin = 0
             print(WHITE_TEXT + "\033[{0};{1}H{2}\033[1B"\
             .format(self.height + self.margin_v, margin, MESSAGE_KEY))
         if len(self.players)>1:
-            margin = ((int(self.columns) - (len(MESSAGE_MOVES_MULTI)-24))//2)
+            margin = ((int(self.columns) - (len(MESSAGE_MOVES_MULTI)-30))//2)
             message_moves = MESSAGE_MOVES_MULTI
         else:
             margin = ((int(self.columns) - len(MESSAGE_MOVES) + 4)//2)
             message_moves = MESSAGE_MOVES
+        if margin < 0:
+            margin = 0
         print("\033[{0};{1}H{2}"\
         .format(self.height + 1 + self.margin_v,margin,message_moves))
         self.save_game()
@@ -201,7 +208,7 @@ class GameScreen:
         while no_input:
             choice = self.keyboard_input(1)
             if choice == CTRL_C:
-                print(CLEAR_SCREEN + CURSOR_RESET)
+                os.system('clear')
                 exit()
             elif ord(choice) == 127:
                 no_input = False
@@ -226,19 +233,19 @@ class GameScreen:
                     except:
                         pass
                 no_input = False
-            elif choice.lower()=='z':
+            elif choice.lower() == KEY_UP_PLAYER_2:
                 player_to_move = 2
                 movement = "U"
                 no_input = False
-            elif choice.lower()=='s':
+            elif choice.lower() == KEY_DOWN_PLAYER_2:
                 player_to_move = 2
                 movement = "D"
                 no_input = False
-            elif choice.lower()=='d':
+            elif choice.lower() == KEY_RIGHT_PLAYER_2:
                 player_to_move = 2
                 movement = "R"
                 no_input = False
-            elif choice.lower()=='q':
+            elif choice.lower() == KEY_LEFT_PLAYER_2:
                 player_to_move = 2
                 movement = "L"
                 no_input = False
@@ -314,6 +321,8 @@ class GameScreen:
         go_for_save = False
         while not go_for_save:
             margin = ((int(self.columns) - len(MESSAGE_SAVE_MAZE))//2)
+            if margin < 0:
+                margin = 0
             maze_file = input(WHITE_TEXT + \
             "\033[{0};0H\033[K\033[{1}C{2}\n\033[K\033[{1}C"\
             .format(self.height + self.margin_v, margin, MESSAGE_SAVE_MAZE))
@@ -324,7 +333,7 @@ class GameScreen:
                 MESSAGE_SAVE_OVERWRITE_1, MESSAGE_SAVE_OVERWRITE_2))
                 choice = self.keyboard_input(1)
                 if choice == 'CTRL_C':
-                    print(CLEAR_SCREEN + CURSOR_RESET)
+                    os.system('clear')
                     exit()
                 if choice.lower() == ('o' or 'y'):
                     go_for_save = True
@@ -370,18 +379,21 @@ class GameScreen:
         if self.start_menu.selected == 0:
             map_already_saved = True
         margin = ((int(self.columns) - len(MESSAGE_WIN_1))//2)
+        if margin < 0:
+            margin = 0
         print(WHITE_TEXT + "\033[{0};{1}H{2}"\
         .format(self.height + self.margin_v, margin,\
         MESSAGE_WIN_1.format(self.time_spent, steps)))
-        margin = ((int(self.columns) - len(MESSAGE_WIN_2))//2)
+        margin = ((int(self.columns) - len(MESSAGE_WIN_2)+8)//2)
+        if margin < 0:
+            margin = 0
         print(WHITE_TEXT + "\033[{0};{1}H{2}"\
-        .format(self.height + 1 + self.margin_v, margin,\
-        MESSAGE_WIN_2.format(self.time_spent, steps)))
+        .format(self.height + 1 + self.margin_v, margin, MESSAGE_WIN_2))
         no_input = True
         while no_input:
             choice = self.keyboard_input(1)
             if choice == CTRL_C:
-                print(CLEAR_SCREEN + CURSOR_RESET)
+                os.system('clear')
                 exit()
             elif ord(choice) == 127:
                 no_input = False
@@ -392,6 +404,8 @@ class GameScreen:
                 if map_already_saved:
                     margin = ((int(self.columns)\
                     -len(MESSAGE_MAP_ALREADY_SAVED))//2)
+                    if margin < 0:
+                        margin = 0
                     print("\033[{0};0H\033[K\033[{1}C{2}"\
                     .format(self.height + self.margin_v, margin, \
                     MESSAGE_MAP_ALREADY_SAVED))

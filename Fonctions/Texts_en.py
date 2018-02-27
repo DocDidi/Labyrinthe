@@ -3,6 +3,11 @@
 
 from Fonctions.Variables import *
 
+KEY_UP_PLAYER_2 = 'w'
+KEY_DOWN_PLAYER_2 = 's'
+KEY_LEFT_PLAYER_2 = 'a'
+KEY_RIGHT_PLAYER_2 = 'd'
+
 
 MESSAGE_OS_INCOMPATIBILITY = "Sorry, \
 this program is not compatible with Windows."

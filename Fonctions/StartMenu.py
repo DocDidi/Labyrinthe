@@ -4,6 +4,8 @@
 import glob, termios, tty, sys
 from Fonctions.Variables import *
 from Fonctions.GenerateMaze import *
+from Fonctions.GameScreen import *
+from Fonctions.Title import *
 
 class StartMenu():
     def __init__(self):
@@ -45,13 +47,31 @@ class StartMenu():
     def maze_menu(self):
         """Menu de selection des cartes.
         Renvoie le nom du maze_file choisi ou la carte aléatoire."""
+        title_screen_map = GameScreen(make_maze(30,15), self)
         while not self.chosen:
-            print(CLEAR_SCREEN+CURSOR_RESET + B_BLUE_TEXT + MESSAGE_MAP_CHOICE)
+            title_screen_maze_map = ""
+            for item in title_screen_map.props:
+                item.revealed=True
+                title_screen_maze_map += str(item)
+                if item.x == title_screen_map.width:
+                    title_screen_maze_map += "\n"
+            print(CLEAR_SCREEN + CURSOR_RESET + title_screen_maze_map)
+            print("\033[5;6H "+ B_GREEN_TEXT + TITLE_1)
+            print("\033[6;6H "+ B_GREEN_TEXT + TITLE_2)
+            print("\033[7;6H "+ B_GREEN_TEXT + TITLE_3)
+            print("\033[8;6H "+ B_GREEN_TEXT + TITLE_4)
+            print("\033[9;6H "+ B_GREEN_TEXT + TITLE_5)
+            print("\033[10;6H "+ B_GREEN_TEXT + TITLE_6)
+            print("\033[11;17H "+ B_BLUE_TEXT + TITLE_7)
+            print("\033[12;17H "+ B_BLUE_TEXT + TITLE_8)
+            print("\033[13;17H "+ B_BLUE_TEXT + TITLE_9)
+            print("\033[17;0H" + B_BLUE_TEXT + MESSAGE_MAP_CHOICE)
             print(self)
             no_input = True
             while no_input:
                 choice = self.keyboard_input(1)
                 if choice == CTRL_C:
+                    print(CLEAR_SCREEN + CURSOR_RESET)
                     exit()
                 elif ord(choice) == 13:
                     self.chosen = \
@@ -61,6 +81,7 @@ class StartMenu():
                     addendum = self.keyboard_input(2)
                     choice = choice + addendum
                 elif ord(choice) == 127:
+                    print(CLEAR_SCREEN + CURSOR_RESET)
                     exit()
                 if choice==ARROW_DOWN:
                     if self.selected < (len(self.choice)-1):
@@ -106,6 +127,7 @@ class StartMenu():
             maze_map = make_maze(int(columns)-1,int(rows)-4,number_of_players=2)
             return maze_map
         elif self.chosen == MESSAGE_MAP_CHOICE_QUIT:
+            print(CLEAR_SCREEN + CURSOR_RESET)
             exit()
 
     def keyboard_input(self, nbl):

@@ -7,8 +7,7 @@ from Fonctions.Variables import *
 MESSAGE_OS_INCOMPATIBILITY = "Désolé, \
 ce programme n'est pas compatible avec Windows."
 MESSAGE_MAP_CHOICE = "Quelle carte voulez-vous jouer ?"
-MESSAGE_MAP_LOAD = "Une carte prédéfinie \
-(gauche et droite pour choisir) : "
+MESSAGE_MAP_LOAD = "Une carte prédéfinie (gauche et droite pour choisir) : "
 MESSAGE_MAP_CHOICE_RANDOM_SMALL = "Une carte aléatoire (petite)"
 MESSAGE_MAP_CHOICE_RANDOM_BIG = "Une carte aléatoire (grande)"
 MESSAGE_MAP_CHOICE_RANDOM_SCREEN = "Une carte aléatoire \
@@ -22,14 +21,14 @@ MESSAGE_MOVES = "Touches flechées pour \
 vous déplacer. [Ret.Arr] pour quitter "
 MESSAGE_MOVES_MULTI = "{0}Touches flechées {1}[Z][Q][S][D] \
 {2}[Ret.Arr] pour quitter ".format(COLOR_PLAYER_1, COLOR_PLAYER_2, WHITE_TEXT)
-MESSAGE_WIN = "\033[{0}H\033[KBravo ! \
-Vous avez fini en {1}. Vous avez fait {2} pas.\n\
-pressez [Ret.Arr] pour revenir au menu, [S] pour sauvegarder ce labyrinthe, \
-[ENTREE] pour rejouer."
-MESSAGE_MAP_ALREADY_SAVED = "\033[{0}H\033[KCette carte est déjà sauvegardée."
+MESSAGE_WIN_1 = "Bravo ! Vous avez fini en {0}. Vous avez fait {1} pas."
+MESSAGE_WIN_2 = "pressez [Ret.Arr] pour revenir au menu, \
+[S] pour sauvegarder ce labyrinthe, [ENTREE] pour rejouer."
+MESSAGE_MAP_ALREADY_SAVED = "Cette carte est déjà sauvegardée."
 MESSAGE_SAVE_MAZE = "Quel nom voulez vous donner à ce labyrinthe ? "
-MESSAGE_SAVE_OVERWRITE = "Ce fichier existe. L'écraser ?\n\
-[O] Oui, [Ret.Arr] Quitter, Une autre touche pour renommer."
+MESSAGE_SAVE_OVERWRITE_1 = "Ce fichier existe. L'écraser ?"
+MESSAGE_SAVE_OVERWRITE_2 = "[O] Oui, [Ret.Arr] Quitter, \
+Une autre touche pour renommer."
 MESSAGE_LOAD_MAZE = "Il y a une partie sauvegardée,\
  pressez [O] pour la continuer."
 MESSAGE_ERROR_DIRECTORY = "Le répertoire {0} est vide ou n'existe pas."

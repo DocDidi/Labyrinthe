@@ -76,7 +76,8 @@ class GameScreen:
         self.maze_on = True
         self.time_start = 0
         self.time_spent = ""
-        self.margin = ""
+        self.margin = 0
+        self.margin_v = 0
 
     def start(self):
         self.maze_on = True
@@ -92,10 +93,10 @@ class GameScreen:
         offset = 3
         if self.width < len(MESSAGE_MOVES):
             offset = 4
-        rows, columns = os.popen('stty size', 'r').read().split()
-        if (int(rows) < self.height + offset) or (int(columns) < self.width):
-            print("\033[8;{0};{1}t".format(self.height + offset, self.width))
-        # self.check_screen_size()
+        self.rows, self.columns = os.popen('stty size', 'r').read().split()
+        if (int(self.rows) < self.height + offset) \
+        or (int(self.columns) < self.width + 1):
+            print("\033[8;{0};{1}t".format(self.height + offset, self.width+1))
         w = self.width + 1
         max_sight = 20
         matrice = (((0,0,-1,0),(0,-1,-1,0),(0,1,-1,0)),\
@@ -162,31 +163,33 @@ class GameScreen:
                         self.props[((item.y+i)*w)+(item.x)].revealed = True
                     else:
                         self.props[((item.y)*w)+(item.x+i)].revealed = True
-        self.margin = " " * ((int(columns) - self.width)//2)
-        maze_map = CLEAR_SCREEN + CURSOR_RESET + self.margin
+        self.margin = ((int(self.columns) - self.width)//2)
+        self.margin_v = ((int(self.rows) - self.height)//2)
+        maze_map = CLEAR_SCREEN+"\033[{};0H".format(self.margin_v) \
+        + " " * self.margin
         for item in self.props:
             maze_map += str(item)
             if item.x == self.width:
-                maze_map += "\n" + self.margin
+                maze_map += "\n" + " " * self.margin
         print(maze_map)
         for player in self.players:
-            player.display(self.margin)
+            player.display(self.margin, self.margin_v)
         if self.player_have_key:
-            margin = " " * ((int(columns) - len(SYMBOL_KEY))//2)
-            print(WHITE_TEXT + "\033[{0}H{1}{2}\033[1B"\
-            .format(self.height + 1, margin, SYMBOL_KEY))
+            margin = ((int(self.columns) - len(SYMBOL_KEY) + 4)//2)
+            print(WHITE_TEXT + "\033[{0};{1}H{2}\033[1B"\
+            .format(self.height + self.margin_v, margin, SYMBOL_KEY))
         else:
-            margin = " " * ((int(columns) - len(MESSAGE_KEY))//2)
-            print(WHITE_TEXT + "\033[{0}H{1}{2}\033[1B"\
-            .format(self.height + 1, margin, MESSAGE_KEY))
+            margin = ((int(self.columns) - len(MESSAGE_KEY) + 4)//2)
+            print(WHITE_TEXT + "\033[{0};{1}H{2}\033[1B"\
+            .format(self.height + self.margin_v, margin, MESSAGE_KEY))
         if len(self.players)>1:
-            margin = " " * ((int(columns) - len(MESSAGE_MOVES_MULTI))//2)
+            margin = ((int(self.columns) - (len(MESSAGE_MOVES_MULTI)-24))//2)
             message_moves = MESSAGE_MOVES_MULTI
         else:
-            margin = " " * ((int(columns) - len(MESSAGE_MOVES))//2)
+            margin = ((int(self.columns) - len(MESSAGE_MOVES) + 4)//2)
             message_moves = MESSAGE_MOVES
-        print("\033[{0}H{1}{2}"\
-        .format(self.height+2,margin,message_moves))
+        print("\033[{0};{1}H{2}"\
+        .format(self.height + 1 + self.margin_v,margin,message_moves))
         self.save_game()
 
     def player_move(self):
@@ -198,6 +201,7 @@ class GameScreen:
         while no_input:
             choice = self.keyboard_input(1)
             if choice == CTRL_C:
+                print(CLEAR_SCREEN + CURSOR_RESET)
                 exit()
             elif ord(choice) == 127:
                 no_input = False
@@ -278,16 +282,6 @@ class GameScreen:
                         self.maze_on = False
                         self.finished_menu()
 
-
-    # def check_screen_size(self):
-    #     """Demande à l'utilisateur d'agrandir sa console si besoin."""
-    #     offset = 3
-    #     if self.width < len(MESSAGE_MOVES):
-    #         offset = 4
-    #     rows, columns = os.popen('stty size', 'r').read().split()
-    #     if (int(rows) < self.height + offset) or (int(columns) < self.width):
-    #         print("\033[8;{0};{1}t".format(self.height + offset, self.width))
-
     def start_timer(self):
         """Démarre le chrono"""
         self.time_start = time.time()
@@ -319,13 +313,18 @@ class GameScreen:
         """Sauvegarde le labyrinthe"""
         go_for_save = False
         while not go_for_save:
-            print(CLEAR_SCREEN + CURSOR_RESET)
-            maze_file = input(self.maze+MESSAGE_SAVE_MAZE)
+            margin = ((int(self.columns) - len(MESSAGE_SAVE_MAZE))//2)
+            maze_file = input(WHITE_TEXT + \
+            "\033[{0};0H\033[K\033[{1}C{2}\n\033[K\033[{1}C"\
+            .format(self.height + self.margin_v, margin, MESSAGE_SAVE_MAZE))
             maze_file = MAPS_DIRECTORY + maze_file + MAPS_FORMAT
             if os.path.exists(maze_file):
-                print(MESSAGE_SAVE_OVERWRITE)
+                print("\033[{0};0H\033[K\033[{1}C{2}\n\033[K\033[{1}C{3}"\
+                .format(self.height + self.margin_v, margin, \
+                MESSAGE_SAVE_OVERWRITE_1, MESSAGE_SAVE_OVERWRITE_2))
                 choice = self.keyboard_input(1)
                 if choice == 'CTRL_C':
+                    print(CLEAR_SCREEN + CURSOR_RESET)
                     exit()
                 if choice.lower() == ('o' or 'y'):
                     go_for_save = True
@@ -342,10 +341,10 @@ class GameScreen:
         for item in self.props:
             if (type(item) == Corridor) and item.visited:
                 print("{0}\033[{1};{2}H{3}".format\
-                (B_BLUE_TEXT,item.y+1,item.x+1+len(self.margin),\
+                (B_BLUE_TEXT,item.y+self.margin_v,item.x+1+self.margin,\
                 SYMBOL_CORRIDOR_VISITED))
         for player in self.players:
-            player.display(self.margin)
+            player.display(self.margin, self.margin_v)
 
     def keyboard_input(self, nbl):
         """Renvoie la ou les touches de clavier pressées.
@@ -370,12 +369,19 @@ class GameScreen:
         map_already_saved = False
         if self.start_menu.selected == 0:
             map_already_saved = True
-        print(WHITE_TEXT + \
-        MESSAGE_WIN.format(self.height +1,self.time_spent, steps))
+        margin = ((int(self.columns) - len(MESSAGE_WIN_1))//2)
+        print(WHITE_TEXT + "\033[{0};{1}H{2}"\
+        .format(self.height + self.margin_v, margin,\
+        MESSAGE_WIN_1.format(self.time_spent, steps)))
+        margin = ((int(self.columns) - len(MESSAGE_WIN_2))//2)
+        print(WHITE_TEXT + "\033[{0};{1}H{2}"\
+        .format(self.height + 1 + self.margin_v, margin,\
+        MESSAGE_WIN_2.format(self.time_spent, steps)))
         no_input = True
         while no_input:
             choice = self.keyboard_input(1)
             if choice == CTRL_C:
+                print(CLEAR_SCREEN + CURSOR_RESET)
                 exit()
             elif ord(choice) == 127:
                 no_input = False
@@ -384,7 +390,11 @@ class GameScreen:
                 no_input = False
             elif choice.lower() == "s":
                 if map_already_saved:
-                    print(MESSAGE_MAP_ALREADY_SAVED.format(self.height+1))
+                    margin = ((int(self.columns)\
+                    -len(MESSAGE_MAP_ALREADY_SAVED))//2)
+                    print("\033[{0};0H\033[K\033[{1}C{2}"\
+                    .format(self.height + self.margin_v, margin, \
+                    MESSAGE_MAP_ALREADY_SAVED))
                 else:
                     self.save_maze()
                     no_input = False

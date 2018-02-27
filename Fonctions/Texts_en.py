@@ -18,13 +18,15 @@ MESSAGE_MAP_CHOICE_QUIT = "Quit [Backspace]\n"
 MESSAGE_MOVES = "Use arrows to move, [Backspace] to quit"
 MESSAGE_MOVES_MULTI = "{0}Arrows {1}[Z][Q][S][D] \
 {2}[Backspace] to quit ".format(COLOR_PLAYER_1, COLOR_PLAYER_2, WHITE_TEXT)
-MESSAGE_WIN = "\033[{0}H\033[KCongratulations ! You escaped in {1}. \
-You walked {2} steps.\n\
-Press [Backspace] to quit, [S] to save this maze, [ENTER] to play again."
-MESSAGE_MAP_ALREADY_SAVED = "\033[{0}H\033[KThis map is already saved."
+MESSAGE_WIN_1 = "Congratulations ! You escaped in {0}. \
+You walked {1} steps."
+MESSAGE_WIN_2 = "Press [Backspace] to quit, [S] to save this maze, \
+[ENTER] to play again."
+MESSAGE_MAP_ALREADY_SAVED = "This map is already saved."
 MESSAGE_SAVE_MAZE = "Give a name to this maze : "
-MESSAGE_SAVE_OVERWRITE = "This file already exists. Overwrite ?\n\
-[Y] Yes, [Backspace] Quit, any other key to change the name."
+MESSAGE_SAVE_OVERWRITE_1 = "This file already exists. Overwrite ?"
+MESSAGE_SAVE_OVERWRITE_2 = "[Y] Yes, [Backspace] Quit, \
+any other key to change the name."
 MESSAGE_LOAD_MAZE = "There is a saved game, press [Y] to resume \
 or any other key to go to the menu."
 MESSAGE_ERROR_DIRECTORY = "{0} is empty or does not exists."

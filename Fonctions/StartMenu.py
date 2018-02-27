@@ -83,6 +83,9 @@ class StartMenu():
                 elif ord(choice) == 127:
                     os.system('clear')
                     exit()
+                elif ord(choice) == 32:
+                    title_screen_map = GameScreen(make_maze(30,15), self)
+                    no_input = False
                 if choice==ARROW_DOWN:
                     if self.selected < (len(self.choice)-1):
                         self.selected += 1
@@ -98,14 +101,8 @@ class StartMenu():
                 and self.file_index<len(self.directory_content)-1:
                     self.file_index += 1
                     no_input = False
-        return self.getmap()
-
-
-
-    def getmap(self):
         if self.chosen == self.saved_maps and self.directory_content:
-            self.chosen =\
-            self.directory_content[self.file_index]
+            self.chosen = self.directory_content[self.file_index]
             if os.path.exists(self.chosen):
                 with open(self.chosen, "r") as maze_map:
                     return maze_map.read()

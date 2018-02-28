@@ -15,10 +15,11 @@ class Player:
             color = B_BLUE_TEXT
         else:
             color = B_RED_TEXT
-        print("{0}\033[{1};{2}H{3}".format\
+        print("{0}\033[{1};{2}H{3}\033[0m".format\
         (color,self.y+margin_v,self.x+1+margin,SYMBOL_PLAYER))
 
     def move(self,player_to_move, movement, props):
+        """Move the player"""
         test_player_position = [self.y, self.x]
         if player_to_move == self.player_number:
             if movement == "U":

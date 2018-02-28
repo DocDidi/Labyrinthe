@@ -15,6 +15,7 @@ MESSAGE_MAP_CHOICE = "Choose your map :"
 MESSAGE_MAP_LOAD = "A saved map (left/right to choose) : "
 MESSAGE_MAP_CHOICE_RANDOM_SMALL = "A random map (small)"
 MESSAGE_MAP_CHOICE_RANDOM_BIG = "A random map (big)"
+MESSAGE_MAP_CHOICE_DEFINE_SIZE = "A random map (you choose the size)"
 MESSAGE_MAP_CHOICE_RANDOM_SCREEN = "A random map (console size)"
 MESSAGE_MAP_CHOICE_RANDOM_BIG_MULTIPLAYER = "A random map for 2 players (big)"
 MESSAGE_MAP_CHOICE_RANDOM_SCREEN_MULTIPLAYER =\
@@ -25,7 +26,7 @@ MESSAGE_MOVES_MULTI = "{0}Arrows {1}[Z][Q][S][D] \
 {2}[Backspace] to quit ".format(COLOR_PLAYER_1, COLOR_PLAYER_2, WHITE_TEXT)
 MESSAGE_WIN_1 = "Congratulations ! You escaped in {0}. \
 You walked {1} steps."
-MESSAGE_WIN_2 = "Press [Backspace] to quit, [S] to save this maze, \
+MESSAGE_WIN_2 = "Press [Backspace] to quit, [K] to save this maze, \
 [ENTER] to play again."
 MESSAGE_MAP_ALREADY_SAVED = "This map is already saved."
 MESSAGE_SAVE_MAZE = "Give a name to this maze : "
@@ -46,3 +47,5 @@ WORD_MINUTES = "minutes"
 WORD_MINUTE = "minute"
 MESSAGE_HOUR_LONG = "more than an hour !"
 MESSAGE_KEY = "You need to find the key."
+MESSAGE_WIDTH = "Width : "
+MESSAGE_HEIGHT = "Height : "

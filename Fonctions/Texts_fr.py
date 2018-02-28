@@ -15,6 +15,7 @@ MESSAGE_MAP_CHOICE = "Quelle carte voulez-vous jouer ?"
 MESSAGE_MAP_LOAD = "Une carte prédéfinie (gauche et droite pour choisir) : "
 MESSAGE_MAP_CHOICE_RANDOM_SMALL = "Une carte aléatoire (petite)"
 MESSAGE_MAP_CHOICE_RANDOM_BIG = "Une carte aléatoire (grande)"
+MESSAGE_MAP_CHOICE_DEFINE_SIZE = "Une carte aléatoire (choix de la taille)"
 MESSAGE_MAP_CHOICE_RANDOM_SCREEN = "Une carte aléatoire \
 (de la taille de la console)"
 MESSAGE_MAP_CHOICE_RANDOM_BIG_MULTIPLAYER =\
@@ -28,7 +29,7 @@ MESSAGE_MOVES_MULTI = "{0}Touches flechées {1}[Z][Q][S][D] \
 {2}[Ret.Arr] pour quitter ".format(COLOR_PLAYER_1, COLOR_PLAYER_2, WHITE_TEXT)
 MESSAGE_WIN_1 = "Bravo ! Vous avez fini en {0}. Vous avez fait {1} pas."
 MESSAGE_WIN_2 = "pressez [Ret.Arr] pour revenir au menu, \
-[S] pour sauvegarder ce labyrinthe, [ENTREE] pour rejouer."
+[K] pour sauvegarder ce labyrinthe, [ENTREE] pour rejouer."
 MESSAGE_MAP_ALREADY_SAVED = "Cette carte est déjà sauvegardée."
 MESSAGE_SAVE_MAZE = "Quel nom voulez vous donner à ce labyrinthe ? "
 MESSAGE_SAVE_OVERWRITE_1 = "Ce fichier existe. L'écraser ?"
@@ -48,3 +49,5 @@ WORD_MINUTES = "minutes"
 WORD_MINUTE = "minute"
 MESSAGE_HOUR_LONG = "plus d'une heure !"
 MESSAGE_KEY = "Vous devez trouver la clé."
+MESSAGE_WIDTH = "Largeur : "
+MESSAGE_HEIGHT = "Hauteur : "

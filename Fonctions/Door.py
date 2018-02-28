@@ -36,4 +36,4 @@ class Door:
             color = WHITE_TEXT
             symbol = SYMBOL_FOG
 
-        return color+symbol
+        return color+symbol+"\033[0m"

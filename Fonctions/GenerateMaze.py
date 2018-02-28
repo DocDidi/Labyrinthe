@@ -28,7 +28,7 @@ class Cell:
         return str_dir
 
     def wall_test(self, grid):
-        """Choisi une direction au hasard et casse le mur si c'est possible"""
+        """Pick a random direction and break the wall if possible"""
         x=random.randint(1,4)
         if x == 1: # Up
             if self.i-1 > 0:
@@ -60,21 +60,21 @@ class Cell:
                 pass
 
 def change_index(a, b, grid):
-    """Modifie les index après le cassage d'un mur"""
+    """Modify the indexes after a wall broke"""
     for i in grid:
         for j in i:
             if j.index_value == max(a, b):
                 j.index_value = min(a, b)
 
 def round_to_sup_odd(x):
-    """Arrondi au chiffre impair supérieur"""
+    """Round a number to its superior odd"""
     if x % 2 == 1:
         return x
     else:
         return x + 1
 
 def groundwork(w,h):
-    """Prépare un canevas de la bonne taille pour y graver la carte"""
+    """Prepare a canvas to carve the map"""
     w = round_to_sup_odd(w)
     h = round_to_sup_odd(h)
     groundwork = []
@@ -85,7 +85,7 @@ def groundwork(w,h):
     return groundwork
 
 def make_str_from_2d_array(maze_map):
-    """Converti la carte (liste) en chaine de caracteres"""
+    """Convert a list into a string"""
     groundwork_str=""
     for line in maze_map:
         for letter in line:
@@ -94,7 +94,7 @@ def make_str_from_2d_array(maze_map):
     return groundwork_str
 
 def make_grid(w, h):
-    """Défini la grid de cells"""
+    """Make a grid of cells"""
     index_value = 0
     w = w//2
     h = h//2
@@ -107,7 +107,7 @@ def make_grid(w, h):
     return new_grid
 
 def delete_isolated_wall(maze_map):
-    """Supprime les murs isolés"""
+    """Delete isolated walls"""
     for x in range(len(maze_map)-1):
         for y in range(len(maze_map[0])-1):
             if maze_map[x][y] == LETTER_WALL:
@@ -121,25 +121,26 @@ def delete_isolated_wall(maze_map):
                     pass
 
 def make_room(maze_map):
-    """Ajoute une ou plusieurs salles dans le labyrinthe."""
+    """Add rooms in the maze"""
     total_cells = len(maze_map)*len(maze_map[1])
     key_placed = False
-    for i in range (total_cells//40):
-        a = random.randint(1, ((len(maze_map)//2))-1)*2
-        b = random.randint(1, ((len(maze_map[0])//2))-1)*2
-        maze_map[a-1][b] = LETTER_CORRIDOR
-        maze_map[a+1][b] = LETTER_CORRIDOR
-        if i%3 == 0:
-            maze_map[a][b-1] = LETTER_CORRIDOR
-            maze_map[a][b+1] = LETTER_CORRIDOR
-            if not key_placed:
-                maze_map[a][b]=LETTER_KEY
-                key_placed = True
+    if len(maze_map) > 3 and len(maze_map[0]) > 3:
+        for i in range (total_cells//40):
+            a = random.randint(1, ((len(maze_map)//2))-1)*2
+            b = random.randint(1, ((len(maze_map[0])//2))-1)*2
+            maze_map[a-1][b] = LETTER_CORRIDOR
+            maze_map[a+1][b] = LETTER_CORRIDOR
+            if i%3 == 0:
+                maze_map[a][b-1] = LETTER_CORRIDOR
+                maze_map[a][b+1] = LETTER_CORRIDOR
+                if not key_placed:
+                    maze_map[a][b]=LETTER_KEY
+                    key_placed = True
 
     delete_isolated_wall(maze_map)
 
 def find_eligible_exit(maze_map,corner):
-    """Retourne une liste d'emplacement pour la sortie"""
+    """Find locations for the exit"""
     eligible_exits = []
     map_width = len(maze_map[0]) - 1
     map_height = len(maze_map) - 1
@@ -178,7 +179,7 @@ def find_eligible_exit(maze_map,corner):
 
 
 def make_entrance_and_exit(maze_map, number_of_players):
-    """Place l'entrée et la sortie sur la carte"""
+    """Place enter and exit on the map"""
     locations = [ "NW", "NE", "SW", "SE"]
     for i in range(number_of_players):
         position_start = locations.pop(random.randint(0, len(locations)-1))
@@ -196,7 +197,7 @@ def make_entrance_and_exit(maze_map, number_of_players):
     maze_map[exit_location[0]][exit_location[1]] = LETTER_END
 
 def add_doors(maze_map):
-    """Ajoute des portes sur la carte"""
+    """Add doors on the map"""
     maze_map_old = []
     while maze_map != maze_map_old:
         maze_map_old = list(maze_map)
@@ -243,8 +244,7 @@ def add_doors(maze_map):
                                 door_added = True
 
 def make_maze(w,h, number_of_players = 1):
-    """Fonction principale.
-    Construit un labyrinthe à la taille demandée."""
+    """Build a maze of the requested size"""
     grid = make_grid(w,h)
     maze_map = groundwork(w,h)
     while True:

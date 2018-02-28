@@ -19,7 +19,8 @@ class StartMenu():
         self.directory_content = glob.glob(MAPS_LOAD)
         self.min_choice = 0
         if not self.directory_content:
-            self.saved_maps = (MESSAGE_ERROR_DIRECTORY.format(MAPS_DIRECTORY))
+            self.saved_maps = (MESSAGE_ERROR_DIRECTORY.format(MAPS_DIRECTORY)\
+            + CLR_ATTR)
             self.selected = 1
             self.min_choice = 1
         else:
@@ -35,18 +36,17 @@ class StartMenu():
         for i, maze_map in enumerate(self.choice):
             if i == self.selected:
                 result_str += \
-                BLACK_ON_WHITE + maze_map + WHITE_TEXT
+                BLACK_ON_WHITE + maze_map + WHITE_TEXT + CLR_ATTR
             else:
                 if maze_map == MESSAGE_MAP_CHOICE_QUIT:
-                    result_str += B_RED_TEXT + maze_map
+                    result_str += B_RED_TEXT + maze_map + CLR_ATTR
                 else:
-                    result_str += WHITE_TEXT + maze_map
+                    result_str += WHITE_TEXT + maze_map + CLR_ATTR
             result_str += "\n"
         return result_str
 
     def maze_menu(self):
-        """Menu de selection des cartes.
-        Renvoie le nom du maze_file choisi ou la carte aléatoire."""
+        """Maze selection menu"""
         title_screen_map = GameScreen(make_maze(30,15), self)
         while not self.chosen:
             title_screen_maze_map = ""
@@ -65,7 +65,7 @@ class StartMenu():
             print("\033[11;17H "+ B_BLUE_TEXT + TITLE_7)
             print("\033[12;17H "+ B_BLUE_TEXT + TITLE_8)
             print("\033[13;17H "+ B_BLUE_TEXT + TITLE_9)
-            print("\033[17;0H" + B_BLUE_TEXT + MESSAGE_MAP_CHOICE)
+            print("\033[17;0H" + B_BLUE_TEXT + MESSAGE_MAP_CHOICE + CLR_ATTR)
             print(self)
             no_input = True
             while no_input:
@@ -94,10 +94,11 @@ class StartMenu():
                     if self.selected > self.min_choice:
                         self.selected -= 1
                     no_input = False
-                elif choice==ARROW_LEFT and self.file_index > 0:
+                elif choice==ARROW_LEFT and self.file_index > 0 \
+                and self.selected == 0:
                     self.file_index -= 1
                     no_input = False
-                elif choice==ARROW_RIGHT \
+                elif choice==ARROW_RIGHT and self.selected == 0 \
                 and self.file_index<len(self.directory_content)-1:
                     self.file_index += 1
                     no_input = False
@@ -128,8 +129,7 @@ class StartMenu():
             exit()
 
     def keyboard_input(self, nbl):
-        """Renvoie la ou les touches de clavier pressées.
-        Prend le nombre de touches à renvoyer"""
+        """Capture keystrokes"""
         orig_settings = termios.tcgetattr(sys.stdin)
         tty.setraw(sys.stdin)
         text_grab=sys.stdin.read(nbl)

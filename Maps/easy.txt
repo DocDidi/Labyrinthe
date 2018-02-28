@@ -1,11 +1,11 @@
 X_XXXXXXXXXXXXXXXXXXX
 X   X X X     X X   X
-XXX#X#X XXXXX X XXX#X
-X   # #     # X     X
+XXXDXDX XXXXX X XXXDX
+X   D D     D X     X
 X   XXX XXX X XXXXX X
-X       # X X X   # X
-X @   X#X XXX X#XXX X
+X       D X X X   D X
+X @   XDX XXX XDXXX X
 X     X X   X   X   X
-X X#X XXXXX XXXXX X#X
+X XDX XXXXX XXXXX XDX
 XOX X     X     X X X
 XXXXXXXXXXXXXXXXXXXXX

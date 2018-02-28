@@ -5,7 +5,7 @@ import os, pickle, sys, termios, tty, os
 from Fonctions.Variables import *
 
 def load_file():
-    """Propose de reprendre la partie précedente"""
+    """Ask the player if he wants to resume previous game"""
     if os.path.exists(SAVE_FILE):
         print(WHITE_TEXT + MESSAGE_LOAD_MAZE)
         choice = keyboard_input(1)
@@ -23,8 +23,7 @@ def load_file():
     return (ongoing_game)
 
 def keyboard_input(nbl):
-    """Renvoie la ou les touches de clavier pressées.
-    Prend le nombre de touches à renvoyer"""
+    """Capture keystrokes"""
     orig_settings = termios.tcgetattr(sys.stdin)
     tty.setraw(sys.stdin)
     text_grab=sys.stdin.read(nbl)

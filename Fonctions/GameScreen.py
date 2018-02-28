@@ -13,7 +13,7 @@ from Fonctions.Corridor import *
 class GameScreen:
 
     def __init__(self, maze, start_menu):
-        """Extrait les données du jeu de la carte (str)"""
+        """Extract game data from the map"""
         lines = maze.split("\n")
         join_with = (LETTER_WALL, LETTER_DOOR, LETTER_END)
         props = []
@@ -32,15 +32,22 @@ class GameScreen:
                     props.append(Corridor(i,j))
                 elif letter is LETTER_END:
                     vertical = False
-                    if j == 0 or j == len(line)-1:
-                        vertical = True
+                    if j < len(line)-1:
+                        if lines[i][j+1] not in join_with:
+                            vertical = True
+                    if j > 0:
+                        if lines[i][j-1] not in join_with:
+                            vertical = True
                     props.append(Door(i,j,vertical,end = True))
                     check_end = True
                 elif letter is LETTER_DOOR:
                     vertical = False
-                    if lines[i][j+1] == LETTER_CORRIDOR\
-                    or lines[i][j-1] == LETTER_CORRIDOR:
-                        vertical = True
+                    if j < len(line)-1:
+                        if lines[i][j+1] not in join_with:
+                            vertical = True
+                    if j > 0:
+                        if lines[i][j-1] not in join_with:
+                            vertical = True
                     props.append(Door(i,j,vertical))
                 elif letter is LETTER_WALL:
                     neighbors = ""
@@ -80,23 +87,26 @@ class GameScreen:
         self.margin_v = 0
 
     def start(self):
+        """Initiate the variables at the start of the maze"""
         self.maze_on = True
         self.player_have_key = False
         self.start_timer()
 
     def save_game(self):
-        """Sauvegarde la partie"""
+        """Save the game"""
         with open(SAVE_FILE, "wb") as save_file:
             save_file.write(pickle.dumps(self))
 
     def display(self):
+        """Update and display the maze"""
         offset = 3
         if self.width < len(MESSAGE_MOVES):
             offset = 4
         self.rows, self.columns = os.popen('stty size', 'r').read().split()
         if (int(self.rows) < self.height + offset) \
         or (int(self.columns) < self.width + 1):
-            print("\033[8;{0};{1}t".format(self.height + offset, self.width+1))
+            print("\033[8;{0};{1}t"\
+            .format(self.height + offset, self.width+1)+CLR_ATTR)
         w = self.width + 1
         max_sight = 20
         matrice = (((0,0,-1,0),(0,-1,-1,0),(0,1,-1,0)),\
@@ -167,7 +177,7 @@ class GameScreen:
         self.margin = ((int(self.columns) - self.width)//2)
         self.margin_v = ((int(self.rows) - self.height)//2)
         maze_map = CLEAR_SCREEN+"\033[{};0H".format(self.margin_v) \
-        + " " * self.margin
+        + " " * self.margin + CLR_ATTR
         for item in self.props:
             maze_map += str(item)
             if item.x == self.width:
@@ -179,13 +189,13 @@ class GameScreen:
             margin = ((int(self.columns) - len(SYMBOL_KEY) + 4)//2)
             if margin < 0:
                 margin = 0
-            print(WHITE_TEXT + "\033[{0};{1}H{2}\033[1B"\
+            print(WHITE_TEXT + "\033[{0};{1}H{2}\033[1B\033[0m"\
             .format(self.height + self.margin_v, margin, SYMBOL_KEY))
         else:
             margin = ((int(self.columns) - len(MESSAGE_KEY) + 4)//2)
             if margin < 0:
                 margin = 0
-            print(WHITE_TEXT + "\033[{0};{1}H{2}\033[1B"\
+            print(WHITE_TEXT + "\033[{0};{1}H{2}\033[1B\033[0m"\
             .format(self.height + self.margin_v, margin, MESSAGE_KEY))
         if len(self.players)>1:
             margin = ((int(self.columns) - (len(MESSAGE_MOVES_MULTI)-30))//2)
@@ -196,11 +206,11 @@ class GameScreen:
         if margin < 0:
             margin = 0
         print("\033[{0};{1}H{2}"\
-        .format(self.height + 1 + self.margin_v,margin,message_moves))
+        .format(self.height + 1 + self.margin_v,margin,message_moves)+CLR_ATTR)
         self.save_game()
 
     def player_move(self):
-        """Capture les touches pour faire bouger le joueur"""
+        """Detect keystrokes and move the player accordingly"""
         no_input = True
         player_to_move = 0
         movement = ""
@@ -273,8 +283,7 @@ class GameScreen:
             player.move(player_to_move, movement,self.props)
 
     def tests(self):
-        """Déverouille la porte si la clé a été ramassée
-        et vérifie que le jeu n'est pas encore fini."""
+        """Unlock end door if the key was picked"""
         for item in self.props:
             if self.player_have_key and item.end:
                 item.block = False
@@ -290,11 +299,11 @@ class GameScreen:
                         self.finished_menu()
 
     def start_timer(self):
-        """Démarre le chrono"""
+        """Start the timer"""
         self.time_start = time.time()
 
     def stop_timer(self):
-        """Arrete le chrono"""
+        """Stop the timer"""
         total_time = time.time() - self.time_start
         minutes = int(total_time // 60)
         seconds = int(total_time % 60)
@@ -317,7 +326,7 @@ class GameScreen:
             self.time_spent =  MESSAGE_HOUR_LONG
 
     def save_maze(self):
-        """Sauvegarde le labyrinthe"""
+        """Save the maze (map)"""
         go_for_save = False
         while not go_for_save:
             margin = ((int(self.columns) - len(MESSAGE_SAVE_MAZE))//2)
@@ -346,7 +355,7 @@ class GameScreen:
                 save_file.write(self.maze)
 
     def print_path_taken(self):
-        """Affiche le chemin parcouru par les joueurs"""
+        """Print the path players had taken"""
         for item in self.props:
             if (type(item) == Corridor) and item.visited:
                 print("{0}\033[{1};{2}H{3}".format\
@@ -356,8 +365,7 @@ class GameScreen:
             player.display(self.margin, self.margin_v)
 
     def keyboard_input(self, nbl):
-        """Renvoie la ou les touches de clavier pressées.
-        Prend le nombre de touches à renvoyer"""
+        """Capture keystrokes"""
         orig_settings = termios.tcgetattr(sys.stdin)
         tty.setraw(sys.stdin)
         text_grab=sys.stdin.read(nbl)
@@ -365,7 +373,7 @@ class GameScreen:
         return text_grab
 
     def finished_menu(self):
-        """Messages et menu de choix quand le labyrinthe est fini."""
+        """Display the finish menu"""
         for item in self.props:
             item.revealed = True
         self.display()
@@ -400,7 +408,7 @@ class GameScreen:
                 self.start_menu.chosen = False
             elif ord(choice) == 13 and not map_already_saved:
                 no_input = False
-            elif choice.lower() == "s":
+            elif choice.lower() == "k":
                 if map_already_saved:
                     margin = ((int(self.columns)\
                     -len(MESSAGE_MAP_ALREADY_SAVED))//2)

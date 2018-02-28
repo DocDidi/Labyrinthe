@@ -392,11 +392,15 @@ class GameScreen:
         print(WHITE_TEXT + "\033[{0};{1}H{2}"\
         .format(self.height + self.margin_v, margin,\
         MESSAGE_WIN_1.format(self.time_spent, steps)))
-        margin = ((int(self.columns) - len(MESSAGE_WIN_2)+8)//2)
+        if map_already_saved:
+            message = MESSAGE_WIN_2_SAVED
+        else:
+            message = MESSAGE_WIN_2
+        margin = ((int(self.columns) - len(message)+8)//2)
         if margin < 0:
             margin = 0
-        print(WHITE_TEXT + "\033[{0};{1}H{2}"\
-        .format(self.height + 1 + self.margin_v, margin, MESSAGE_WIN_2))
+        print(WHITE_TEXT + "\033[{0};0H\033[K\033[{1}C{2}"\
+        .format(self.height + 1 + self.margin_v, margin, message))
         no_input = True
         while no_input:
             choice = self.keyboard_input(1)

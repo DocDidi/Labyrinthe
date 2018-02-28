@@ -186,6 +186,7 @@ class Editor():
                 maze_map += "\n"
         print(CLEAR_SCREEN + CURSOR_RESET + maze_map)
         print("\033[{0};0H{1},{2}".format(self.height + 1,self.x,self.y))
+        print(MESSAGE_EDITOR_KEYS)
 
     def edit(self):
         maze_map=[]
@@ -211,6 +212,11 @@ class Editor():
             #     no_input = False
             #     self.edit_on = False
             #     self.chosen = False
+            elif ord(choice) == 127:
+                no_input = False
+                for i in range(1,self.width):
+                    for j in range(1,self.height-1):
+                        maze_map[j][i]= LETTER_CORRIDOR
             elif choice.lower()=="k":
                 no_input = False
                 if maze_map[self.y][self.x] != LETTER_KEY:

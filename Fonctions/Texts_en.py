@@ -28,6 +28,7 @@ MESSAGE_WIN_1 = "Congratulations ! You escaped in {0}. \
 You walked {1} steps."
 MESSAGE_WIN_2 = "Press [Backspace] to quit, [K] to save this maze, \
 [ENTER] to play again."
+MESSAGE_WIN_2_SAVED = "Press [Backspace] to quit."
 MESSAGE_MAP_ALREADY_SAVED = "This map is already saved."
 MESSAGE_SAVE_MAZE = "Give a name to this maze : "
 MESSAGE_SAVE_OVERWRITE_1 = "This file already exists. Overwrite ?"
@@ -49,3 +50,5 @@ MESSAGE_HOUR_LONG = "more than an hour !"
 MESSAGE_KEY = "You need to find the key."
 MESSAGE_WIDTH = "Width : "
 MESSAGE_HEIGHT = "Height : "
+MESSAGE_EDITOR_KEYS = "[Space]Walls [D]Doors/End [P]Player 1/2 [K]Key \
+[Backspace]Erase all [S]Save"

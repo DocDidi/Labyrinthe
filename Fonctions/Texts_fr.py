@@ -30,6 +30,7 @@ MESSAGE_MOVES_MULTI = "{0}Touches flechées {1}[Z][Q][S][D] \
 MESSAGE_WIN_1 = "Bravo ! Vous avez fini en {0}. Vous avez fait {1} pas."
 MESSAGE_WIN_2 = "pressez [Ret.Arr] pour revenir au menu, \
 [K] pour sauvegarder ce labyrinthe, [ENTREE] pour rejouer."
+MESSAGE_WIN_2_SAVED = "pressez [Ret.Arr] pour revenir au menu."
 MESSAGE_MAP_ALREADY_SAVED = "Cette carte est déjà sauvegardée."
 MESSAGE_SAVE_MAZE = "Quel nom voulez vous donner à ce labyrinthe ? "
 MESSAGE_SAVE_OVERWRITE_1 = "Ce fichier existe. L'écraser ?"
@@ -51,3 +52,5 @@ MESSAGE_HOUR_LONG = "plus d'une heure !"
 MESSAGE_KEY = "Vous devez trouver la clé."
 MESSAGE_WIDTH = "Largeur : "
 MESSAGE_HEIGHT = "Hauteur : "
+MESSAGE_EDITOR_KEYS = "[Espace]Murs [D]Portes/fin [P]Joueur 1/2 [K]Clé \
+[Ret.Arr]Effacer tout [S]Sauvegarde"

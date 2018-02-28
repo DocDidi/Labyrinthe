@@ -4,6 +4,6 @@
 LETTER_WALL = "X"
 LETTER_PLAYER = "OI" #Player1 = O, player2 = I
 LETTER_END = "_"
-LETTER_DOOR = "#"
+LETTER_DOOR = "D"
 LETTER_CORRIDOR = " "
 LETTER_KEY = "@"

@@ -61,14 +61,14 @@ class Editor():
                 if choice == CTRL_C:
                     os.system('clear')
                     exit()
-                elif ord(choice) == 13:
+                elif ord(choice) == ENTER:
                     self.chosen = \
                     self.choice[self.selected]
                     no_input = False
                 elif choice == ESCAPE_CHARACTER:
                     addendum = self.keyboard_input(2)
                     choice = choice + addendum
-                elif ord(choice) == 127:
+                elif ord(choice) == BACKSPACE:
                     os.system('clear')
                     exit()
                 if choice==ARROW_DOWN:
@@ -208,11 +208,11 @@ class Editor():
                 no_input = False
                 self.save()
             # bugged
-            # elif ord(choice) == 127:
+            # elif ord(choice) == BACKSPACE:
             #     no_input = False
             #     self.edit_on = False
             #     self.chosen = False
-            elif ord(choice) == 127:
+            elif ord(choice) == BACKSPACE:
                 no_input = False
                 for i in range(1,self.width):
                     for j in range(1,self.height-1):
@@ -282,7 +282,7 @@ class Editor():
                     exit()
                 if choice.lower() == ('o' or 'y'):
                     go_for_save = True
-                if ord(choice) == 127:
+                if ord(choice) == BACKSPACE:
                     break
             else:
                 go_for_save = True

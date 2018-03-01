@@ -8,11 +8,26 @@ from Fonctions.Player import *
 from Fonctions.Wall import *
 from Fonctions.Door import *
 from Fonctions.Corridor import *
+from Fonctions.GenerateMaze import *
 
 
 class GameScreen:
 
     def __init__(self, maze, start_menu):
+        self.maze = maze
+        self.start_menu = start_menu
+        self.player_have_key = False
+        self.maze_on = True
+        self.time_start = 0
+        self.time_spent = ""
+        self.margin = 0
+        self.margin_v = 0
+        self.extract(self.maze)
+        self.hardcore = False
+        self.txt_color = WHITE_TEXT
+
+
+    def extract(self, maze):
         """Extract game data from the map"""
         lines = maze.split("\n")
         join_with = (LETTER_WALL, LETTER_DOOR, LETTER_END)
@@ -74,17 +89,10 @@ class GameScreen:
             self.props = props
             self.height = i
             self.width = j
-            self.maze = maze
         else:
-            self.__init__(DEFAULT_MAP, start_menu)
+            self.extract(DEFAULT_MAP)
 
-        self.start_menu = start_menu
-        self.player_have_key = False
-        self.maze_on = True
-        self.time_start = 0
-        self.time_spent = ""
-        self.margin = 0
-        self.margin_v = 0
+
 
     def start(self):
         """Initiate the variables at the start of the maze"""
@@ -99,6 +107,9 @@ class GameScreen:
 
     def display(self):
         """Update and display the maze"""
+        if self.hardcore:
+            for item in self.props:
+                item.revealed = False
         offset = 3
         if self.width < len(MESSAGE_MOVES):
             offset = 4
@@ -148,11 +159,12 @@ class GameScreen:
         for item in self.props:
             item.lit = False
             for player in self.players:
-                if ((-2 <= player.x - item.x <= 2) \
-                and (-3 <= player.y - item.y <= 3))\
-                or ((-3 <= player.x - item.x <= 3) \
-                and (-2 <= player.y - item.y <= 2)):
-                    item.revealed = True
+                if not self.hardcore:
+                    if ((-2 <= player.x - item.x <= 2) \
+                    and (-3 <= player.y - item.y <= 3))\
+                    or ((-3 <= player.x - item.x <= 3) \
+                    and (-2 <= player.y - item.y <= 2)):
+                        item.revealed = True
                 if ((-1 <= player.x - item.x <= 1) \
                 and (-2 <= player.y - item.y <= 2))\
                 or ((-2 <= player.x - item.x <= 2) \
@@ -189,14 +201,14 @@ class GameScreen:
             margin = ((int(self.columns) - len(SYMBOL_KEY) + 4)//2)
             if margin < 0:
                 margin = 0
-            print(WHITE_TEXT + "\033[{0};{1}H{2}\033[1B\033[0m"\
-            .format(self.height + self.margin_v, margin, SYMBOL_KEY))
+            print(B_WHITE_TEXT + "\033[{0};{1}H{2}\033[1B"\
+            .format(self.height + self.margin_v, margin, SYMBOL_KEY)+CLR_ATTR)
         else:
             margin = ((int(self.columns) - len(MESSAGE_KEY) + 4)//2)
             if margin < 0:
                 margin = 0
-            print(WHITE_TEXT + "\033[{0};{1}H{2}\033[1B\033[0m"\
-            .format(self.height + self.margin_v, margin, MESSAGE_KEY))
+            print(self.txt_color + "\033[{0};{1}H{2}\033[1B"\
+            .format(self.height + self.margin_v, margin, MESSAGE_KEY)+CLR_ATTR)
         if len(self.players)>1:
             margin = ((int(self.columns) - (len(MESSAGE_MOVES_MULTI)-30))//2)
             message_moves = MESSAGE_MOVES_MULTI
@@ -205,7 +217,7 @@ class GameScreen:
             message_moves = MESSAGE_MOVES
         if margin < 0:
             margin = 0
-        print("\033[{0};{1}H{2}"\
+        print(self.txt_color + "\033[{0};{1}H{2}"\
         .format(self.height + 1 + self.margin_v,margin,message_moves)+CLR_ATTR)
         self.save_game()
 
@@ -220,7 +232,15 @@ class GameScreen:
             if choice == CTRL_C:
                 os.system('clear')
                 exit()
-            elif ord(choice) == 127:
+            elif choice.lower()=='h':
+                no_input = False
+                if self.hardcore:
+                    self.hardcore = False
+                    self.txt_color = WHITE_TEXT
+                else:
+                    self.hardcore = True
+                    self.txt_color = B_RED_TEXT
+            elif ord(choice) == BACKSPACE:
                 no_input = False
                 self.maze_on = False
                 self.start_menu.chosen = False
@@ -332,7 +352,7 @@ class GameScreen:
             margin = ((int(self.columns) - len(MESSAGE_SAVE_MAZE))//2)
             if margin < 0:
                 margin = 0
-            maze_file = input(WHITE_TEXT + \
+            maze_file = input(self.txt_color + \
             "\033[{0};0H\033[K\033[{1}C{2}\n\033[K\033[{1}C"\
             .format(self.height + self.margin_v, margin, MESSAGE_SAVE_MAZE))
             maze_file = MAPS_DIRECTORY + maze_file + MAPS_FORMAT
@@ -346,7 +366,7 @@ class GameScreen:
                     exit()
                 if choice.lower() == ('o' or 'y'):
                     go_for_save = True
-                if ord(choice) == 127:
+                if ord(choice) == BACKSPACE:
                     break
             else:
                 go_for_save = True
@@ -376,6 +396,7 @@ class GameScreen:
         """Display the finish menu"""
         for item in self.props:
             item.revealed = True
+            self.hardcore = False
         self.display()
         os.remove(SAVE_FILE)
         self.stop_timer()
@@ -389,7 +410,7 @@ class GameScreen:
         margin = ((int(self.columns) - len(MESSAGE_WIN_1))//2)
         if margin < 0:
             margin = 0
-        print(WHITE_TEXT + "\033[{0};{1}H{2}"\
+        print(self.txt_color + "\033[{0};{1}H{2}"\
         .format(self.height + self.margin_v, margin,\
         MESSAGE_WIN_1.format(self.time_spent, steps)))
         if map_already_saved:
@@ -399,7 +420,7 @@ class GameScreen:
         margin = ((int(self.columns) - len(message)+8)//2)
         if margin < 0:
             margin = 0
-        print(WHITE_TEXT + "\033[{0};0H\033[K\033[{1}C{2}"\
+        print(self.txt_color + "\033[{0};0H\033[K\033[{1}C{2}"\
         .format(self.height + 1 + self.margin_v, margin, message))
         no_input = True
         while no_input:
@@ -407,10 +428,10 @@ class GameScreen:
             if choice == CTRL_C:
                 os.system('clear')
                 exit()
-            elif ord(choice) == 127:
+            elif ord(choice) == BACKSPACE:
                 no_input = False
                 self.start_menu.chosen = False
-            elif ord(choice) == 13 and not map_already_saved:
+            elif ord(choice) == ENTER and not map_already_saved:
                 no_input = False
             elif choice.lower() == "k":
                 if map_already_saved:

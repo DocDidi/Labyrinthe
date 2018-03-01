@@ -17,6 +17,8 @@ SAVE_FILE = os.environ['HOME']+"/MazeStroller_current.save"
 
 CTRL_C = '\x03'
 ESCAPE_CHARACTER = '\x1b'
+BACKSPACE = 127
+ENTER = 13
 ARROW_UP = '\x1b[A'
 ARROW_DOWN = '\x1b[B'
 ARROW_RIGHT = '\x1b[C'

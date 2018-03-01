@@ -4,7 +4,9 @@
 import glob, termios, tty, sys, os
 from Fonctions.Variables import *
 from Fonctions.GenerateMaze import *
-from Fonctions.GameScreen import *
+from Fonctions.Wall import *
+from Fonctions.Door import *
+from Fonctions.Corridor import *
 from Fonctions.Title import *
 
 class StartMenu():
@@ -47,15 +49,15 @@ class StartMenu():
 
     def maze_menu(self):
         """Maze selection menu"""
-        title_screen_map = GameScreen(make_maze(30,15), self)
+        self.extract(make_maze(30,15))
         while not self.chosen:
-            title_screen_maze_map = ""
-            for item in title_screen_map.props:
+            title_screen_maze = ""
+            for item in self.props:
                 item.revealed=True
-                title_screen_maze_map += str(item)
-                if item.x == title_screen_map.width:
-                    title_screen_maze_map += "\n"
-            print(CLEAR_SCREEN + CURSOR_RESET + title_screen_maze_map)
+                title_screen_maze += str(item)
+                if item.x == self.width:
+                    title_screen_maze += "\n"
+            print(CLEAR_SCREEN + CURSOR_RESET + title_screen_maze)
             print("\033[5;6H "+ B_GREEN_TEXT + TITLE_1)
             print("\033[6;6H "+ B_GREEN_TEXT + TITLE_2)
             print("\033[7;6H "+ B_GREEN_TEXT + TITLE_3)
@@ -73,18 +75,18 @@ class StartMenu():
                 if choice == CTRL_C:
                     os.system('clear')
                     exit()
-                elif ord(choice) == 13:
+                elif ord(choice) == ENTER:
                     self.chosen = \
                     self.choice[self.selected]
                     no_input = False
                 elif choice == ESCAPE_CHARACTER:
                     addendum = self.keyboard_input(2)
                     choice = choice + addendum
-                elif ord(choice) == 127:
+                elif ord(choice) == BACKSPACE:
                     os.system('clear')
                     exit()
                 elif ord(choice) == 32:
-                    title_screen_map = GameScreen(make_maze(30,15), self)
+                    self.extract(make_maze(30,15))
                     no_input = False
                 if choice==ARROW_DOWN:
                     if self.selected < (len(self.choice)-1):
@@ -135,3 +137,54 @@ class StartMenu():
         text_grab=sys.stdin.read(nbl)
         termios.tcsetattr(sys.stdin, termios.TCSADRAIN, orig_settings)
         return text_grab
+
+    def extract(self, maze):
+        """Extract data from map"""
+        lines = maze.split("\n")
+        join_with = (LETTER_WALL, LETTER_DOOR, LETTER_END)
+        props = []
+        for i, line in enumerate(lines):
+            for j, letter in enumerate(line):
+                if letter is LETTER_PLAYER[0]:
+                    props.append(Corridor(i,j))
+                elif letter is LETTER_END:
+                    vertical = False
+                    if j < len(line)-1:
+                        if lines[i][j+1] not in join_with:
+                            vertical = True
+                    if j > 0:
+                        if lines[i][j-1] not in join_with:
+                            vertical = True
+                    props.append(Door(i,j,vertical,end = True))
+                elif letter is LETTER_DOOR:
+                    vertical = False
+                    if j < len(line)-1:
+                        if lines[i][j+1] not in join_with:
+                            vertical = True
+                    if j > 0:
+                        if lines[i][j-1] not in join_with:
+                            vertical = True
+                    props.append(Door(i,j,vertical))
+                elif letter is LETTER_WALL:
+                    neighbors = ""
+                    if i>0:
+                        if lines[i-1][j] in join_with:
+                            neighbors += "N"
+                    if i<(len(lines)-2):
+                        if lines[i+1][j] in join_with:
+                            neighbors += "S"
+                    if j<(len(lines[0])-1):
+                        if lines[i][j+1] in join_with:
+                            neighbors += "E"
+                    if j>0:
+                        if lines[i][j-1] in join_with:
+                            neighbors += "W"
+                    props.append(Wall(i,j,neighbors))
+                elif letter is LETTER_KEY:
+                    props.append(Corridor(i,j,has_key=True))
+                else:
+                    props.append(Corridor(i,j))
+        self.props = props
+        self.height = i
+        self.width = j
+        self.maze = maze

@@ -55,4 +55,5 @@ MESSAGE_HEIGHT = "Hauteur : "
 MESSAGE_EDITOR_KEYS = "[Espace]Murs [D]Portes/fin [P]Joueur 1/2 [K]Clé \
 [Ret.Arr]Effacer tout [S]Sauvegarde"
 MESSAGE_DIFFICULTY = ["< Facile >","< Normal >","< Difficile >"]
-MESSAGE_DIFFICULTY_COLORS = [B_GREEN_TEXT,B_WHITE_TEXT,B_RED_TEXT]
+MESSAGE_DIFFICULTY_COLORS = [B_GREEN_TEXT,B_YELLOW_TEXT,B_RED_TEXT]
+MESSAGE_NUMBER_PLAYERS = ["< Un joueur >", "< Deux joueurs >"]

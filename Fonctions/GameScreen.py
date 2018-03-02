@@ -133,7 +133,7 @@ class GameScreen:
                 if player.x == item.x and player.y == item.y:
                     item.visited = True
             if not self.start_menu.difficulty == 2:
-                time_limit = ((self.height * self.width)//40) + 25
+                time_limit = ((self.height * self.width)//30) + 25
                 if item.has_key and (time.time()-self.time_start > time_limit):
                     item.revealed = True
                     for i in range(-1,2):

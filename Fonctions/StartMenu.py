@@ -17,6 +17,7 @@ class StartMenu():
         self.choice = []
         self.file_path = MAPS_LOAD.find("*")
         self.difficulty = 1
+        self.number_of_players = 1
 
     def __str__(self):
         self.directory_content = glob.glob(MAPS_LOAD)
@@ -32,14 +33,13 @@ class StartMenu():
         self.choice = [self.saved_maps] + [MESSAGE_MAP_CHOICE_RANDOM_SMALL,\
         MESSAGE_MAP_CHOICE_RANDOM_BIG,\
         MESSAGE_MAP_CHOICE_RANDOM_SCREEN,\
-        MESSAGE_MAP_CHOICE_RANDOM_BIG_MULTIPLAYER,\
-        MESSAGE_MAP_CHOICE_RANDOM_SCREEN_MULTIPLAYER,\
         MESSAGE_DIFFICULTY_COLORS[self.difficulty] + \
         MESSAGE_DIFFICULTY[self.difficulty],\
+        B_WHITE_TEXT + MESSAGE_NUMBER_PLAYERS[self.number_of_players - 1],\
         MESSAGE_MAP_CHOICE_QUIT]
         result_str = ""
         for i, maze_map in enumerate(self.choice):
-            if i == self.selected and self.selected == 6:
+            if i == self.selected and 4 <= self.selected <= 5:
                 result_str += \
                 "\033[4m" + maze_map + CLR_ATTR
             elif i == self.selected:
@@ -81,7 +81,7 @@ class StartMenu():
                 if choice == CTRL_C:
                     os.system('clear')
                     exit()
-                elif ord(choice) == ENTER and self.selected != 6:
+                elif ord(choice) == ENTER and self.selected != 4:
                     self.chosen = \
                     self.choice[self.selected]
                     no_input = False
@@ -106,42 +106,56 @@ class StartMenu():
                     no_input = False
                     if self.selected == 0 and self.file_index > 0:
                         self.file_index -= 1
-                    if self.selected == 6 and self.difficulty > 0:
+                    elif self.selected == 4 and self.difficulty > 0:
                         self.difficulty -= 1
-                    else:
+                    elif self.selected == 4 and self.difficulty == 0:
                         self.difficulty = len(MESSAGE_DIFFICULTY)-1
+                    elif self.selected == 5 and self.number_of_players == 1:
+                        self.number_of_players = 2
+                    elif self.selected == 5 and self.number_of_players == 2:
+                        self.number_of_players = 1
                 elif choice==ARROW_RIGHT:
                     no_input = False
                     if self.selected == 0 \
                     and self.file_index<len(self.directory_content)-1:
                         self.file_index += 1
-                    if self.selected == 6 \
+                    elif self.selected == 4 \
                     and self.difficulty < len(MESSAGE_DIFFICULTY)-1:
                         self.difficulty += 1
-                    else:
+                    elif self.selected == 4 \
+                    and self.difficulty == len(MESSAGE_DIFFICULTY)-1:
                         self.difficulty = 0
+                    elif self.selected == 5 and self.number_of_players == 1:
+                        self.number_of_players = 2
+                    elif self.selected == 5 and self.number_of_players == 2:
+                        self.number_of_players = 1
         if self.chosen == self.saved_maps and self.directory_content:
             self.chosen = self.directory_content[self.file_index]
             if os.path.exists(self.chosen):
                 with open(self.chosen, "r") as maze_map:
                     return maze_map.read()
         elif self.chosen == MESSAGE_MAP_CHOICE_RANDOM_SMALL:
-            maze_map = make_maze(SMALL_WIDTH,SMALL_HEIGHT)
+            maze_map = make_maze(SMALL_WIDTH,SMALL_HEIGHT,\
+            number_of_players=self.number_of_players)
             return maze_map
         elif self.chosen == MESSAGE_MAP_CHOICE_RANDOM_BIG:
-            maze_map = make_maze(BIG_WIDTH,BIG_HEIGHT)
+            maze_map = make_maze(BIG_WIDTH,BIG_HEIGHT,\
+            number_of_players=self.number_of_players)
             return maze_map
         elif self.chosen == MESSAGE_MAP_CHOICE_RANDOM_SCREEN:
             rows, columns = os.popen('stty size', 'r').read().split()
-            maze_map = make_maze(int(columns)-1,int(rows)-4)
+            maze_map = make_maze(int(columns)-1,int(rows)-4,\
+            number_of_players=self.number_of_players)
             return maze_map
-        elif self.chosen == MESSAGE_MAP_CHOICE_RANDOM_BIG_MULTIPLAYER:
-            maze_map = make_maze(BIG_WIDTH,BIG_HEIGHT, number_of_players=2)
-            return maze_map
-        elif self.chosen == MESSAGE_MAP_CHOICE_RANDOM_SCREEN_MULTIPLAYER:
-            rows, columns = os.popen('stty size', 'r').read().split()
-            maze_map = make_maze(int(columns)-1,int(rows)-4,number_of_players=2)
-            return maze_map
+        # elif self.chosen == MESSAGE_MAP_CHOICE_RANDOM_BIG_MULTIPLAYER:
+        #     maze_map = make_maze(BIG_WIDTH,BIG_HEIGHT, \
+        #     number_of_players=self.number_of_players)
+        #     return maze_map
+        # elif self.chosen == MESSAGE_MAP_CHOICE_RANDOM_SCREEN_MULTIPLAYER:
+        #     rows, columns = os.popen('stty size', 'r').read().split()
+        #     maze_map = make_maze(int(columns)-1,int(rows)-4, \
+        #     number_of_players=self.number_of_players)
+        #     return maze_map
         elif self.chosen == MESSAGE_MAP_CHOICE_QUIT:
             os.system('clear')
             exit()

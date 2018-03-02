@@ -17,6 +17,7 @@ MESSAGE_MAP_CHOICE_RANDOM_SMALL = "A random map (small)"
 MESSAGE_MAP_CHOICE_RANDOM_BIG = "A random map (big)"
 MESSAGE_MAP_CHOICE_DEFINE_SIZE = "A random map (you choose the size)"
 MESSAGE_MAP_CHOICE_RANDOM_SCREEN = "A random map (console size)"
+MESSAGE_SET_SIZE = "A random map of size : {0} x {1} [Space] to change size."
 MESSAGE_MAP_CHOICE_RANDOM_BIG_MULTIPLAYER = "A random map for 2 players (big)"
 MESSAGE_MAP_CHOICE_RANDOM_SCREEN_MULTIPLAYER =\
 "A random map for 2 players (console size)"
@@ -55,3 +56,4 @@ MESSAGE_EDITOR_KEYS = "[Space]Walls [D]Doors/End [P]Player 1/2 [K]Key \
 MESSAGE_DIFFICULTY = ["< Easy >","< Normal >","< Hard >"]
 MESSAGE_DIFFICULTY_COLORS = [B_GREEN_TEXT,B_YELLOW_TEXT,B_RED_TEXT]
 MESSAGE_NUMBER_PLAYERS = ["< One player >", "< Two players >"]
+MESSAGE_CONTROLS_SIZE = "Arrows to resize"

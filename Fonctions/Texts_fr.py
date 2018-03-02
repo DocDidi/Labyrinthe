@@ -18,6 +18,8 @@ MESSAGE_MAP_CHOICE_RANDOM_BIG = "Une carte aléatoire (grande)"
 MESSAGE_MAP_CHOICE_DEFINE_SIZE = "Une carte aléatoire (choix de la taille)"
 MESSAGE_MAP_CHOICE_RANDOM_SCREEN = "Une carte aléatoire \
 (de la taille de la console)"
+MESSAGE_SET_SIZE = "Une carte de taille : {0} x {1} \
+[Espace] pour redimensionner."
 MESSAGE_MAP_CHOICE_RANDOM_BIG_MULTIPLAYER =\
 "Une carte aléatoire (grande) 2 JOUEURS"
 MESSAGE_MAP_CHOICE_RANDOM_SCREEN_MULTIPLAYER =\
@@ -57,3 +59,4 @@ MESSAGE_EDITOR_KEYS = "[Espace]Murs [D]Portes/fin [P]Joueur 1/2 [K]Clé \
 MESSAGE_DIFFICULTY = ["< Facile >","< Normal >","< Difficile >"]
 MESSAGE_DIFFICULTY_COLORS = [B_GREEN_TEXT,B_YELLOW_TEXT,B_RED_TEXT]
 MESSAGE_NUMBER_PLAYERS = ["< Un joueur >", "< Deux joueurs >"]
+MESSAGE_CONTROLS_SIZE = "Touches flechées pour redimensionner"

@@ -18,6 +18,8 @@ class StartMenu():
         self.file_path = MAPS_LOAD.find("*")
         self.difficulty = 1
         self.number_of_players = 1
+        self.x = 20
+        self.y = 10
 
     def __str__(self):
         self.directory_content = glob.glob(MAPS_LOAD)
@@ -33,13 +35,14 @@ class StartMenu():
         self.choice = [self.saved_maps] + [MESSAGE_MAP_CHOICE_RANDOM_SMALL,\
         MESSAGE_MAP_CHOICE_RANDOM_BIG,\
         MESSAGE_MAP_CHOICE_RANDOM_SCREEN,\
+        MESSAGE_SET_SIZE.format(self.x,self.y),\
         MESSAGE_DIFFICULTY_COLORS[self.difficulty] + \
         MESSAGE_DIFFICULTY[self.difficulty],\
         B_WHITE_TEXT + MESSAGE_NUMBER_PLAYERS[self.number_of_players - 1],\
         MESSAGE_MAP_CHOICE_QUIT]
         result_str = ""
         for i, maze_map in enumerate(self.choice):
-            if i == self.selected and 4 <= self.selected <= 5:
+            if i == self.selected and 5 <= self.selected <= 6:
                 result_str += \
                 "\033[4m" + maze_map + CLR_ATTR
             elif i == self.selected:
@@ -81,7 +84,7 @@ class StartMenu():
                 if choice == CTRL_C:
                     os.system('clear')
                     exit()
-                elif ord(choice) == ENTER and self.selected != 4:
+                elif ord(choice) == ENTER and self.selected < 5:
                     self.chosen = \
                     self.choice[self.selected]
                     no_input = False
@@ -91,6 +94,9 @@ class StartMenu():
                 elif ord(choice) == BACKSPACE:
                     os.system('clear')
                     exit()
+                elif ord(choice) == SPACE and self.selected == 4:
+                    self.set_size()
+                    no_input = False
                 elif ord(choice) == SPACE:
                     self.extract(make_maze(30,15))
                     no_input = False
@@ -106,28 +112,28 @@ class StartMenu():
                     no_input = False
                     if self.selected == 0 and self.file_index > 0:
                         self.file_index -= 1
-                    elif self.selected == 4 and self.difficulty > 0:
+                    elif self.selected == 5 and self.difficulty > 0:
                         self.difficulty -= 1
-                    elif self.selected == 4 and self.difficulty == 0:
+                    elif self.selected == 5 and self.difficulty == 0:
                         self.difficulty = len(MESSAGE_DIFFICULTY)-1
-                    elif self.selected == 5 and self.number_of_players == 1:
+                    elif self.selected == 6 and self.number_of_players == 1:
                         self.number_of_players = 2
-                    elif self.selected == 5 and self.number_of_players == 2:
+                    elif self.selected == 6 and self.number_of_players == 2:
                         self.number_of_players = 1
                 elif choice==ARROW_RIGHT:
                     no_input = False
                     if self.selected == 0 \
                     and self.file_index<len(self.directory_content)-1:
                         self.file_index += 1
-                    elif self.selected == 4 \
+                    elif self.selected == 5 \
                     and self.difficulty < len(MESSAGE_DIFFICULTY)-1:
                         self.difficulty += 1
-                    elif self.selected == 4 \
+                    elif self.selected == 5 \
                     and self.difficulty == len(MESSAGE_DIFFICULTY)-1:
                         self.difficulty = 0
-                    elif self.selected == 5 and self.number_of_players == 1:
+                    elif self.selected == 6 and self.number_of_players == 1:
                         self.number_of_players = 2
-                    elif self.selected == 5 and self.number_of_players == 2:
+                    elif self.selected == 6 and self.number_of_players == 2:
                         self.number_of_players = 1
         if self.chosen == self.saved_maps and self.directory_content:
             self.chosen = self.directory_content[self.file_index]
@@ -145,6 +151,10 @@ class StartMenu():
         elif self.chosen == MESSAGE_MAP_CHOICE_RANDOM_SCREEN:
             rows, columns = os.popen('stty size', 'r').read().split()
             maze_map = make_maze(int(columns)-1,int(rows)-4,\
+            number_of_players=self.number_of_players)
+            return maze_map
+        elif self.chosen == MESSAGE_SET_SIZE.format(self.x,self.y):
+            maze_map = make_maze(self.x,self.y,\
             number_of_players=self.number_of_players)
             return maze_map
         # elif self.chosen == MESSAGE_MAP_CHOICE_RANDOM_BIG_MULTIPLAYER:
@@ -218,3 +228,51 @@ class StartMenu():
         self.height = i
         self.width = j
         self.maze = maze
+
+
+    def set_size(self):
+        choosing = True
+        while choosing:
+            self.rows, self.columns = os.popen('stty size', 'r').read().split()
+            self.extract(make_maze(self.x,self.y))
+            self.margin = ((int(self.columns) - self.width)//2)
+            self.margin_v = ((int(self.rows) - self.height)//2)
+            maze_map = CLEAR_SCREEN+"\033[{};0H".format(self.margin_v) \
+            + " " * self.margin + CLR_ATTR
+            for item in self.props:
+                item.revealed = True
+                maze_map += str(item)
+                if item.x == self.width:
+                    maze_map += "\n" + " " * self.margin
+            print(maze_map)
+            margin = ((int(self.columns) - len(MESSAGE_CONTROLS_SIZE) + 4)//2)
+            if margin < 0:
+                margin = 0
+            print(WHITE_TEXT + "\033[{0};{1}H{2}\033[1B"\
+            .format(self.height + self.margin_v, margin, MESSAGE_CONTROLS_SIZE)\
+            + CLR_ATTR)
+            no_input = True
+            while no_input:
+                choice = self.keyboard_input(1)
+                if choice == CTRL_C:
+                    os.system('clear')
+                    exit()
+                elif ord(choice) == ENTER:
+                    choosing = False
+                    no_input = False
+                    self.extract(make_maze(30,15))
+                elif choice == ESCAPE_CHARACTER:
+                    addendum = self.keyboard_input(2)
+                    choice = choice + addendum
+                if choice==ARROW_DOWN and self.y > 6:
+                    self.y -=2
+                    no_input = False
+                elif choice==ARROW_UP and self.y < int(self.rows) - 8:
+                    self.y +=2
+                    no_input = False
+                elif choice==ARROW_LEFT and self.x > 6:
+                    self.x -=2
+                    no_input = False
+                elif choice==ARROW_RIGHT and self.x < int(self.columns) - 8:
+                    self.x +=2
+                    no_input = False

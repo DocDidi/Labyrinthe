@@ -199,19 +199,20 @@ def make_entrance_and_exit(maze_map, number_of_players):
 def add_doors(maze_map):
     """Add doors on the map"""
     maze_map_old = []
+    eligible_symbols = (LETTER_CORRIDOR, LETTER_DOOR)
     while maze_map != maze_map_old:
         maze_map_old = list(maze_map)
         for x in range(2,len(maze_map)-2):
             for y in range(2,len(maze_map[0])-2):
                 if maze_map[x][y] == LETTER_WALL:
                     empty_spaces = []
-                    if maze_map[x][y-1] == LETTER_CORRIDOR:
+                    if maze_map[x][y-1] in (LETTER_CORRIDOR, LETTER_DOOR):
                         empty_spaces.append("W")
-                    if maze_map[x][y+1] == LETTER_CORRIDOR:
+                    if maze_map[x][y+1] in (LETTER_CORRIDOR, LETTER_DOOR):
                         empty_spaces.append("E")
-                    if maze_map[x-1][y] == LETTER_CORRIDOR:
+                    if maze_map[x-1][y] in (LETTER_CORRIDOR, LETTER_DOOR):
                         empty_spaces.append("N")
-                    if maze_map[x+1][y] == LETTER_CORRIDOR:
+                    if maze_map[x+1][y] in (LETTER_CORRIDOR, LETTER_DOOR):
                         empty_spaces.append("S")
                     if len(empty_spaces) == 3:
                         door_added = False

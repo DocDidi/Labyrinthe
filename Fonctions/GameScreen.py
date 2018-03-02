@@ -16,16 +16,18 @@ class GameScreen:
     def __init__(self, maze, start_menu):
         self.maze = maze
         self.start_menu = start_menu
-        self.player_have_key = False
+        self.extract(self.maze)
+        self.txt_color = WHITE_TEXT
+
+    def start(self):
+        """Initiate the variables at the start of the maze"""
         self.maze_on = True
+        self.player_have_key = False
         self.time_start = 0
         self.time_spent = ""
         self.margin = 0
         self.margin_v = 0
-        self.extract(self.maze)
-        self.hardcore = False
-        self.txt_color = WHITE_TEXT
-
+        self.start_timer()
 
     def extract(self, maze):
         """Extract game data from the map"""
@@ -92,14 +94,6 @@ class GameScreen:
         else:
             self.extract(DEFAULT_MAP)
 
-
-
-    def start(self):
-        """Initiate the variables at the start of the maze"""
-        self.maze_on = True
-        self.player_have_key = False
-        self.start_timer()
-
     def save_game(self):
         """Save the game"""
         with open(SAVE_FILE, "wb") as save_file:
@@ -107,9 +101,12 @@ class GameScreen:
 
     def display(self):
         """Update and display the maze"""
-        if self.hardcore:
+        if self.start_menu.difficulty == 2 and self.maze_on:
             for item in self.props:
                 item.revealed = False
+        elif self.start_menu.difficulty == 0:
+            for item in self.props:
+                item.revealed = True
         offset = 3
         if self.width < len(MESSAGE_MOVES):
             offset = 4
@@ -119,12 +116,43 @@ class GameScreen:
             print("\033[8;{0};{1}t"\
             .format(self.height + offset, self.width+1)+CLR_ATTR)
         w = self.width + 1
+        for item in self.props:
+            item.lit = False
+            for player in self.players:
+                # if not self.start_menu.difficulty == 2:
+                #     if ((-2 <= player.x - item.x <= 2) \
+                #     and (-3 <= player.y - item.y <= 3))\
+                #     or ((-3 <= player.x - item.x <= 3) \
+                #     and (-2 <= player.y - item.y <= 2)):
+                #         item.revealed = True
+                if ((-1 <= player.x - item.x <= 1) \
+                and (-2 <= player.y - item.y <= 2))\
+                or ((-2 <= player.x - item.x <= 2) \
+                and (-1 <= player.y - item.y <= 1)):
+                    item.lit = True
+                if player.x == item.x and player.y == item.y:
+                    item.visited = True
+            if not self.start_menu.difficulty == 2:
+                time_limit = ((self.height * self.width)//40) + 25
+                if item.has_key and (time.time()-self.time_start > time_limit):
+                    item.revealed = True
+                    for i in range(-1,2):
+                        for j in range(-1,2):
+                            self.props[((item.y + i) * w) + (item.x + j)]\
+                            .revealed = True
+                if item.end and (time.time()-self.time_start > (time_limit*2)):
+                    item.revealed = True
+                    for i in range(-1,2):
+                        if item.vertical:
+                            self.props[((item.y+i)*w)+(item.x)].revealed = True
+                        else:
+                            self.props[((item.y)*w)+(item.x+i)].revealed = True
         max_sight = 20
         matrice = (((0,0,-1,0),(0,-1,-1,0),(0,1,-1,0)),\
         ((0,0,1,0),(0,-1,1,0),(0,1,1,0)),\
         ((-1,0,0,0),(-1,0,0,-1),(-1,0,0,1)),\
         ((1,0,0,0),(1,0,0,-1),(1,0,0,1)))
-        if self.maze_on:
+        if self.maze_on: # do not remove or bug
             for player in self.players:
                 x = player.x
                 y = player.y
@@ -200,37 +228,6 @@ class GameScreen:
                     revealed_wall_count.append(item)
             if len(revealed_wall_count) == 2:
                 item.revealed = True
-        for item in self.props:
-            item.lit = False
-            for player in self.players:
-                if not self.hardcore:
-                    if ((-2 <= player.x - item.x <= 2) \
-                    and (-3 <= player.y - item.y <= 3))\
-                    or ((-3 <= player.x - item.x <= 3) \
-                    and (-2 <= player.y - item.y <= 2)):
-                        item.revealed = True
-                if ((-1 <= player.x - item.x <= 1) \
-                and (-2 <= player.y - item.y <= 2))\
-                or ((-2 <= player.x - item.x <= 2) \
-                and (-1 <= player.y - item.y <= 1)):
-                    item.lit = True
-                if player.x == item.x and player.y == item.y:
-                    item.visited = True
-            if not self.hardcore:
-                time_limit = ((self.height * self.width)//40) + 25
-                if item.has_key and (time.time()-self.time_start > time_limit):
-                    item.revealed = True
-                    for i in range(-1,2):
-                        for j in range(-1,2):
-                            self.props[((item.y + i) * w) + (item.x + j)]\
-                            .revealed = True
-                if item.end and (time.time()-self.time_start > (time_limit*2)):
-                    item.revealed = True
-                    for i in range(-1,2):
-                        if item.vertical:
-                            self.props[((item.y+i)*w)+(item.x)].revealed = True
-                        else:
-                            self.props[((item.y)*w)+(item.x+i)].revealed = True
         self.margin = ((int(self.columns) - self.width)//2)
         self.margin_v = ((int(self.rows) - self.height)//2)
         maze_map = CLEAR_SCREEN+"\033[{};0H".format(self.margin_v) \
@@ -277,14 +274,6 @@ class GameScreen:
             if choice == CTRL_C:
                 os.system('clear')
                 exit()
-            elif choice.lower()=='h':
-                no_input = False
-                if self.hardcore:
-                    self.hardcore = False
-                    self.txt_color = WHITE_TEXT
-                else:
-                    self.hardcore = True
-                    self.txt_color = B_RED_TEXT
             elif ord(choice) == BACKSPACE:
                 no_input = False
                 self.maze_on = False
@@ -298,8 +287,7 @@ class GameScreen:
             elif choice.lower()=='e' and cheatcode == 3:
                 cheatcode = 4
             elif choice.lower()=='t' and cheatcode == 4:
-                for item in self.props:
-                    item.revealed = True
+                self.start_menu.difficulty = 0
                 no_input = False
             elif choice.lower()=='g':
                 for item in self.props:
@@ -441,7 +429,6 @@ class GameScreen:
         """Display the finish menu"""
         for item in self.props:
             item.revealed = True
-            self.hardcore = False
         self.display()
         os.remove(SAVE_FILE)
         self.stop_timer()

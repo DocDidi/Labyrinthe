@@ -16,6 +16,7 @@ class StartMenu():
         self.file_index = 0
         self.choice = []
         self.file_path = MAPS_LOAD.find("*")
+        self.difficulty = 1
 
     def __str__(self):
         self.directory_content = glob.glob(MAPS_LOAD)
@@ -33,12 +34,17 @@ class StartMenu():
         MESSAGE_MAP_CHOICE_RANDOM_SCREEN,\
         MESSAGE_MAP_CHOICE_RANDOM_BIG_MULTIPLAYER,\
         MESSAGE_MAP_CHOICE_RANDOM_SCREEN_MULTIPLAYER,\
+        MESSAGE_DIFFICULTY_COLORS[self.difficulty] + \
+        MESSAGE_DIFFICULTY[self.difficulty],\
         MESSAGE_MAP_CHOICE_QUIT]
         result_str = ""
         for i, maze_map in enumerate(self.choice):
-            if i == self.selected:
+            if i == self.selected and self.selected == 6:
                 result_str += \
-                BLACK_ON_WHITE + maze_map + WHITE_TEXT + CLR_ATTR
+                "\033[4m" + maze_map + CLR_ATTR
+            elif i == self.selected:
+                result_str += \
+                BLACK_ON_WHITE + maze_map + CLR_ATTR
             else:
                 if maze_map == MESSAGE_MAP_CHOICE_QUIT:
                     result_str += B_RED_TEXT + maze_map + CLR_ATTR
@@ -75,7 +81,7 @@ class StartMenu():
                 if choice == CTRL_C:
                     os.system('clear')
                     exit()
-                elif ord(choice) == ENTER:
+                elif ord(choice) == ENTER and self.selected != 6:
                     self.chosen = \
                     self.choice[self.selected]
                     no_input = False
@@ -85,7 +91,7 @@ class StartMenu():
                 elif ord(choice) == BACKSPACE:
                     os.system('clear')
                     exit()
-                elif ord(choice) == 32:
+                elif ord(choice) == SPACE:
                     self.extract(make_maze(30,15))
                     no_input = False
                 if choice==ARROW_DOWN:
@@ -96,14 +102,24 @@ class StartMenu():
                     if self.selected > self.min_choice:
                         self.selected -= 1
                     no_input = False
-                elif choice==ARROW_LEFT and self.file_index > 0 \
-                and self.selected == 0:
-                    self.file_index -= 1
+                elif choice==ARROW_LEFT:
                     no_input = False
-                elif choice==ARROW_RIGHT and self.selected == 0 \
-                and self.file_index<len(self.directory_content)-1:
-                    self.file_index += 1
+                    if self.selected == 0 and self.file_index > 0:
+                        self.file_index -= 1
+                    if self.selected == 6 and self.difficulty > 0:
+                        self.difficulty -= 1
+                    else:
+                        self.difficulty = len(MESSAGE_DIFFICULTY)-1
+                elif choice==ARROW_RIGHT:
                     no_input = False
+                    if self.selected == 0 \
+                    and self.file_index<len(self.directory_content)-1:
+                        self.file_index += 1
+                    if self.selected == 6 \
+                    and self.difficulty < len(MESSAGE_DIFFICULTY)-1:
+                        self.difficulty += 1
+                    else:
+                        self.difficulty = 0
         if self.chosen == self.saved_maps and self.directory_content:
             self.chosen = self.directory_content[self.file_index]
             if os.path.exists(self.chosen):

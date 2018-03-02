@@ -52,3 +52,5 @@ MESSAGE_WIDTH = "Width : "
 MESSAGE_HEIGHT = "Height : "
 MESSAGE_EDITOR_KEYS = "[Space]Walls [D]Doors/End [P]Player 1/2 [K]Key \
 [Backspace]Erase all [S]Save"
+MESSAGE_DIFFICULTY = ["< Easy >","< Normal >","< Hard >"]
+MESSAGE_DIFFICULTY_COLORS = [B_GREEN_TEXT,B_WHITE_TEXT,B_RED_TEXT]

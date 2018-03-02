@@ -16,11 +16,12 @@ start_menu = StartMenu()
 while True:
     if ongoing_game:
         game_screen = ongoing_game
+        start_menu = game_screen.start_menu
         ongoing_game = False
     else:
         maze = start_menu.maze_menu()
         game_screen = GameScreen(maze, start_menu)
-    game_screen.start()
+        game_screen.start()
     while game_screen.maze_on:
         game_screen.display()
         game_screen.player_move()

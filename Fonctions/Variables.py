@@ -72,7 +72,7 @@ COLOR_PLAYER_2 = B_RED_TEXT
 DEFAULT_MAP = "\
 XXXXXXXXXXXXXXXXXXXXXXX\n\
 X                     X\n\
-X   XXX X#X XXX XXX   X\n\
+X   XXX XDX XXX XXX   X\n\
 X   X X X X X X X     X\n\
 X   X@X XOX XXX XXX   X\n\
 X   X X X X X     X   X\n\

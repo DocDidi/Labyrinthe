@@ -13,6 +13,7 @@ class Cell:
         self.i = i
         self.j = j
         self.index_value = index_value
+        self.tried_already = False
         self.up = True
         self.down = True
         self.left = True
@@ -29,35 +30,42 @@ class Cell:
 
     def wall_test(self, grid):
         """Pick a random direction and break the wall if possible"""
-        x=random.randint(1,4)
-        if x == 1: # Up
-            if self.i-1 > 0:
-                target_cell = grid[self.i-1][self.j]
-                if target_cell.index_value != self.index_value:
-                    change_index(target_cell.index_value,self.index_value,grid)
-                    self.up = False
-        if x == 2: # Down
-            try:
-                target_cell = grid[self.i+1][self.j]
-                if target_cell.index_value != self.index_value:
-                    change_index(target_cell.index_value,self.index_value,grid)
-                    self.down = False
-            except:
-                pass
-        if x == 3: # Left
-            if self.j-1 > 0:
-                target_cell = grid[self.i][self.j-1]
-                if target_cell.index_value != self.index_value:
-                    change_index(target_cell.index_value,self.index_value,grid)
-                    self.left = False
-        if x == 4: # Right
-            try:
-                target_cell = grid[self.i][self.j+1]
-                if target_cell.index_value != self.index_value:
-                    change_index(target_cell.index_value,self.index_value,grid)
-                    self.right = False
-            except:
-                pass
+        tries = ["Up","Down","Left","Right"]
+        while len(tries) != 0:
+            x = tries.pop(random.randint(0,len(tries)-1))
+            # x=random.randint(1,4)
+            if x == "Up": # "Up"
+                if self.i-1 > 0:
+                    target_cell = grid[self.i-1][self.j]
+                    if target_cell.index_value != self.index_value:
+                        change_index\
+                        (target_cell.index_value,self.index_value,grid)
+                        self.up = False
+            if x == "Down": # "Down"
+                try:
+                    target_cell = grid[self.i+1][self.j]
+                    if target_cell.index_value != self.index_value:
+                        change_index\
+                        (target_cell.index_value,self.index_value,grid)
+                        self.down = False
+                except:
+                    pass
+            if x == "Left": # "Left"
+                if self.j-1 > 0:
+                    target_cell = grid[self.i][self.j-1]
+                    if target_cell.index_value != self.index_value:
+                        change_index\
+                        (target_cell.index_value,self.index_value,grid)
+                        self.left = False
+            if x == "Right": # "Right"
+                try:
+                    target_cell = grid[self.i][self.j+1]
+                    if target_cell.index_value != self.index_value:
+                        change_index\
+                        (target_cell.index_value,self.index_value,grid)
+                        self.right = False
+                except:
+                    pass
 
 def change_index(a, b, grid):
     """Modify the indexes after a wall broke"""
@@ -250,24 +258,26 @@ def make_maze(w,h, number_of_players = 1):
     maze_map = groundwork(w,h)
     while True:
         cell_active = random.choice(random.choice(grid))
-        cell_active.wall_test(grid)
+        if not cell_active.tried_already:
+            cell_active.wall_test(grid)
+            cell_active.tried_already = True
         test_finished = 0
         for i in grid:
             for j in i:
                 test_finished += j.index_value
         if test_finished == 0:
             break
-    for i, line in enumerate(grid):
-        for j, item in enumerate(line):
-            maze_map[i*2+1][j*2+1] = LETTER_CORRIDOR
+    for line in grid:
+        for item in line:
+            maze_map[item.i*2+1][item.j*2+1] = LETTER_CORRIDOR
             if item.up == False:
-                maze_map[i*2][j*2+1] = LETTER_CORRIDOR
+                maze_map[item.i*2][item.j*2+1] = LETTER_CORRIDOR
             if item.down == False:
-                maze_map[i*2+2][j*2+1] = LETTER_CORRIDOR
+                maze_map[item.i*2+2][item.j*2+1] = LETTER_CORRIDOR
             if item.left == False:
-                maze_map[i*2+1][j*2] = LETTER_CORRIDOR
+                maze_map[item.i*2+1][item.j*2] = LETTER_CORRIDOR
             if item.right == False:
-                maze_map[i*2+1][j*2+2] = LETTER_CORRIDOR
+                maze_map[item.i*2+1][item.j*2+2] = LETTER_CORRIDOR
     make_room(maze_map)
     make_entrance_and_exit(maze_map, number_of_players)
     add_doors(maze_map)
@@ -278,5 +288,5 @@ def make_maze(w,h, number_of_players = 1):
 if __name__ == '__main__':
     # rows, columns = os.popen('stty size', 'r').read().split()
     # maze_map = make_maze(int(columns),int(rows)-1)
-    maze_map = make_maze(54,27,number_of_players = 2)
+    maze_map = make_maze(80,40,number_of_players = 2)
     print(maze_map)

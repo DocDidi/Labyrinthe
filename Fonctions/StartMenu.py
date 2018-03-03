@@ -84,7 +84,7 @@ class StartMenu():
                 if choice == CTRL_C:
                     os.system('clear')
                     exit()
-                elif ord(choice) == ENTER and self.selected < 5:
+                elif ord(choice) == ENTER:
                     self.chosen = \
                     self.choice[self.selected]
                     no_input = False
@@ -135,40 +135,33 @@ class StartMenu():
                         self.number_of_players = 2
                     elif self.selected == 6 and self.number_of_players == 2:
                         self.number_of_players = 1
-        if self.chosen == self.saved_maps and self.directory_content:
-            self.chosen = self.directory_content[self.file_index]
-            if os.path.exists(self.chosen):
-                with open(self.chosen, "r") as maze_map:
-                    return maze_map.read()
-        elif self.chosen == MESSAGE_MAP_CHOICE_RANDOM_SMALL:
-            maze_map = make_maze(SMALL_WIDTH,SMALL_HEIGHT,\
-            number_of_players=self.number_of_players)
-            return maze_map
-        elif self.chosen == MESSAGE_MAP_CHOICE_RANDOM_BIG:
-            maze_map = make_maze(BIG_WIDTH,BIG_HEIGHT,\
-            number_of_players=self.number_of_players)
-            return maze_map
-        elif self.chosen == MESSAGE_MAP_CHOICE_RANDOM_SCREEN:
-            rows, columns = os.popen('stty size', 'r').read().split()
-            maze_map = make_maze(int(columns)-1,int(rows)-4,\
-            number_of_players=self.number_of_players)
-            return maze_map
-        elif self.chosen == MESSAGE_SET_SIZE.format(self.x,self.y):
-            maze_map = make_maze(self.x,self.y,\
-            number_of_players=self.number_of_players)
-            return maze_map
-        # elif self.chosen == MESSAGE_MAP_CHOICE_RANDOM_BIG_MULTIPLAYER:
-        #     maze_map = make_maze(BIG_WIDTH,BIG_HEIGHT, \
-        #     number_of_players=self.number_of_players)
-        #     return maze_map
-        # elif self.chosen == MESSAGE_MAP_CHOICE_RANDOM_SCREEN_MULTIPLAYER:
-        #     rows, columns = os.popen('stty size', 'r').read().split()
-        #     maze_map = make_maze(int(columns)-1,int(rows)-4, \
-        #     number_of_players=self.number_of_players)
-        #     return maze_map
-        elif self.chosen == MESSAGE_MAP_CHOICE_QUIT:
-            os.system('clear')
-            exit()
+            if self.chosen == self.saved_maps and self.directory_content:
+                self.chosen = self.directory_content[self.file_index]
+                if os.path.exists(self.chosen):
+                    with open(self.chosen, "r") as maze_map:
+                        return maze_map.read()
+            elif self.chosen == MESSAGE_MAP_CHOICE_RANDOM_SMALL:
+                maze_map = make_maze(SMALL_WIDTH,SMALL_HEIGHT,\
+                number_of_players=self.number_of_players)
+                return maze_map
+            elif self.chosen == MESSAGE_MAP_CHOICE_RANDOM_BIG:
+                maze_map = make_maze(BIG_WIDTH,BIG_HEIGHT,\
+                number_of_players=self.number_of_players)
+                return maze_map
+            elif self.chosen == MESSAGE_MAP_CHOICE_RANDOM_SCREEN:
+                rows, columns = os.popen('stty size', 'r').read().split()
+                maze_map = make_maze(int(columns)-1,int(rows)-4,\
+                number_of_players=self.number_of_players)
+                return maze_map
+            elif self.chosen == MESSAGE_SET_SIZE.format(self.x,self.y):
+                maze_map = make_maze(self.x,self.y,\
+                number_of_players=self.number_of_players)
+                return maze_map
+            elif self.chosen == MESSAGE_MAP_CHOICE_QUIT:
+                os.system('clear')
+                exit()
+            else:
+                self.chosen = False
 
     def keyboard_input(self, nbl):
         """Capture keystrokes"""

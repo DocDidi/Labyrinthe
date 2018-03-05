@@ -13,7 +13,6 @@ class Cell:
         self.i = i
         self.j = j
         self.index_value = index_value
-        self.tried_already = False
         self.up = True
         self.down = True
         self.left = True
@@ -256,17 +255,13 @@ def make_maze(w,h, number_of_players = 1):
     """Build a maze of the requested size"""
     grid = make_grid(w,h)
     maze_map = groundwork(w,h)
-    while True:
-        cell_active = random.choice(random.choice(grid))
-        if not cell_active.tried_already:
-            cell_active.wall_test(grid)
-            cell_active.tried_already = True
-        test_finished = 0
-        for i in grid:
-            for j in i:
-                test_finished += j.index_value
-        if test_finished == 0:
-            break
+    list_of_cells = []
+    for line in grid:
+        for item in line:
+            list_of_cells.append(item)
+    random.shuffle(list_of_cells)
+    for cell_active in list_of_cells:
+        cell_active.wall_test(grid)
     for line in grid:
         for item in line:
             maze_map[item.i*2+1][item.j*2+1] = LETTER_CORRIDOR
@@ -288,5 +283,5 @@ def make_maze(w,h, number_of_players = 1):
 if __name__ == '__main__':
     # rows, columns = os.popen('stty size', 'r').read().split()
     # maze_map = make_maze(int(columns),int(rows)-1)
-    maze_map = make_maze(80,40,number_of_players = 2)
+    maze_map = make_maze(150,35,number_of_players = 2)
     print(maze_map)

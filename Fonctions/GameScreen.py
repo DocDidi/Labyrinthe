@@ -27,7 +27,8 @@ class GameScreen:
         self.time_spent = ""
         self.margin = 0
         self.margin_v = 0
-        self.start_timer()
+        self.time_total = 0
+        self.timer_start()
 
     def extract(self, maze):
         """Extract game data from the map"""
@@ -134,13 +135,13 @@ class GameScreen:
                     item.visited = True
             if not self.start_menu.difficulty == 2:
                 time_limit = ((self.height * self.width)//20) + 25
-                if item.has_key and (time.time()-self.time_start > time_limit):
+                if item.has_key and (self.time_total > time_limit):
                     item.revealed = True
                     for i in range(-1,2):
                         for j in range(-1,2):
                             self.props[((item.y + i) * w) + (item.x + j)]\
                             .revealed = True
-                if item.end and (time.time()-self.time_start > (time_limit*2)):
+                if item.end and (self.time_total > (time_limit*2)):
                     item.revealed = True
                     for i in range(-1,2):
                         if item.vertical:
@@ -261,7 +262,9 @@ class GameScreen:
             margin = 0
         print(self.txt_color + "\033[{0};{1}H{2}"\
         .format(self.height + 1 + self.margin_v,margin,message_moves)+CLR_ATTR)
+        self.timer_add()
         self.save_game()
+        self.timer_start()
 
     def player_move(self):
         """Detect keystrokes and move the player accordingly"""
@@ -351,15 +354,19 @@ class GameScreen:
                         self.maze_on = False
                         self.finished_menu()
 
-    def start_timer(self):
+    def timer_start(self):
         """Start the timer"""
         self.time_start = time.time()
 
-    def stop_timer(self):
+    def timer_add(self):
+        """add time played since the last turn to total"""
+        self.time_total += time.time() - self.time_start
+
+    def timer_stop(self):
         """Stop the timer"""
-        total_time = time.time() - self.time_start
-        minutes = int(total_time // 60)
-        seconds = int(total_time % 60)
+        self.timer_add()
+        minutes = int(self.time_total // 60)
+        seconds = int(self.time_total % 60)
         hours = minutes // 60
         minutes == minutes % 60
         if seconds <= 1:
@@ -376,7 +383,7 @@ class GameScreen:
             self.time_spent =  "{0} {1}, {2} {3}"\
             .format(minutes,word_minutes, seconds,word_seconds)
         else:
-            self.time_spent =  MESSAGE_HOUR_LONG
+            self.time_spent = MESSAGE_HOUR_LONG
 
     def save_maze(self):
         """Save the maze (map)"""
@@ -426,12 +433,12 @@ class GameScreen:
         return text_grab
 
     def finished_menu(self):
-        """Display the finish menu"""
+        """Display the end menu"""
         for item in self.props:
             item.revealed = True
         self.display()
         os.remove(SAVE_FILE)
-        self.stop_timer()
+        self.timer_stop()
         self.print_path_taken()
         steps = 0
         for player in self.players:

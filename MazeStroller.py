@@ -17,6 +17,7 @@ while True:
     if ongoing_game:
         game_screen = ongoing_game
         start_menu = game_screen.start_menu
+        game_screen.timer_start()
         ongoing_game = False
     else:
         maze = start_menu.maze_menu()

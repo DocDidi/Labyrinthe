@@ -20,15 +20,17 @@ class StartMenu():
         self.number_of_players = 1
         self.x = 20
         self.y = 10
+        self.directory_content = glob.glob(MAPS_LOAD)
+        if not self.directory_content:
+            self.selected = 1
+            self.min_choice = 1
+        else:
+            self.min_choice = 0
 
     def __str__(self):
-        self.directory_content = glob.glob(MAPS_LOAD)
-        self.min_choice = 0
         if not self.directory_content:
             self.saved_maps = (MESSAGE_ERROR_DIRECTORY.format(MAPS_DIRECTORY)\
             + CLR_ATTR)
-            self.selected = 1
-            self.min_choice = 1
         else:
             self.saved_maps = MESSAGE_MAP_LOAD+self.directory_content\
             [self.file_index][self.file_path:-4].capitalize()
@@ -59,6 +61,7 @@ class StartMenu():
     def maze_menu(self):
         """Maze selection menu"""
         self.extract(make_maze(30,15))
+        # choice = 0
         while not self.chosen:
             title_screen_maze = ""
             for item in self.props:
@@ -78,6 +81,7 @@ class StartMenu():
             print("\033[13;17H "+ B_BLUE_TEXT + TITLE_9)
             print("\033[17;0H" + B_BLUE_TEXT + MESSAGE_MAP_CHOICE + CLR_ATTR)
             print(self)
+            # print(choice,self.selected,len(self.choice))
             no_input = True
             while no_input:
                 choice = self.keyboard_input(1)
@@ -101,13 +105,17 @@ class StartMenu():
                     self.extract(make_maze(30,15))
                     no_input = False
                 if choice==ARROW_DOWN:
+                    no_input = False
                     if self.selected < (len(self.choice)-1):
                         self.selected += 1
-                    no_input = False
+                    else:
+                        self.selected = self.min_choice
                 elif choice==ARROW_UP:
+                    no_input = False
                     if self.selected > self.min_choice:
                         self.selected -= 1
-                    no_input = False
+                    else:
+                        self.selected = len(self.choice)-1
                 elif choice==ARROW_LEFT:
                     no_input = False
                     if self.selected == 0 and self.file_index > 0:

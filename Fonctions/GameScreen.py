@@ -292,13 +292,10 @@ class GameScreen:
             elif choice.lower()=='t' and cheatcode == 4:
                 self.start_menu.difficulty = 0
                 no_input = False
-            elif choice.lower()=='g':
-                for item in self.props:
-                    try:
-                        item.neighbors = False
-                    except:
-                        pass
-                no_input = False
+            # elif choice.lower()=='g':
+            #     for item in self.props:
+            #         item.symbol = SYMBOL_WALL
+            #     no_input = False
             elif choice.lower() == KEY_UP_PLAYER_2:
                 player_to_move = 2
                 movement = "U"

@@ -273,61 +273,61 @@ class GameScreen:
         movement = ""
         cheatcode = 0
         while no_input:
-            choice = self.keyboard_input(1)
-            if choice == CTRL_C:
+            keystroke = self.keyboard_input(1)
+            if keystroke == CTRL_C:
                 os.system('clear')
                 exit()
-            elif ord(choice) == BACKSPACE:
+            elif ord(keystroke) == BACKSPACE:
                 no_input = False
                 self.maze_on = False
                 self.start_menu.chosen = False
-            elif choice.lower()=='p':
+            elif keystroke.lower()=='p':
                 cheatcode = 1
-            elif choice.lower()=='o' and cheatcode == 1:
+            elif keystroke.lower()=='o' and cheatcode == 1:
                 cheatcode = 2
-            elif choice.lower()=='u' and cheatcode == 2:
+            elif keystroke.lower()=='u' and cheatcode == 2:
                 cheatcode = 3
-            elif choice.lower()=='e' and cheatcode == 3:
+            elif keystroke.lower()=='e' and cheatcode == 3:
                 cheatcode = 4
-            elif choice.lower()=='t' and cheatcode == 4:
+            elif keystroke.lower()=='t' and cheatcode == 4:
                 self.start_menu.difficulty = 0
                 no_input = False
-            # elif choice.lower()=='g':
+            # elif keystroke.lower()=='g':
             #     for item in self.props:
             #         item.symbol = SYMBOL_WALL
             #     no_input = False
-            elif choice.lower() == KEY_UP_PLAYER_2:
+            elif keystroke.lower() == KEY_UP_PLAYER_2:
                 player_to_move = 2
                 movement = "U"
                 no_input = False
-            elif choice.lower() == KEY_DOWN_PLAYER_2:
+            elif keystroke.lower() == KEY_DOWN_PLAYER_2:
                 player_to_move = 2
                 movement = "D"
                 no_input = False
-            elif choice.lower() == KEY_RIGHT_PLAYER_2:
+            elif keystroke.lower() == KEY_RIGHT_PLAYER_2:
                 player_to_move = 2
                 movement = "R"
                 no_input = False
-            elif choice.lower() == KEY_LEFT_PLAYER_2:
+            elif keystroke.lower() == KEY_LEFT_PLAYER_2:
                 player_to_move = 2
                 movement = "L"
                 no_input = False
-            elif choice == ESCAPE_CHARACTER:
+            elif keystroke == ESCAPE_CHARACTER:
                 addendum = self.keyboard_input(2)
-                choice = choice + addendum
-            if choice==ARROW_UP:
+                keystroke = keystroke + addendum
+            if keystroke == ARROW_UP:
                 player_to_move = 1
                 movement = "U"
                 no_input = False
-            elif choice==ARROW_DOWN:
+            elif keystroke == ARROW_DOWN:
                 player_to_move = 1
                 movement = "D"
                 no_input = False
-            elif choice==ARROW_RIGHT:
+            elif keystroke == ARROW_RIGHT:
                 player_to_move = 1
                 movement = "R"
                 no_input = False
-            elif choice==ARROW_LEFT:
+            elif keystroke == ARROW_LEFT:
                 player_to_move = 1
                 movement = "L"
                 no_input = False
@@ -397,13 +397,13 @@ class GameScreen:
                 print("\033[{0};0H\033[K\033[{1}C{2}\n\033[K\033[{1}C{3}"\
                 .format(self.height + self.margin_v, margin, \
                 MESSAGE_SAVE_OVERWRITE_1, MESSAGE_SAVE_OVERWRITE_2))
-                choice = self.keyboard_input(1)
-                if choice == 'CTRL_C':
+                keystroke = self.keyboard_input(1)
+                if keystroke == 'CTRL_C':
                     os.system('clear')
                     exit()
-                if choice.lower() == ('o' or 'y'):
+                elif keystroke.lower() == 'o' or keystroke.lower() == 'y':
                     go_for_save = True
-                if ord(choice) == BACKSPACE:
+                elif ord(keystroke) == BACKSPACE:
                     break
             else:
                 go_for_save = True
@@ -460,16 +460,16 @@ class GameScreen:
         .format(self.height + 1 + self.margin_v, margin, message))
         no_input = True
         while no_input:
-            choice = self.keyboard_input(1)
-            if choice == CTRL_C:
+            keystroke = self.keyboard_input(1)
+            if keystroke == CTRL_C:
                 os.system('clear')
                 exit()
-            elif ord(choice) == BACKSPACE:
+            elif ord(keystroke) == BACKSPACE:
                 no_input = False
                 self.start_menu.chosen = False
-            elif ord(choice) == ENTER and not map_already_saved:
+            elif ord(keystroke) == ENTER and not map_already_saved:
                 no_input = False
-            elif choice.lower() == "k":
+            elif keystroke.lower() == "k":
                 if map_already_saved:
                     margin = ((int(self.columns)\
                     -len(MESSAGE_MAP_ALREADY_SAVED))//2)

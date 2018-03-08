@@ -1,9 +1,9 @@
 #! /usr/bin/env python3
 # coding: utf-8
 
+import glob, termios, tty, sys, os
+
 from Fonctions.Variables import *
-from Fonctions.StartMenu import *
-from Fonctions.GameScreen import *
 from Fonctions.GenerateMaze import *
 from Fonctions.Player import *
 from Fonctions.Wall import *
@@ -29,12 +29,12 @@ class Editor():
         self.min_choice = 0
         if not self.directory_content:
             self.saved_maps = (MESSAGE_ERROR_DIRECTORY.format(MAPS_DIRECTORY) \
-            + "\033[0m")
+            + CLR_ATTR)
             self.selected = 1
             self.min_choice = 1
         else:
             self.saved_maps = MESSAGE_MAP_LOAD+self.directory_content\
-            [self.file_index][self.file_path:-4].capitalize() + "\033[0m"
+            [self.file_index][self.file_path:-4].capitalize() + CLR_ATTR
         self.choice = [self.saved_maps] + [MESSAGE_MAP_CHOICE_RANDOM_SMALL, \
         MESSAGE_MAP_CHOICE_RANDOM_BIG, MESSAGE_MAP_CHOICE_DEFINE_SIZE, \
         MESSAGE_MAP_CHOICE_QUIT]
@@ -42,12 +42,12 @@ class Editor():
         for i, maze_map in enumerate(self.choice):
             if i == self.selected:
                 result_str += \
-                BLACK_ON_WHITE + maze_map + WHITE_TEXT + "\033[0m"
+                BLACK_ON_WHITE + maze_map + WHITE_TEXT + CLR_ATTR
             else:
                 if maze_map == MESSAGE_MAP_CHOICE_QUIT:
-                    result_str += B_RED_TEXT + maze_map + "\033[0m"
+                    result_str += B_RED_TEXT + maze_map + CLR_ATTR
                 else:
-                    result_str += WHITE_TEXT + maze_map + "\033[0m"
+                    result_str += WHITE_TEXT + maze_map + CLR_ATTR
             result_str += "\n"
         return result_str
 
@@ -57,33 +57,30 @@ class Editor():
             while no_input:
                 print(CLEAR_SCREEN + CURSOR_RESET)
                 print(self)
-                choice = self.keyboard_input(1)
-                if choice == CTRL_C:
+                keystroke = self.keyboard_input(1)
+                if keystroke == CTRL_C or ord(keystroke) == BACKSPACE:
                     os.system('clear')
                     exit()
-                elif ord(choice) == ENTER:
+                elif ord(keystroke) == ENTER:
                     self.chosen = \
                     self.choice[self.selected]
                     no_input = False
-                elif choice == ESCAPE_CHARACTER:
+                elif keystroke == ESCAPE_CHARACTER:
                     addendum = self.keyboard_input(2)
-                    choice = choice + addendum
-                elif ord(choice) == BACKSPACE:
-                    os.system('clear')
-                    exit()
-                if choice==ARROW_DOWN:
+                    keystroke = keystroke + addendum
+                if keystroke == ARROW_DOWN:
                     if self.selected < (len(self.choice)-1):
                         self.selected += 1
                     no_input = False
-                elif choice==ARROW_UP:
+                elif keystroke == ARROW_UP:
                     if self.selected > self.min_choice:
                         self.selected -= 1
                     no_input = False
-                elif choice==ARROW_LEFT and self.file_index > 0 \
+                elif keystroke == ARROW_LEFT and self.file_index > 0 \
                 and self.selected == 0:
                     self.file_index -= 1
                     no_input = False
-                elif choice==ARROW_RIGHT and self.selected == 0 \
+                elif keystroke == ARROW_RIGHT and self.selected == 0 \
                 and self.file_index<len(self.directory_content)-1:
                     self.file_index += 1
                     no_input = False
@@ -177,16 +174,29 @@ class Editor():
                         color = B_BLUE_TEXT
                     else:
                         color = B_RED_TEXT
-                    maze_map += color + SYMBOL_PLAYER + "\033[0m"
+                    maze_map += color + SYMBOL_PLAYER + CLR_ATTR
             if is_not_player:
                 maze_map += str(item)
             if (item.x,item.y) == (self.x,self.y):
-                maze_map += "\033[0m"
+                maze_map += CLR_ATTR
             if item.x == self.width:
                 maze_map += "\n"
         print(CLEAR_SCREEN + CURSOR_RESET + maze_map)
         print("\033[{0};0H{1},{2}".format(self.height + 1,self.x,self.y))
         print(MESSAGE_EDITOR_KEYS)
+
+    def delete_maze_walls(self, maze_map):
+        print(MESSAGE_DELETE_MAZE_WALLS)
+        keystroke = self.keyboard_input(1)
+        if keystroke == CTRL_C:
+            os.system('clear')
+            exit()
+        elif keystroke.lower() == 'o' or keystroke.lower() == 'y':
+            for i in range(1,self.width):
+                for j in range(1,self.height-1):
+                    maze_map[j][i]= LETTER_CORRIDOR
+        return maze_map
+
 
     def edit(self):
         maze_map=[]
@@ -197,33 +207,38 @@ class Editor():
                 maze_map[i].append(letter)
         no_input = True
         while no_input:
-            choice = self.keyboard_input(1)
-            if choice == CTRL_C:
+            keystroke = self.keyboard_input(1)
+            if keystroke == CTRL_C:
                 os.system('clear')
                 exit()
-            elif choice == ESCAPE_CHARACTER:
+            elif keystroke == ESCAPE_CHARACTER:
                 addendum = self.keyboard_input(2)
-                choice = choice + addendum
-            elif choice.lower()=="s":
+                keystroke = keystroke + addendum
+            elif keystroke.lower()=="s":
                 no_input = False
                 self.save()
-            # bugged
-            # elif ord(choice) == BACKSPACE:
-            #     no_input = False
-            #     self.edit_on = False
-            #     self.chosen = False
-            elif ord(choice) == BACKSPACE:
+            elif ord(keystroke) == BACKSPACE:
+                print(WHITE_TEXT + "\033[{0};0H\033[K{1}\n\033[K"\
+                .format(self.height + 2, MESSAGE_QUIT_EDITING))
+                keystroke = self.keyboard_input(1)
+                if keystroke == CTRL_C:
+                    os.system('clear')
+                    exit()
+                elif keystroke.lower() == 'o' or keystroke.lower() == 'y':
+                    self.save()
                 no_input = False
-                for i in range(1,self.width):
-                    for j in range(1,self.height-1):
-                        maze_map[j][i]= LETTER_CORRIDOR
-            elif choice.lower()=="k":
+                self.edit_on = False
+                self.chosen = False
+            elif keystroke.lower()=="c":
+                no_input = False
+                maze_map = self.delete_maze_walls(maze_map)
+            elif keystroke.lower()=="k":
                 no_input = False
                 if maze_map[self.y][self.x] != LETTER_KEY:
                     maze_map[self.y][self.x] = LETTER_KEY
                 elif maze_map[self.y][self.x] == LETTER_KEY:
                     maze_map[self.y][self.x] = LETTER_CORRIDOR
-            elif choice.lower()=="d":
+            elif keystroke.lower()=="d":
                 no_input = False
                 if maze_map[self.y][self.x] != LETTER_DOOR\
                 and maze_map[self.y][self.x] != LETTER_END:
@@ -232,7 +247,7 @@ class Editor():
                     maze_map[self.y][self.x] = LETTER_END
                 elif maze_map[self.y][self.x] == LETTER_END:
                     maze_map[self.y][self.x] = LETTER_CORRIDOR
-            elif choice.lower()=="p":
+            elif keystroke.lower()=="p":
                 no_input = False
                 if maze_map[self.y][self.x] != LETTER_PLAYER[0] \
                 and maze_map[self.y][self.x] != LETTER_PLAYER[1]:
@@ -241,22 +256,22 @@ class Editor():
                     maze_map[self.y][self.x] = LETTER_PLAYER[1]
                 elif maze_map[self.y][self.x] == LETTER_PLAYER[1]:
                     maze_map[self.y][self.x] = LETTER_CORRIDOR
-            elif ord(choice) == 32:
+            elif ord(keystroke) == 32:
                 no_input = False
                 if maze_map[self.y][self.x] != LETTER_CORRIDOR:
                     maze_map[self.y][self.x] = LETTER_CORRIDOR
                 elif maze_map[self.y][self.x] == LETTER_CORRIDOR:
                     maze_map[self.y][self.x] = LETTER_WALL
-            if choice==ARROW_DOWN and self.y < self.height - 1:
+            if keystroke == ARROW_DOWN and self.y < self.height - 1:
                 self.y+=1
                 no_input = False
-            elif choice==ARROW_UP and self.y > 0:
+            elif keystroke == ARROW_UP and self.y > 0:
                 self.y-=1
                 no_input = False
-            elif choice==ARROW_LEFT and self.x > 0:
+            elif keystroke == ARROW_LEFT and self.x > 0:
                 self.x-=1
                 no_input = False
-            elif choice==ARROW_RIGHT and self.x < self.width:
+            elif keystroke == ARROW_RIGHT and self.x < self.width:
                 self.x+=1
                 no_input = False
         groundwork_str=""
@@ -276,13 +291,13 @@ class Editor():
                 print("\033[{0};0H\033[K{1}\n\033[K{2}".format\
                 (self.height + 2, MESSAGE_SAVE_OVERWRITE_1, \
                 MESSAGE_SAVE_OVERWRITE_2))
-                choice = self.keyboard_input(1)
-                if choice == 'CTRL_C':
+                keystroke = self.keyboard_input(1)
+                if keystroke == 'CTRL_C':
                     os.system('clear')
                     exit()
-                if choice.lower() == ('o' or 'y'):
+                elif keystroke.lower() == 'o' or keystroke.lower() == 'y':
                     go_for_save = True
-                if ord(choice) == BACKSPACE:
+                elif ord(keystroke) == BACKSPACE:
                     break
             else:
                 go_for_save = True

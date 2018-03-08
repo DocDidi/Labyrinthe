@@ -8,11 +8,11 @@ def load_file():
     """Ask the player if he wants to resume previous game"""
     if os.path.exists(SAVE_FILE):
         print(WHITE_TEXT + MESSAGE_LOAD_MAZE)
-        choice = keyboard_input(1)
-        if choice == CTRL_C:
+        keystroke = keyboard_input(1)
+        if keystroke == CTRL_C:
             os.system('clear')
             exit()
-        elif choice.lower() == ('o' or 'y'):
+        elif keystroke.lower() == 'o' or keystroke.lower() == 'y':
             with open(SAVE_FILE, "rb") as save_file:
                 ongoing_game = pickle.loads(save_file.read())
         else:

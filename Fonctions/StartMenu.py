@@ -37,7 +37,7 @@ class StartMenu():
         self.choice = [self.saved_maps] + [MESSAGE_MAP_CHOICE_RANDOM_SMALL,\
         MESSAGE_MAP_CHOICE_RANDOM_BIG,\
         MESSAGE_MAP_CHOICE_RANDOM_SCREEN,\
-        MESSAGE_SET_SIZE.format(self.x,self.y),\
+        MESSAGE_SET_SIZE.format(self.x + 1,self.y + 1),\
         MESSAGE_DIFFICULTY_COLORS[self.difficulty] + \
         MESSAGE_DIFFICULTY[self.difficulty],\
         B_WHITE_TEXT + MESSAGE_NUMBER_PLAYERS[self.number_of_players - 1],\
@@ -61,7 +61,7 @@ class StartMenu():
     def maze_menu(self):
         """Maze selection menu"""
         self.extract(make_maze(30,15))
-        # choice = 0
+        # keystroke = 0
         while not self.chosen:
             title_screen_maze = ""
             for item in self.props:
@@ -81,42 +81,39 @@ class StartMenu():
             print("\033[13;17H "+ B_BLUE_TEXT + TITLE_9)
             print("\033[17;0H" + B_BLUE_TEXT + MESSAGE_MAP_CHOICE + CLR_ATTR)
             print(self)
-            # print(choice,self.selected,len(self.choice))
+            # print(keystroke,self.selected,len(self.choice))
             no_input = True
             while no_input:
-                choice = self.keyboard_input(1)
-                if choice == CTRL_C:
+                keystroke = self.keyboard_input(1)
+                if keystroke == CTRL_C or ord(keystroke) == BACKSPACE:
                     os.system('clear')
                     exit()
-                elif ord(choice) == ENTER:
+                elif ord(keystroke) == ENTER:
                     self.chosen = \
                     self.choice[self.selected]
                     no_input = False
-                elif choice == ESCAPE_CHARACTER:
+                elif keystroke == ESCAPE_CHARACTER:
                     addendum = self.keyboard_input(2)
-                    choice = choice + addendum
-                elif ord(choice) == BACKSPACE:
-                    os.system('clear')
-                    exit()
-                elif ord(choice) == SPACE and self.selected == 4:
+                    keystroke = keystroke + addendum
+                elif ord(keystroke) == SPACE and self.selected == 4:
                     self.set_size()
                     no_input = False
-                elif ord(choice) == SPACE:
+                elif ord(keystroke) == SPACE:
                     self.extract(make_maze(30,15))
                     no_input = False
-                if choice==ARROW_DOWN:
+                if keystroke == ARROW_DOWN:
                     no_input = False
                     if self.selected < (len(self.choice)-1):
                         self.selected += 1
                     else:
                         self.selected = self.min_choice
-                elif choice==ARROW_UP:
+                elif keystroke == ARROW_UP:
                     no_input = False
                     if self.selected > self.min_choice:
                         self.selected -= 1
                     else:
                         self.selected = len(self.choice)-1
-                elif choice==ARROW_LEFT:
+                elif keystroke == ARROW_LEFT:
                     no_input = False
                     if self.selected == 0 and self.file_index > 0:
                         self.file_index -= 1
@@ -128,7 +125,7 @@ class StartMenu():
                         self.number_of_players = 2
                     elif self.selected == 6 and self.number_of_players == 2:
                         self.number_of_players = 1
-                elif choice==ARROW_RIGHT:
+                elif keystroke == ARROW_RIGHT:
                     no_input = False
                     if self.selected == 0 \
                     and self.file_index<len(self.directory_content)-1:
@@ -161,7 +158,7 @@ class StartMenu():
             maze_map = make_maze(int(columns)-1,int(rows)-4,\
             number_of_players=self.number_of_players)
             return maze_map
-        elif self.chosen == MESSAGE_SET_SIZE.format(self.x,self.y):
+        elif self.chosen == MESSAGE_SET_SIZE.format(self.x + 1,self.y + 1):
             maze_map = make_maze(self.x,self.y,\
             number_of_players=self.number_of_players)
             return maze_map
@@ -254,26 +251,26 @@ class StartMenu():
             + CLR_ATTR)
             no_input = True
             while no_input:
-                choice = self.keyboard_input(1)
-                if choice == CTRL_C:
+                keystroke = self.keyboard_input(1)
+                if keystroke == CTRL_C:
                     os.system('clear')
                     exit()
-                elif ord(choice) == ENTER:
+                elif ord(keystroke) == ENTER or ord(keystroke) == BACKSPACE:
                     choosing = False
                     no_input = False
                     self.extract(make_maze(30,15))
-                elif choice == ESCAPE_CHARACTER:
+                elif keystroke == ESCAPE_CHARACTER:
                     addendum = self.keyboard_input(2)
-                    choice = choice + addendum
-                if choice==ARROW_DOWN and self.y > 6:
+                    keystroke = keystroke + addendum
+                if keystroke == ARROW_DOWN and self.y > 6:
                     self.y -=2
                     no_input = False
-                elif choice==ARROW_UP and self.y < int(self.rows) - 8:
+                elif keystroke == ARROW_UP and self.y < int(self.rows) - 8:
                     self.y +=2
                     no_input = False
-                elif choice==ARROW_LEFT and self.x > 6:
+                elif keystroke == ARROW_LEFT and self.x > 6:
                     self.x -=2
                     no_input = False
-                elif choice==ARROW_RIGHT and self.x < int(self.columns) - 8:
+                elif keystroke == ARROW_RIGHT and self.x < int(self.columns) - 8:
                     self.x +=2
                     no_input = False

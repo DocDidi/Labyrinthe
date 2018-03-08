@@ -31,10 +31,7 @@ class Cell:
         """Pick a random direction and break the wall if possible"""
         tries = ["Up","Down","Left","Right"]
         random.shuffle(tries)
-        # while len(tries) != 0:
         for x in tries:
-            # x = tries.pop(random.randint(0,len(tries)-1))
-            # x=random.randint(1,4)
             if x == "Up" and self.i-1 > 0:
                 target_cell = grid[self.i-1][self.j]
                 if target_cell.index_value != self.index_value:
@@ -276,7 +273,5 @@ def make_maze(w,h, number_of_players = 1):
 
 
 if __name__ == '__main__':
-    # rows, columns = os.popen('stty size', 'r').read().split()
-    # maze_map = make_maze(int(columns),int(rows)-1)
-    maze_map = make_maze(50,25,number_of_players = 2)
+    maze_map = make_maze(150,35,number_of_players = 2)
     print(maze_map)

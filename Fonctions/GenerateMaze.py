@@ -27,7 +27,7 @@ class Cell:
         if self.right: str_dir+="R"
         return str_dir
 
-    def wall_test(self, grid):
+    def wall_test(self, grid, indexed_list):
         """Pick a random direction and break the wall if possible"""
         tries = ["Up","Down","Left","Right"]
         random.shuffle(tries)
@@ -36,33 +36,35 @@ class Cell:
                 target_cell = grid[self.i-1][self.j]
                 if target_cell.index_value != self.index_value:
                     change_index\
-                    (target_cell.index_value,self.index_value,grid)
+                    (target_cell.index_value,self.index_value,indexed_list)
                     self.up = False
             if x == "Down" and self.i+1 < len(grid)-1:
                 target_cell = grid[self.i+1][self.j]
                 if target_cell.index_value != self.index_value:
                     change_index\
-                    (target_cell.index_value,self.index_value,grid)
+                    (target_cell.index_value,self.index_value,indexed_list)
                     self.down = False
             if x == "Left" and self.j-1 > 0:
                 target_cell = grid[self.i][self.j-1]
                 if target_cell.index_value != self.index_value:
                     change_index\
-                    (target_cell.index_value,self.index_value,grid)
+                    (target_cell.index_value,self.index_value,indexed_list)
                     self.left = False
             if x == "Right" and self.j+1 < len(grid[0])-1:
                     target_cell = grid[self.i][self.j+1]
                     if target_cell.index_value != self.index_value:
                         change_index\
-                        (target_cell.index_value,self.index_value,grid)
+                        (target_cell.index_value,self.index_value,indexed_list)
                         self.right = False
 
-def change_index(a, b, grid):
+def change_index(a, b, indexed_list):
     """Modify the indexes after a wall broke"""
-    for i in grid:
-        for j in i:
-            if j.index_value == max(a, b):
-                j.index_value = min(a, b)
+    value_low = min(a, b)
+    value_high = max(a, b)
+    for item in indexed_list[value_high]:
+        item.index_value = value_low
+        indexed_list[value_low].append(item)
+    indexed_list[value_high] = []
 
 def round_to_sup_odd(x):
     """Round a number to its superior odd"""
@@ -251,9 +253,13 @@ def make_maze(w,h, number_of_players = 1):
     for line in grid:
         for item in line:
             list_of_cells.append(item)
+    indexed_list = []
+    for item in list_of_cells:
+        new_list = [item]
+        indexed_list.append(new_list)
     random.shuffle(list_of_cells)
     for cell_active in list_of_cells:
-        cell_active.wall_test(grid)
+        cell_active.wall_test(grid, indexed_list)
     for line in grid:
         for item in line:
             maze_map[item.i*2+1][item.j*2+1] = LETTER_CORRIDOR

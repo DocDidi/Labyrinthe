@@ -29,6 +29,9 @@ class GameScreen:
         self.margin_v = 0
         self.time_total = 0
         self.timer_start()
+        self.time_limit = ((self.height * self.width)//20) + 25
+        self.hint = 0
+
 
     def extract(self, maze):
         """Extract game data from the map"""
@@ -57,6 +60,7 @@ class GameScreen:
                         if lines[i][j-1] not in join_with:
                             vertical = True
                     props.append(Door(i,j,vertical,end = True))
+                    self.position_end = (i,j)
                     check_end = True
                 elif letter is LETTER_DOOR:
                     vertical = False
@@ -84,6 +88,7 @@ class GameScreen:
                     props.append(Wall(i,j,neighbors))
                 elif letter is LETTER_KEY:
                     props.append(Corridor(i,j,has_key=True))
+                    self.position_key = (i,j)
                     check_key = True
                 else:
                     props.append(Corridor(i,j))
@@ -117,37 +122,59 @@ class GameScreen:
             print("\033[8;{0};{1}t"\
             .format(self.height + offset, self.width+1)+CLR_ATTR)
         w = self.width + 1
-        for item in self.props:
-            item.lit = False
-            for player in self.players:
-                # if not self.start_menu.difficulty == 2:
-                #     if ((-2 <= player.x - item.x <= 2) \
-                #     and (-3 <= player.y - item.y <= 3))\
-                #     or ((-3 <= player.x - item.x <= 3) \
-                #     and (-2 <= player.y - item.y <= 2)):
-                #         item.revealed = True
-                if ((-1 <= player.x - item.x <= 1) \
-                and (-2 <= player.y - item.y <= 2))\
-                or ((-2 <= player.x - item.x <= 2) \
-                and (-1 <= player.y - item.y <= 1)):
-                    item.lit = True
-                if player.x == item.x and player.y == item.y:
-                    item.visited = True
-            if not self.start_menu.difficulty == 2:
-                time_limit = ((self.height * self.width)//20) + 25
-                if item.has_key and (self.time_total > time_limit):
-                    item.revealed = True
-                    for i in range(-1,2):
-                        for j in range(-1,2):
-                            self.props[((item.y + i) * w) + (item.x + j)]\
-                            .revealed = True
-                if item.end and (self.time_total > (time_limit*2)):
-                    item.revealed = True
-                    for i in range(-1,2):
-                        if item.vertical:
-                            self.props[((item.y+i)*w)+(item.x)].revealed = True
-                        else:
-                            self.props[((item.y)*w)+(item.x+i)].revealed = True
+        # turn off the light near players
+        for player in self.players:
+            for i in range(-3,4):
+                for j in range(-3,4):
+                    position = (player.y + i) * w + (player.x + j)
+                    if 0 <= position < len(self.props):
+                        self.props[position].lit = False
+        # light surrounding of players
+        for player in self.players:
+            range_left = -1
+            range_right = 2
+            if player.x < 1:
+                range_left = player.x * -1
+            if player.x > (w - 2):
+                range_right = w - player.x
+            for i in range(-2,3):
+                for j in range(range_left,range_right):
+                    position = (player.y + i) * w + (player.x + j)
+                    if 0 <= position < len(self.props):
+                        self.props[position].lit = True
+            range_left = -2
+            range_right = 3
+            if player.x < 2:
+                range_left = player.x * -1
+            if player.x > (w - 3):
+                range_right = w - player.x
+            for i in range(-1,2):
+                for j in range(range_left,range_right):
+                    position = (player.y + i) * w + (player.x + j)
+                    if 0 <= position < len(self.props):
+                        self.props[position].lit = True
+            # mark position
+            position = (player.y) * w + (player.x)
+            self.props[position].visited = True
+        # give hint after time limit
+        if not self.start_menu.difficulty == 2:
+            if self.time_total > self.time_limit and self.hint < 1:
+                self.hint = 1
+                for i in range(-1,2):
+                    for j in range(-1,2):
+                        position = (self.position_key[0] + i) * w \
+                        + (self.position_key[1] + j)
+                        if 0 <= position < len(self.props):
+                            self.props[position].revealed = True
+            if self.time_total > (self.time_limit * 2) and self.hint < 2:
+                self.hint = 2
+                for i in range(-1,2):
+                    for j in range(-1,2):
+                        position = (self.position_end[0] + i) * w \
+                        + (self.position_end[1] + j)
+                        if 0 <= position < len(self.props):
+                            self.props[position].revealed = True
+        # Calculate line of sight
         max_sight = 20
         matrice = (((0,0,-1,0),(0,-1,-1,0),(0,1,-1,0)),\
         ((0,0,1,0),(0,-1,1,0),(0,1,1,0)),\
@@ -333,7 +360,7 @@ class GameScreen:
                 no_input = False
 
         for player in self.players:
-            player.move(player_to_move, movement,self.props)
+            player.move(player_to_move, movement, self.props, self.width)
 
     def tests(self):
         """Unlock end door if the key was picked"""

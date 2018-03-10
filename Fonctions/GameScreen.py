@@ -175,7 +175,7 @@ class GameScreen:
                         if 0 <= position < len(self.props):
                             self.props[position].revealed = True
         # Calculate line of sight
-        max_sight = 20
+        max_sight = 15
         matrice = (((0,0,-1,0),(0,-1,-1,0),(0,1,-1,0)),\
         ((0,0,1,0),(0,-1,1,0),(0,1,1,0)),\
         ((-1,0,0,0),(-1,0,0,-1),(-1,0,0,1)),\
@@ -213,49 +213,64 @@ class GameScreen:
                             side_item.revealed = True
                         i+=1
         to_reveal = []
-        for item in self.props:
-            if item.y < self.height -1:
-                test_item = self.props[((item.y + 1) * w) + (item.x)]
-                if test_item.revealed and not item.sight and test_item.sight:
-                    to_reveal.append(item)
-            if item.y > 0:
-                test_item = self.props[((item.y - 1) * w) + (item.x)]
-                if test_item.revealed and not item.sight and test_item.sight:
-                    to_reveal.append(item)
-            if item.x < self.width:
-                test_item = self.props[((item.y) * w) + (item.x + 1)]
-                if test_item.revealed and not item.sight and test_item.sight:
-                    to_reveal.append(item)
-            if item.x > 0:
-                test_item = self.props[((item.y) * w) + (item.x - 1)]
-                if test_item.revealed and not item.sight and test_item.sight:
-                    to_reveal.append(item)
+        for player in self.players:
+            for i in range(max_sight * -1,max_sight + 1):
+                for j in range(max_sight * -1,max_sight + 1):
+                    position = (player.y + i) * w + (player.x + j)
+                    if 0 <= position < len(self.props):
+                        item = self.props[position]
+                    else:
+                        continue
+                    if item.y < self.height -1:
+                        test_item = self.props[((item.y + 1) * w) + (item.x)]
+                        if test_item.revealed and not item.sight and test_item.sight:
+                            to_reveal.append(item)
+                    if item.y > 0:
+                        test_item = self.props[((item.y - 1) * w) + (item.x)]
+                        if test_item.revealed and not item.sight and test_item.sight:
+                            to_reveal.append(item)
+                    if item.x < self.width:
+                        test_item = self.props[((item.y) * w) + (item.x + 1)]
+                        if test_item.revealed and not item.sight and test_item.sight:
+                            to_reveal.append(item)
+                    if item.x > 0:
+                        test_item = self.props[((item.y) * w) + (item.x - 1)]
+                        if test_item.revealed and not item.sight and test_item.sight:
+                            to_reveal.append(item)
         for item in to_reveal:
             item.revealed = True
-        for item in self.props:
-            revealed_wall_count = []
-            if item.y < self.height -1:
-                test_item = self.props[((item.y + 1) * w) + (item.x)]
-                if test_item.revealed and not test_item.sight \
-                and not item.sight:
-                    revealed_wall_count.append(item)
-            if item.y > 0:
-                test_item = self.props[((item.y - 1) * w) + (item.x)]
-                if test_item.revealed and not test_item.sight \
-                and not item.sight:
-                    revealed_wall_count.append(item)
-            if item.x < self.width:
-                test_item = self.props[((item.y) * w) + (item.x + 1)]
-                if test_item.revealed and not test_item.sight \
-                and not item.sight:
-                    revealed_wall_count.append(item)
-            if item.x > 0:
-                test_item = self.props[((item.y) * w) + (item.x - 1)]
-                if test_item.revealed and not test_item.sight \
-                and not item.sight:
-                    revealed_wall_count.append(item)
-            if len(revealed_wall_count) == 2:
-                item.revealed = True
+        for player in self.players:
+            for i in range(max_sight * -1,max_sight + 1):
+                for j in range(max_sight * -1,max_sight + 1):
+                    position = (player.y + i) * w + (player.x + j)
+                    if 0 <= position < len(self.props):
+                        item = self.props[position]
+                    else:
+                        continue
+                    revealed_wall_count = []
+                    if item.y < self.height -1:
+                        test_item = self.props[((item.y + 1) * w) + (item.x)]
+                        if test_item.revealed and not test_item.sight \
+                        and not item.sight:
+                            revealed_wall_count.append(item)
+                    if item.y > 0:
+                        test_item = self.props[((item.y - 1) * w) + (item.x)]
+                        if test_item.revealed and not test_item.sight \
+                        and not item.sight:
+                            revealed_wall_count.append(item)
+                    if item.x < self.width:
+                        test_item = self.props[((item.y) * w) + (item.x + 1)]
+                        if test_item.revealed and not test_item.sight \
+                        and not item.sight:
+                            revealed_wall_count.append(item)
+                    if item.x > 0:
+                        test_item = self.props[((item.y) * w) + (item.x - 1)]
+                        if test_item.revealed and not test_item.sight \
+                        and not item.sight:
+                            revealed_wall_count.append(item)
+                    if len(revealed_wall_count) == 2:
+                        item.revealed = True
+
         self.margin = ((int(self.columns) - self.width)//2)
         self.margin_v = ((int(self.rows) - self.height)//2)
         maze_map = CLEAR_SCREEN+"\033[{};0H".format(self.margin_v) \

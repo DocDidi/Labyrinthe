@@ -31,7 +31,7 @@ class GameScreen:
         self.timer_start()
         self.time_limit = ((self.height * self.width)//20) + 25
         self.hint = 0
-
+        self.turn_count = 0
 
     def extract(self, maze):
         """Extract game data from the map"""
@@ -223,19 +223,23 @@ class GameScreen:
                         continue
                     if item.y < self.height -1:
                         test_item = self.props[((item.y + 1) * w) + (item.x)]
-                        if test_item.revealed and not item.sight and test_item.sight:
+                        if test_item.revealed and not item.sight \
+                        and test_item.sight:
                             to_reveal.append(item)
                     if item.y > 0:
                         test_item = self.props[((item.y - 1) * w) + (item.x)]
-                        if test_item.revealed and not item.sight and test_item.sight:
+                        if test_item.revealed and not item.sight \
+                        and test_item.sight:
                             to_reveal.append(item)
                     if item.x < self.width:
                         test_item = self.props[((item.y) * w) + (item.x + 1)]
-                        if test_item.revealed and not item.sight and test_item.sight:
+                        if test_item.revealed and not item.sight \
+                        and test_item.sight:
                             to_reveal.append(item)
                     if item.x > 0:
                         test_item = self.props[((item.y) * w) + (item.x - 1)]
-                        if test_item.revealed and not item.sight and test_item.sight:
+                        if test_item.revealed and not item.sight \
+                        and test_item.sight:
                             to_reveal.append(item)
         for item in to_reveal:
             item.revealed = True
@@ -273,13 +277,28 @@ class GameScreen:
 
         self.margin = ((int(self.columns) - self.width)//2)
         self.margin_v = ((int(self.rows) - self.height)//2)
-        maze_map = CLEAR_SCREEN+"\033[{};0H".format(self.margin_v) \
-        + " " * self.margin + CLR_ATTR
-        for item in self.props:
-            maze_map += str(item)
-            if item.x == self.width:
-                maze_map += "\n" + " " * self.margin
-        print(maze_map)
+
+
+        # if self.turn_count % 5 == 0:  NO. Blinky.
+        if True:
+            maze_map = CLEAR_SCREEN+"\033[{};0H".format(self.margin_v) \
+            + " " * self.margin + CLR_ATTR
+            for item in self.props:
+                maze_map += str(item)
+                if item.x == self.width:
+                    maze_map += "\n" + " " * self.margin
+            print(maze_map)
+        else:
+            for player in self.players:
+                for i in range((max_sight + 2) * -1,(max_sight + 2) + 1):
+                    for j in range(max_sight * -1,max_sight + 1):
+                        position = (player.y + i) * w + (player.x + j)
+                        if 0 <= position < len(self.props):
+                            item = self.props[position]
+                        else:
+                            continue
+                        self.props[position].display(self.margin, self.margin_v)
+        self.turn_count += 1
         for player in self.players:
             player.display(self.margin, self.margin_v)
         if self.player_have_key:
@@ -333,6 +352,7 @@ class GameScreen:
                 cheatcode = 4
             elif keystroke.lower()=='t' and cheatcode == 4:
                 self.start_menu.difficulty = 0
+                self.turn_count = 0
                 no_input = False
             # elif keystroke.lower()=='g':
             #     for item in self.props:
@@ -378,20 +398,20 @@ class GameScreen:
             player.move(player_to_move, movement, self.props, self.width)
 
     def tests(self):
-        """Unlock end door if the key was picked"""
-        for item in self.props:
-            if self.player_have_key and item.end:
-                item.block = False
-            if item.has_key:
-                for player in self.players:
-                    if (player.x, player.y) == (item.x, item.y):
-                        item.has_key = False
-                        self.player_have_key = True
-            if item.end:
-                for player in self.players:
-                    if (player.x, player.y) == (item.x, item.y):
-                        self.maze_on = False
-                        self.finished_menu()
+        """Unlock end door if the key was picked and end the game if the player
+        has reached the exit"""
+        w = self.width + 1
+        for player in self.players:
+            position_player = (player.y, player.x)
+            if position_player == self.position_key:
+                self.player_have_key = True
+                position = (self.position_end[0] * w + self.position_end[1])
+                self.props[position].block = False
+                position = (self.position_key[0] * w + self.position_key[1])
+                self.props[position].has_key = False
+            if position_player == self.position_end:
+                self.maze_on = False
+                self.finished_menu()
 
     def timer_start(self):
         """Start the timer"""
@@ -475,6 +495,7 @@ class GameScreen:
         """Display the end menu"""
         for item in self.props:
             item.revealed = True
+        self.turn_count = 0
         self.display()
         os.remove(SAVE_FILE)
         self.timer_stop()

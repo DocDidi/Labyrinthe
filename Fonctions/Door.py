@@ -36,4 +36,11 @@ class Door:
             color = WHITE_TEXT
             symbol = SYMBOL_FOG
 
-        return color+symbol+CLR_ATTR
+        if self.lit:
+            return color+symbol+CLR_ATTR
+        else:
+            return color+symbol
+
+    def display(self, margin, margin_v):
+        print("\033[{0};{1}H{2}".format\
+        (self.y+margin_v,self.x+1+margin,str(self)))

@@ -22,28 +22,33 @@ class Cell:
     def wall_test_RB(self, grid):
         """Pick a random direction and break the wall if possible"""
         self.visited = True
-        tries = []
-        if self.i-1 >= 0 and not grid[self.i-1][self.j].visited:
-            tries.append((grid[self.i-1][self.j],"Up"))
-        if self.i+1 < len(grid) and not grid[self.i+1][self.j].visited:
-            tries.append((grid[self.i+1][self.j],"Down"))
-        if self.j-1 >= 0 and not grid[self.i][self.j-1].visited:
-            tries.append((grid[self.i][self.j-1],"Left"))
-        if self.j+1 < len(grid[0]) and not grid[self.i][self.j+1].visited:
-            tries.append((grid[self.i][self.j+1],"Right"))
-        if len(tries) != 0:
-            main_cell, direction = random.choice(tries)
-            if direction == "Up":
-                self.up = False
-            if direction == "Down":
-                self.down = False
-            if direction == "Left":
-                self.left = False
-            if direction == "Right":
-                self.right = False
+        if not self.dead_end:
+            tries = []
+            if self.i-1 >= 0 and not grid[self.i-1][self.j].visited:
+                tries.append((grid[self.i-1][self.j],"Up"))
+            if self.i+1 < len(grid) and not grid[self.i+1][self.j].visited:
+                tries.append((grid[self.i+1][self.j],"Down"))
+            if self.j-1 >= 0 and not grid[self.i][self.j-1].visited:
+                tries.append((grid[self.i][self.j-1],"Left"))
+            if self.j+1 < len(grid[0]) and not grid[self.i][self.j+1].visited:
+                tries.append((grid[self.i][self.j+1],"Right"))
+            if len(tries) != 0:
+                main_cell, direction = random.choice(tries)
+                if direction == "Up":
+                    self.up = False
+                if direction == "Down":
+                    self.down = False
+                if direction == "Left":
+                    self.left = False
+                if direction == "Right":
+                    self.right = False
+            else:
+                main_cell = self
+                self.dead_end = True
+            if len(tries) == 1:
+                self.dead_end = True
         else:
             main_cell = self
-            self.dead_end = True
 
         return main_cell
 
@@ -365,6 +370,7 @@ maze_map = groundwork(w,h)
 main_cell = random.choice(random.choice(grid))
 backtracking = []
 while True:
+    map_test = make_str_from_2d_array(maze_map)
     if not main_cell.dead_end:
         backtracking.append(main_cell)
         main_cell = main_cell.wall_test_RB(grid)
@@ -380,8 +386,9 @@ while True:
                 if item.right == False:
                     maze_map[item.i*2+1][item.j*2+2] = LETTER_CORRIDOR
         map_finished = make_str_from_2d_array(maze_map)
-        display(map_finished)
-        time.sleep(0.05)
+        if map_finished !=  map_test:
+            time.sleep(0.05)
+            display(map_finished)
     else:
         del backtracking[len(backtracking) - 1]
         if len(backtracking) == 0:

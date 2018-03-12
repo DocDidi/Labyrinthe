@@ -204,49 +204,52 @@ def make_entrance_and_exit(maze_map, number_of_players):
 
 def add_doors(maze_map):
     """Add doors on the map"""
-    for x in range(2,len(maze_map)-2):
-        for y in range(2,len(maze_map[0])-2):
-            if maze_map[x][y] == LETTER_WALL:
-                empty_spaces = []
-                if maze_map[x][y-1] in (LETTER_CORRIDOR):
-                    empty_spaces.append("W")
-                if maze_map[x][y+1] in (LETTER_CORRIDOR):
-                    empty_spaces.append("E")
-                if maze_map[x-1][y] in (LETTER_CORRIDOR):
-                    empty_spaces.append("N")
-                if maze_map[x+1][y] in (LETTER_CORRIDOR):
-                    empty_spaces.append("S")
-                if len(empty_spaces) == 3:
-                    door_added = False
-                    random.shuffle(empty_spaces)
-                    for door_try in empty_spaces:
-                        if door_try == "W" and\
-                        maze_map[x][y-2] == LETTER_WALL:
-                            maze_map[x][y-1] = LETTER_DOOR
-                            door_added = True
-                            break
-                        elif door_try == "E" and\
-                        maze_map[x][y+2] == LETTER_WALL:
-                            maze_map[x][y+1] = LETTER_DOOR
-                            door_added = True
-                            break
-                        elif door_try == "N" and\
-                        maze_map[x-2][y] == LETTER_WALL:
-                            maze_map[x-1][y] = LETTER_DOOR
-                            door_added = True
-                            break
-                        elif door_try == "S" and\
-                        maze_map[x+2][y] == LETTER_WALL:
-                            maze_map[x+1][y] = LETTER_DOOR
-                            door_added = True
-                            break
-                    if not door_added:
-                        maze_map[x][y] = LETTER_CORRIDOR
-                        maze_map[x-1][y] = LETTER_CORRIDOR
-                        maze_map[x+1][y] = LETTER_CORRIDOR
-                        maze_map[x][y-1] = LETTER_CORRIDOR
-                        maze_map[x][y+1] = LETTER_CORRIDOR
-                        delete_isolated_wall(maze_map)
+    maze_map_old = []
+    while maze_map != maze_map_old:
+        maze_map_old = [x[:] for x in maze_map]
+        for x in range(2,len(maze_map)-2):
+            for y in range(2,len(maze_map[0])-2):
+                if maze_map[x][y] == LETTER_WALL:
+                    empty_spaces = []
+                    if maze_map[x][y-1] in (LETTER_CORRIDOR):
+                        empty_spaces.append("W")
+                    if maze_map[x][y+1] in (LETTER_CORRIDOR):
+                        empty_spaces.append("E")
+                    if maze_map[x-1][y] in (LETTER_CORRIDOR):
+                        empty_spaces.append("N")
+                    if maze_map[x+1][y] in (LETTER_CORRIDOR):
+                        empty_spaces.append("S")
+                    if len(empty_spaces) == 3:
+                        door_added = False
+                        random.shuffle(empty_spaces)
+                        for door_try in empty_spaces:
+                            if door_try == "W" and\
+                            maze_map[x][y-2] == LETTER_WALL:
+                                maze_map[x][y-1] = LETTER_DOOR
+                                door_added = True
+                                break
+                            elif door_try == "E" and\
+                            maze_map[x][y+2] == LETTER_WALL:
+                                maze_map[x][y+1] = LETTER_DOOR
+                                door_added = True
+                                break
+                            elif door_try == "N" and\
+                            maze_map[x-2][y] == LETTER_WALL:
+                                maze_map[x-1][y] = LETTER_DOOR
+                                door_added = True
+                                break
+                            elif door_try == "S" and\
+                            maze_map[x+2][y] == LETTER_WALL:
+                                maze_map[x+1][y] = LETTER_DOOR
+                                door_added = True
+                                break
+                        if not door_added:
+                            maze_map[x][y] = LETTER_CORRIDOR
+                            maze_map[x-1][y] = LETTER_CORRIDOR
+                            maze_map[x+1][y] = LETTER_CORRIDOR
+                            maze_map[x][y-1] = LETTER_CORRIDOR
+                            maze_map[x][y+1] = LETTER_CORRIDOR
+                            delete_isolated_wall(maze_map)
 
 
 def make_maze(w,h, number_of_players = 1):
@@ -556,49 +559,52 @@ if __name__ == '__main__':
     map_finished = make_str_from_2d_array(maze_map)
     display(map_finished)
     time.sleep(0.5)
-    for x in range(2,len(maze_map)-2):
-        for y in range(2,len(maze_map[0])-2):
-            if maze_map[x][y] == LETTER_WALL:
-                empty_spaces = []
-                if maze_map[x][y-1] in (LETTER_CORRIDOR):
-                    empty_spaces.append("W")
-                if maze_map[x][y+1] in (LETTER_CORRIDOR):
-                    empty_spaces.append("E")
-                if maze_map[x-1][y] in (LETTER_CORRIDOR):
-                    empty_spaces.append("N")
-                if maze_map[x+1][y] in (LETTER_CORRIDOR):
-                    empty_spaces.append("S")
-                if len(empty_spaces) == 3:
-                    door_added = False
-                    random.shuffle(empty_spaces)
-                    for door_try in empty_spaces:
-                        if door_try == "W" and\
-                        maze_map[x][y-2] == LETTER_WALL:
-                            maze_map[x][y-1] = LETTER_DOOR
-                            door_added = True
-                            break
-                        elif door_try == "E" and\
-                        maze_map[x][y+2] == LETTER_WALL:
-                            maze_map[x][y+1] = LETTER_DOOR
-                            door_added = True
-                            break
-                        elif door_try == "N" and\
-                        maze_map[x-2][y] == LETTER_WALL:
-                            maze_map[x-1][y] = LETTER_DOOR
-                            door_added = True
-                            break
-                        elif door_try == "S" and\
-                        maze_map[x+2][y] == LETTER_WALL:
-                            maze_map[x+1][y] = LETTER_DOOR
-                            door_added = True
-                            break
-                    if not door_added:
-                        maze_map[x][y] = LETTER_CORRIDOR
-                        maze_map[x-1][y] = LETTER_CORRIDOR
-                        maze_map[x+1][y] = LETTER_CORRIDOR
-                        maze_map[x][y-1] = LETTER_CORRIDOR
-                        maze_map[x][y+1] = LETTER_CORRIDOR
-                        delete_isolated_wall(maze_map)
-                    map_finished = make_str_from_2d_array(maze_map)
-                    display(map_finished)
-                    time.sleep(0.1)
+    maze_map_old = []
+    while maze_map != maze_map_old:
+        maze_map_old = [x[:] for x in maze_map]
+        for x in range(2,len(maze_map)-2):
+            for y in range(2,len(maze_map[0])-2):
+                if maze_map[x][y] == LETTER_WALL:
+                    empty_spaces = []
+                    if maze_map[x][y-1] in (LETTER_CORRIDOR):
+                        empty_spaces.append("W")
+                    if maze_map[x][y+1] in (LETTER_CORRIDOR):
+                        empty_spaces.append("E")
+                    if maze_map[x-1][y] in (LETTER_CORRIDOR):
+                        empty_spaces.append("N")
+                    if maze_map[x+1][y] in (LETTER_CORRIDOR):
+                        empty_spaces.append("S")
+                    if len(empty_spaces) == 3:
+                        door_added = False
+                        random.shuffle(empty_spaces)
+                        for door_try in empty_spaces:
+                            if door_try == "W" and\
+                            maze_map[x][y-2] == LETTER_WALL:
+                                maze_map[x][y-1] = LETTER_DOOR
+                                door_added = True
+                                break
+                            elif door_try == "E" and\
+                            maze_map[x][y+2] == LETTER_WALL:
+                                maze_map[x][y+1] = LETTER_DOOR
+                                door_added = True
+                                break
+                            elif door_try == "N" and\
+                            maze_map[x-2][y] == LETTER_WALL:
+                                maze_map[x-1][y] = LETTER_DOOR
+                                door_added = True
+                                break
+                            elif door_try == "S" and\
+                            maze_map[x+2][y] == LETTER_WALL:
+                                maze_map[x+1][y] = LETTER_DOOR
+                                door_added = True
+                                break
+                        if not door_added:
+                            maze_map[x][y] = LETTER_CORRIDOR
+                            maze_map[x-1][y] = LETTER_CORRIDOR
+                            maze_map[x+1][y] = LETTER_CORRIDOR
+                            maze_map[x][y-1] = LETTER_CORRIDOR
+                            maze_map[x][y+1] = LETTER_CORRIDOR
+                            delete_isolated_wall(maze_map)
+                        map_finished = make_str_from_2d_array(maze_map)
+                        display(map_finished)
+                        time.sleep(0.1)

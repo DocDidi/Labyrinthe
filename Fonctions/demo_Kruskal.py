@@ -380,8 +380,6 @@ for item in list_of_cells:
     new_list = [item]
     indexed_list.append(new_list)
 random.shuffle(list_of_cells)
-# map_finished = make_str_from_2d_array(maze_map)
-# display(map_finished)
 i = 1
 for cell_active in list_of_cells:
     map_test = make_str_from_2d_array(maze_map)

@@ -182,7 +182,8 @@ class Editor():
             if item.x == self.width:
                 maze_map += "\n"
         print(CLEAR_SCREEN + CURSOR_RESET + maze_map)
-        print("\033[{0};0H{1},{2}".format(self.height + 1,self.x,self.y))
+        print(CLR_ATTR + "\033[{0};0H{1},{2}"\
+        .format(self.height + 1,self.x,self.y))
         print(MESSAGE_EDITOR_KEYS)
 
     def delete_maze_walls(self, maze_map):

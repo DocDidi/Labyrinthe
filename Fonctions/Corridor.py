@@ -3,8 +3,9 @@
 
 from Fonctions.Variables import *
 
+
 class Corridor:
-    def __init__(self, y, x, has_key = False):
+    def __init__(self, y, x, has_key=False):
         self.x = x
         self.y = y
         self.revealed = False
@@ -31,5 +32,6 @@ class Corridor:
             return color+symbol
 
     def display(self, margin, margin_v):
-        print("\033[{0};{1}H{2}".format\
-        (self.y+margin_v,self.x+1+margin,str(self)))
+        print(
+            "\033[{0};{1}H{2}"
+            .format(self.y+margin_v, self.x + 1 + margin, str(self)))

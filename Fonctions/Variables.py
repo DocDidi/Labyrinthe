@@ -3,8 +3,6 @@
 
 import os
 
-
-
 OPERATING_SYSTEM = os.name
 SMALL_WIDTH = 21
 SMALL_HEIGHT = 11
@@ -13,7 +11,7 @@ BIG_HEIGHT = 21
 MAPS_DIRECTORY = "Maps/"
 MAPS_FORMAT = ".txt"
 MAPS_LOAD = MAPS_DIRECTORY + "*" + MAPS_FORMAT
-SAVE_FILE = os.environ['HOME']+"/MazeStroller_current.save"
+SAVE_FILE = os.environ['HOME'] + "/MazeStroller_current.save"
 
 CTRL_C = '\x03'
 ESCAPE_CHARACTER = '\x1b'
@@ -82,7 +80,7 @@ XXXXXXXXXXX_XXXXXXXXXXX\n"
 
 
 OS_LANGUAGE = os.getenv('LANG')
-if OS_LANGUAGE[:2]=='fr':
+if OS_LANGUAGE[:2] == 'fr':
     from Fonctions.Texts_fr import *
 else:
     from Fonctions.Texts_en import *

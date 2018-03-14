@@ -1,8 +1,15 @@
 #! /usr/bin/env python3
 # coding: utf-8
 
-import os, pickle, sys, termios, tty, os
+import os
+import pickle
+import sys
+import termios
+import tty
+import os
+
 from Fonctions.Variables import *
+
 
 def load_file():
     """Ask the player if he wants to resume previous game"""
@@ -22,10 +29,11 @@ def load_file():
         ongoing_game = False
     return (ongoing_game)
 
+
 def keyboard_input(nbl):
     """Capture keystrokes"""
     orig_settings = termios.tcgetattr(sys.stdin)
     tty.setraw(sys.stdin)
-    text_grab=sys.stdin.read(nbl)
+    text_grab = sys.stdin.read(nbl)
     termios.tcsetattr(sys.stdin, termios.TCSADRAIN, orig_settings)
     return text_grab

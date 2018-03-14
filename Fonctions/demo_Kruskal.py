@@ -4,9 +4,11 @@
 
 # RECURSIVE BACTRACKING
 
-import random, time
+import random
+import time
 
 from Variables_Map_Building import *
+
 
 class Cell:
     def __init__(self, i, j, index_value):
@@ -20,28 +22,28 @@ class Cell:
 
     def wall_test_Kruskal(self, grid, indexed_list):
         """Pick a random direction and break the wall if possible"""
-        tries = ["Up","Down","Left","Right"]
+        tries = ["Up", "Down", "Left", "Right"]
         random.shuffle(tries)
         for x in tries:
             if x == "Up" and self.i-1 > 0:
                 target_cell = grid[self.i-1][self.j]
                 if target_cell.index_value != self.index_value:
-                    self.change_index(target_cell.index_value,indexed_list)
+                    self.change_index(target_cell.index_value, indexed_list)
                     self.up = False
             if x == "Down" and self.i+1 < len(grid)-1:
                 target_cell = grid[self.i+1][self.j]
                 if target_cell.index_value != self.index_value:
-                    self.change_index(target_cell.index_value,indexed_list)
+                    self.change_index(target_cell.index_value, indexed_list)
                     self.down = False
             if x == "Left" and self.j-1 > 0:
                 target_cell = grid[self.i][self.j-1]
                 if target_cell.index_value != self.index_value:
-                    self.change_index(target_cell.index_value,indexed_list)
+                    self.change_index(target_cell.index_value, indexed_list)
                     self.left = False
             if x == "Right" and self.j+1 < len(grid[0])-1:
                 target_cell = grid[self.i][self.j+1]
                 if target_cell.index_value != self.index_value:
-                    self.change_index(target_cell.index_value,indexed_list)
+                    self.change_index(target_cell.index_value, indexed_list)
                     self.right = False
 
     def change_index(self, a, indexed_list):
@@ -53,6 +55,7 @@ class Cell:
             indexed_list[value_low].append(item)
         indexed_list[value_high] = []
 
+
 def round_to_sup_odd(x):
     """Round a number to its superior odd"""
     if x % 2 == 1:
@@ -60,7 +63,8 @@ def round_to_sup_odd(x):
     else:
         return x + 1
 
-def groundwork(w,h):
+
+def groundwork(w, h):
     """Prepare a canvas to carve the map"""
     w = round_to_sup_odd(w)
     h = round_to_sup_odd(h)
@@ -71,14 +75,16 @@ def groundwork(w,h):
             groundwork[i].append(LETTER_WALL)
     return groundwork
 
+
 def make_str_from_2d_array(maze_map):
     """Convert a list into a string"""
-    groundwork_str=""
+    groundwork_str = ""
     for line in maze_map:
         for letter in line:
             groundwork_str += letter
         groundwork_str += "\n"
     return groundwork_str
+
 
 def make_grid(w, h):
     """Make a grid of cells"""
@@ -89,63 +95,66 @@ def make_grid(w, h):
     for i in range(h):
         new_grid.append([])
         for j in range(w):
-            new_grid[i].append(Cell(i,j,index_value))
+            new_grid[i].append(Cell(i, j, index_value))
             index_value += 1
     return new_grid
+
 
 def delete_isolated_wall(maze_map):
     """Delete isolated walls"""
     for x in range(1, len(maze_map)-2):
         for y in range(1, len(maze_map[0])-2):
             if maze_map[x][y] == LETTER_WALL:
-                if maze_map[x][y-1] == LETTER_CORRIDOR and \
-                maze_map[x][y+1] == LETTER_CORRIDOR and \
-                maze_map[x-1][y] == LETTER_CORRIDOR and \
-                maze_map[x+1][y] == LETTER_CORRIDOR:
+                if (
+                        maze_map[x][y-1] == LETTER_CORRIDOR and
+                        maze_map[x][y+1] == LETTER_CORRIDOR and
+                        maze_map[x-1][y] == LETTER_CORRIDOR and
+                        maze_map[x+1][y] == LETTER_CORRIDOR):
                     maze_map[x][y] = LETTER_CORRIDOR
 
-def find_eligible_exit(maze_map,corner):
+
+def find_eligible_exit(maze_map, corner):
     """Find locations for the exit"""
     eligible_exits = []
     map_width = len(maze_map[0]) - 1
     map_height = len(maze_map) - 1
     if corner == "NW":
-        for i in range(1, map_width//2):
+        for i in range(1, map_width // 2):
             if maze_map[1][i] != LETTER_WALL:
-                eligible_exits.append((0,i))
-        for j in range(1, map_height//2):
+                eligible_exits.append((0, i))
+        for j in range(1, map_height // 2):
             if maze_map[j][1] != LETTER_WALL:
-                eligible_exits.append((j,0))
+                eligible_exits.append((j, 0))
         return eligible_exits
     if corner == "NE":
         for i in range(map_width//2, map_width):
             if maze_map[1][i] != LETTER_WALL:
-                eligible_exits.append((0,i))
-        for j in range(1, map_height//2):
-            if maze_map[j][map_width-1] != LETTER_WALL:
-                eligible_exits.append((j,map_width))
+                eligible_exits.append((0, i))
+        for j in range(1, map_height // 2):
+            if maze_map[j][map_width - 1] != LETTER_WALL:
+                eligible_exits.append((j, map_width))
         return eligible_exits
     if corner == "SW":
-        for i in range(1, map_width//2):
-            if maze_map[map_height-1][i] != LETTER_WALL:
-                eligible_exits.append((map_height,i))
+        for i in range(1, map_width // 2):
+            if maze_map[map_height - 1][i] != LETTER_WALL:
+                eligible_exits.append((map_height, i))
         for j in range(map_height//2, map_height):
             if maze_map[j][1] != LETTER_WALL:
-                eligible_exits.append((j,0))
+                eligible_exits.append((j, 0))
         return eligible_exits
     if corner == "SE":
-        for i in range(map_width//2, map_width):
-            if maze_map[map_height-1][i] != LETTER_WALL:
-                eligible_exits.append((map_height,i))
-        for j in range(map_height//2, map_height):
-            if maze_map[j][map_width-1] != LETTER_WALL:
-                eligible_exits.append((j,map_width))
+        for i in range(map_width // 2, map_width):
+            if maze_map[map_height - 1][i] != LETTER_WALL:
+                eligible_exits.append((map_height, i))
+        for j in range(map_height // 2, map_height):
+            if maze_map[j][map_width - 1] != LETTER_WALL:
+                eligible_exits.append((j, map_width))
         return eligible_exits
 
 
 def make_entrance_and_exit(maze_map, number_of_players):
     """Place enter and exit on the map"""
-    locations = [ "NW", "NE", "SW", "SE"]
+    locations = ["NW", "NE", "SW", "SE"]
     for i in range(number_of_players):
         position_start = locations.pop(random.randint(0, len(locations)-1))
         if position_start == "NW":
@@ -158,7 +167,8 @@ def make_entrance_and_exit(maze_map, number_of_players):
             maze_map[len(maze_map)-2][len(maze_map[1])-2] = LETTER_PLAYER[i]
     corner_end = locations.pop(random.randint(0, len(locations)-1))
     eligible_exits = find_eligible_exit(maze_map, corner_end)
-    exit_location = eligible_exits.pop(random.randint(0, len(eligible_exits)-1))
+    location_choice = random.randint(0, len(eligible_exits)-1)
+    exit_location = eligible_exits.pop(location_choice)
     maze_map[exit_location[0]][exit_location[1]] = LETTER_END
 
 
@@ -212,8 +222,9 @@ CLR_ATTR = "\033[0m"
 COLOR_PLAYER_1 = B_BLUE_TEXT
 COLOR_PLAYER_2 = B_RED_TEXT
 
+
 class Wall:
-    def __init__(self, y, x, neighbors = False):
+    def __init__(self, y, x, neighbors=False):
         self.x = x
         self.y = y
         self.end = False
@@ -258,7 +269,7 @@ class Wall:
 
 
 class Corridor:
-    def __init__(self, y, x, has_key = False):
+    def __init__(self, y, x, has_key=False):
         self.x = x
         self.y = y
         self.end = False
@@ -271,8 +282,9 @@ class Corridor:
 
         return WHITE_TEXT+symbol+CLR_ATTR
 
+
 class Door:
-    def __init__(self, y, x, vertical, end = False):
+    def __init__(self, y, x, vertical, end=False):
         self.x = x
         self.y = y
         self.end = end
@@ -280,23 +292,23 @@ class Door:
         self.has_key = False
 
     def __str__(self):
-        if self.end == True:
+        if self.end:
             color = RED_TEXT
         else:
             color = YELLOW_TEXT
-        if self.vertical == True :
+        if self.vertical:
             symbol = SYMBOL_DOOR_VERTICAL
-        else :
+        else:
             symbol = SYMBOL_DOOR
 
         return color+symbol+CLR_ATTR
 
+
 class Player:
-    def __init__(self, y, x, player_number = 1):
+    def __init__(self, y, x, player_number=1):
         self.x = x
         self.y = y
         self.player_number = player_number
-
 
 
 def display(maze_map):
@@ -307,54 +319,54 @@ def display(maze_map):
     for i, line in enumerate(lines):
         for j, letter in enumerate(line):
             if letter is LETTER_PLAYER[0]:
-                players.append(Player(i,j))
-                props.append(Corridor(i,j))
+                players.append(Player(i, j))
+                props.append(Corridor(i, j))
             elif letter is LETTER_PLAYER[1]:
-                players.append(Player(i,j,player_number = 2))
-                props.append(Corridor(i,j))
+                players.append(Player(i, j, player_number=2))
+                props.append(Corridor(i, j))
             elif letter is LETTER_END:
                 vertical = False
                 if j < len(line)-1:
-                    if lines[i][j+1] not in join_with:
+                    if lines[i][j + 1] not in join_with:
                         vertical = True
                 if j > 0:
-                    if lines[i][j-1] not in join_with:
+                    if lines[i][j - 1] not in join_with:
                         vertical = True
-                props.append(Door(i,j,vertical,end = True))
+                props.append(Door(i, j, vertical, end=True))
             elif letter is LETTER_DOOR:
                 vertical = False
-                if j < len(line)-1:
-                    if lines[i][j+1] not in join_with:
+                if j < len(line) - 1:
+                    if lines[i][j + 1] not in join_with:
                         vertical = True
                 if j > 0:
-                    if lines[i][j-1] not in join_with:
+                    if lines[i][j - 1] not in join_with:
                         vertical = True
-                props.append(Door(i,j,vertical))
+                props.append(Door(i, j, vertical))
             elif letter is LETTER_WALL:
                 neighbors = ""
-                if i>0:
-                    if lines[i-1][j] in join_with:
+                if i > 0:
+                    if lines[i - 1][j] in join_with:
                         neighbors += "N"
-                if i<(len(lines)-2):
-                    if lines[i+1][j] in join_with:
+                if i < (len(lines) - 2):
+                    if lines[i + 1][j] in join_with:
                         neighbors += "S"
-                if j<(len(lines[0])-1):
-                    if lines[i][j+1] in join_with:
+                if j < (len(lines[0]) - 1):
+                    if lines[i][j + 1] in join_with:
                         neighbors += "E"
-                if j>0:
+                if j > 0:
                     if lines[i][j-1] in join_with:
                         neighbors += "W"
-                props.append(Wall(i,j,neighbors))
+                props.append(Wall(i, j, neighbors))
             elif letter is LETTER_KEY:
-                props.append(Corridor(i,j,has_key=True))
+                props.append(Corridor(i, j, has_key=True))
             else:
-                props.append(Corridor(i,j))
+                props.append(Corridor(i, j))
     maze_display = ""
     for item in props:
         is_not_player = True
         item.revealed = True
         for player in players:
-            if (item.x,item.y) == (player.x,player.y):
+            if (item.x, item.y) == (player.x, player.y):
                 is_not_player = False
                 if player.player_number == 1:
                     color = B_BLUE_TEXT
@@ -368,9 +380,8 @@ def display(maze_map):
     print(CLEAR_SCREEN + CURSOR_RESET + maze_display)
 
 
-
-grid = make_grid(w,h)
-maze_map = groundwork(w,h)
+grid = make_grid(w, h)
+maze_map = groundwork(w, h)
 list_of_cells = []
 for line in grid:
     for item in line:
@@ -380,52 +391,48 @@ for item in list_of_cells:
     new_list = [item]
     indexed_list.append(new_list)
 random.shuffle(list_of_cells)
-i = 1
 for cell_active in list_of_cells:
     map_test = make_str_from_2d_array(maze_map)
     cell_active.wall_test_Kruskal(grid, indexed_list)
     for line in grid:
         for item in line:
             maze_map[item.i*2+1][item.j*2+1] = LETTER_CORRIDOR
-            if item.up == False:
+            if not item.up:
                 maze_map[item.i*2][item.j*2+1] = LETTER_CORRIDOR
-            if item.down == False:
+            if not item.down:
                 maze_map[item.i*2+2][item.j*2+1] = LETTER_CORRIDOR
-            if item.left == False:
+            if not item.left:
                 maze_map[item.i*2+1][item.j*2] = LETTER_CORRIDOR
-            if item.right == False:
+            if not item.right:
                 maze_map[item.i*2+1][item.j*2+2] = LETTER_CORRIDOR
     map_finished = make_str_from_2d_array(maze_map)
-    if map_finished !=  map_test:
+    if map_finished != map_test:
         time.sleep(0.1)
         display(map_finished)
-    i+=1
 time.sleep(0.5)
 number_of_rooms = (len(maze_map)*len(maze_map[1])) // 50
 key_placed = False
 eligible_spots = []
 if len(maze_map) > 3 and len(maze_map[0]) > 3:
-    for i in range(2, len(maze_map) -1, 2):
-        for j in range(2, len(maze_map[0]) -1, 2):
-            eligible_spots.append((i,j))
+    for i in range(2, len(maze_map) - 1, 2):
+        for j in range(2, len(maze_map[0]) - 1, 2):
+            eligible_spots.append((i, j))
     random.shuffle(eligible_spots)
-    i = 1
-    for i in range (number_of_rooms):
+    for i in range(number_of_rooms):
         spot = eligible_spots.pop(0)
         a = spot[0]
         b = spot[1]
         maze_map[a-1][b] = LETTER_CORRIDOR
         maze_map[a+1][b] = LETTER_CORRIDOR
-        if i%3 == 0:
-            maze_map[a][b-1] = LETTER_CORRIDOR
-            maze_map[a][b+1] = LETTER_CORRIDOR
+        if i % 3 == 0:
+            maze_map[a][b - 1] = LETTER_CORRIDOR
+            maze_map[a][b + 1] = LETTER_CORRIDOR
             if not key_placed:
-                maze_map[a][b]=LETTER_KEY
+                maze_map[a][b] = LETTER_KEY
                 key_placed = True
         delete_isolated_wall(maze_map)
         map_finished = make_str_from_2d_array(maze_map)
         display(map_finished)
-        i+=1
         time.sleep(0.1)
 make_entrance_and_exit(maze_map, number_of_players)
 map_finished = make_str_from_2d_array(maze_map)
@@ -434,8 +441,8 @@ time.sleep(0.5)
 maze_map_old = []
 while maze_map != maze_map_old:
     maze_map_old = [x[:] for x in maze_map]
-    for x in range(2,len(maze_map)-2):
-        for y in range(2,len(maze_map[0])-2):
+    for x in range(2, len(maze_map) - 2):
+        for y in range(2, len(maze_map[0]) - 2):
             if maze_map[x][y] == LETTER_WALL:
                 empty_spaces = []
                 if maze_map[x][y-1] in (LETTER_CORRIDOR):
@@ -450,23 +457,27 @@ while maze_map != maze_map_old:
                     door_added = False
                     random.shuffle(empty_spaces)
                     for door_try in empty_spaces:
-                        if door_try == "W" and\
-                        maze_map[x][y-2] == LETTER_WALL:
+                        if (
+                                door_try == "W" and
+                                maze_map[x][y - 2] == LETTER_WALL):
                             maze_map[x][y-1] = LETTER_DOOR
                             door_added = True
                             break
-                        elif door_try == "E" and\
-                        maze_map[x][y+2] == LETTER_WALL:
+                        elif (
+                                door_try == "E" and
+                                maze_map[x][y + 2] == LETTER_WALL):
                             maze_map[x][y+1] = LETTER_DOOR
                             door_added = True
                             break
-                        elif door_try == "N" and\
-                        maze_map[x-2][y] == LETTER_WALL:
+                        elif (
+                                door_try == "N" and
+                                maze_map[x - 2][y] == LETTER_WALL):
                             maze_map[x-1][y] = LETTER_DOOR
                             door_added = True
                             break
-                        elif door_try == "S" and\
-                        maze_map[x+2][y] == LETTER_WALL:
+                        elif (
+                                door_try == "S" and
+                                maze_map[x + 2][y] == LETTER_WALL):
                             maze_map[x+1][y] = LETTER_DOOR
                             door_added = True
                             break

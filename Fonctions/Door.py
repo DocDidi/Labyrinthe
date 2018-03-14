@@ -3,8 +3,9 @@
 
 from Fonctions.Variables import *
 
+
 class Door:
-    def __init__(self, y, x, vertical, end = False):
+    def __init__(self, y, x, vertical, end=False):
         self.x = x
         self.y = y
         self.revealed = False
@@ -17,18 +18,18 @@ class Door:
         self.sight = False
 
     def __str__(self):
-        if self.end == True:
+        if self.end:
             color = RED_TEXT
             b_color = B_RED_TEXT
-        elif self.visited == True:
+        elif self.visited:
             color = MAGENTA_TEXT
             b_color = B_MAGENTA_TEXT
         else:
             color = YELLOW_TEXT
             b_color = B_WHITE_TEXT
-        if self.vertical == True :
+        if self.vertical:
             symbol = SYMBOL_DOOR_VERTICAL
-        else :
+        else:
             symbol = SYMBOL_DOOR
         if self.lit:
             color = b_color
@@ -42,5 +43,6 @@ class Door:
             return color+symbol
 
     def display(self, margin, margin_v):
-        print("\033[{0};{1}H{2}".format\
-        (self.y+margin_v,self.x+1+margin,str(self)))
+        print(
+            "\033[{0};{1}H{2}"
+            .format(self.y+margin_v, self.x + 1 + margin, str(self)))

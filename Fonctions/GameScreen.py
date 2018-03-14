@@ -1,7 +1,13 @@
 #! /usr/bin/env python3
 # coding: utf-8
 
-import os, time, pickle, termios, tty, sys
+import os
+import time
+import pickle
+import termios
+import tty
+import sys
+
 from Fonctions.Variables import *
 from Fonctions.Variables_Map_Building import *
 from Fonctions.Player import *
@@ -45,12 +51,12 @@ class GameScreen:
         for i, line in enumerate(lines):
             for j, letter in enumerate(line):
                 if letter is LETTER_PLAYER[0]:
-                    players.append(Player(i,j))
-                    props.append(Corridor(i,j))
+                    players.append(Player(i, j))
+                    props.append(Corridor(i, j))
                     check_player = True
                 elif letter is LETTER_PLAYER[1]:
-                    players.append(Player(i,j,player_number = 2))
-                    props.append(Corridor(i,j))
+                    players.append(Player(i, j, player_number=2))
+                    props.append(Corridor(i, j))
                 elif letter is LETTER_END:
                     vertical = False
                     if j < len(line)-1:
@@ -59,39 +65,39 @@ class GameScreen:
                     if j > 0:
                         if lines[i][j-1] not in join_with:
                             vertical = True
-                    props.append(Door(i,j,vertical,end = True))
-                    self.position_end = (i,j)
+                    props.append(Door(i, j, vertical, end=True))
+                    self.position_end = (i, j)
                     check_end = True
                 elif letter is LETTER_DOOR:
                     vertical = False
                     if j < len(line)-1:
-                        if lines[i][j+1] not in join_with:
+                        if lines[i][j + 1] not in join_with:
                             vertical = True
                     if j > 0:
-                        if lines[i][j-1] not in join_with:
+                        if lines[i][j - 1] not in join_with:
                             vertical = True
-                    props.append(Door(i,j,vertical))
+                    props.append(Door(i, j, vertical))
                 elif letter is LETTER_WALL:
                     neighbors = ""
-                    if i>0:
-                        if lines[i-1][j] in join_with:
+                    if i > 0:
+                        if lines[i - 1][j] in join_with:
                             neighbors += "N"
-                    if i<(len(lines)-2):
-                        if lines[i+1][j] in join_with:
+                    if i < (len(lines) - 2):
+                        if lines[i + 1][j] in join_with:
                             neighbors += "S"
-                    if j<(len(lines[0])-1):
-                        if lines[i][j+1] in join_with:
+                    if j < (len(lines[0]) - 1):
+                        if lines[i][j + 1] in join_with:
                             neighbors += "E"
-                    if j>0:
-                        if lines[i][j-1] in join_with:
+                    if j > 0:
+                        if lines[i][j - 1] in join_with:
                             neighbors += "W"
-                    props.append(Wall(i,j,neighbors))
+                    props.append(Wall(i, j, neighbors))
                 elif letter is LETTER_KEY:
-                    props.append(Corridor(i,j,has_key=True))
-                    self.position_key = (i,j)
+                    props.append(Corridor(i, j, has_key=True))
+                    self.position_key = (i, j)
                     check_key = True
                 else:
-                    props.append(Corridor(i,j))
+                    props.append(Corridor(i, j))
         if check_player and check_end and check_key:
             self.players = players
             self.props = props
@@ -117,15 +123,18 @@ class GameScreen:
         if self.width < len(MESSAGE_MOVES):
             offset = 4
         self.rows, self.columns = os.popen('stty size', 'r').read().split()
-        if (int(self.rows) < self.height + offset) \
-        or (int(self.columns) < self.width + 1):
-            print("\033[8;{0};{1}t"\
-            .format(self.height + offset, self.width+1)+CLR_ATTR)
+        if (
+                (int(self.rows) < self.height + offset) or
+                (int(self.columns) < self.width + 1)):
+            print(
+                    "\033[8;{0};{1}t"
+                    .format(self.height + offset, self.width+1) +
+                    CLR_ATTR)
         w = self.width + 1
         # turn off the light near players
         for player in self.players:
-            for i in range(-3,4):
-                for j in range(-3,4):
+            for i in range(-3, 4):
+                for j in range(-3, 4):
                     position = (player.y + i) * w + (player.x + j)
                     if 0 <= position < len(self.props):
                         self.props[position].lit = False
@@ -137,8 +146,8 @@ class GameScreen:
                 range_left = player.x * -1
             if player.x > (w - 2):
                 range_right = w - player.x
-            for i in range(-2,3):
-                for j in range(range_left,range_right):
+            for i in range(-2, 3):
+                for j in range(range_left, range_right):
                     position = (player.y + i) * w + (player.x + j)
                     if 0 <= position < len(self.props):
                         self.props[position].lit = True
@@ -148,8 +157,8 @@ class GameScreen:
                 range_left = player.x * -1
             if player.x > (w - 3):
                 range_right = w - player.x
-            for i in range(-1,2):
-                for j in range(range_left,range_right):
+            for i in range(-1, 2):
+                for j in range(range_left, range_right):
                     position = (player.y + i) * w + (player.x + j)
                     if 0 <= position < len(self.props):
                         self.props[position].lit = True
@@ -160,27 +169,30 @@ class GameScreen:
         if not self.start_menu.difficulty == 2:
             if self.time_total > self.time_limit and self.hint < 1:
                 self.hint = 1
-                for i in range(-1,2):
-                    for j in range(-1,2):
-                        position = (self.position_key[0] + i) * w \
-                        + (self.position_key[1] + j)
+                for i in range(-1, 2):
+                    for j in range(-1, 2):
+                        position = (
+                                (self.position_key[0] + i) * w +
+                                (self.position_key[1] + j))
                         if 0 <= position < len(self.props):
                             self.props[position].revealed = True
             if self.time_total > (self.time_limit * 2) and self.hint < 2:
                 self.hint = 2
-                for i in range(-1,2):
-                    for j in range(-1,2):
-                        position = (self.position_end[0] + i) * w \
-                        + (self.position_end[1] + j)
+                for i in range(-1, 2):
+                    for j in range(-1, 2):
+                        position = (
+                                (self.position_end[0] + i) * w +
+                                (self.position_end[1] + j))
                         if 0 <= position < len(self.props):
                             self.props[position].revealed = True
         # Calculate line of sight
         max_sight = 15
-        matrice = (((0,0,-1,0),(0,-1,-1,0),(0,1,-1,0)),\
-        ((0,0,1,0),(0,-1,1,0),(0,1,1,0)),\
-        ((-1,0,0,0),(-1,0,0,-1),(-1,0,0,1)),\
-        ((1,0,0,0),(1,0,0,-1),(1,0,0,1)))
-        if self.maze_on: # do not remove or bug
+        matrice = (
+                ((0,  0, -1, 0),  (0, -1, -1,  0),  (0, 1, -1, 0)),
+                ((0,  0,  1, 0),  (0, -1,  1,  0),  (0, 1,  1, 0)),
+                ((-1, 0,  0, 0), (-1,  0,  0, -1), (-1, 0,  0, 1)),
+                ((1,  0,  0, 0),  (1,  0,  0, -1),  (1, 0,  0, 1)))
+        if self.maze_on:  # do not remove or bug
             for player in self.players:
                 x = player.x
                 y = player.y
@@ -188,89 +200,100 @@ class GameScreen:
                 for n in matrice:
                     i = 1
                     j = 1
-                    side1 = side2 = lenght =  max_sight
+                    side1 = side2 = lenght = max_sight
                     while i < lenght:
-                        item=self.props[((y+(i*n[0][0])+(j*n[0][1]))*w)\
-                        +(x+(i*n[0][2])+(j*n[0][3]))]
+                        item = self.props[(
+                                ((y + (i * n[0][0]) + (j * n[0][1])) * w) +
+                                (x + (i * n[0][2]) + (j * n[0][3])))]
                         if not item.sight:
                             lenght = i
                         item.revealed = True
-                        j=1
+                        j = 1
                         while j < side1:
-                            side_item=self.props[((y+(i*n[1][0])+\
-                            (j*n[1][1]))*w)+(x+(i*n[1][2])+(j*n[1][3]))]
-                            j+=1
+                            side_item = self.props[(
+                                    ((y + (i * n[1][0]) + (j * n[1][1])) * w) +
+                                    (x + (i * n[1][2]) + (j * n[1][3])))]
+                            j += 1
                             if not side_item.sight:
                                 side1 = j
                             side_item.revealed = True
-                        j=1
+                        j = 1
                         while j < side2:
-                            side_item=self.props[((y+(i*n[2][0])+\
-                            (j*n[2][1]))*w)+(x+(i*n[2][2])+(j*n[2][3]))]
-                            j+=1
+                            side_item = self.props[(
+                                    ((y + (i * n[2][0]) + (j * n[2][1])) * w) +
+                                    (x + (i * n[2][2]) + (j * n[2][3])))]
+                            j += 1
                             if not side_item.sight:
                                 side2 = j
                             side_item.revealed = True
-                        i+=1
+                        i += 1
         to_reveal = []
         for player in self.players:
-            for i in range(max_sight * -1,max_sight + 1):
-                for j in range(max_sight * -1,max_sight + 1):
+            for i in range(max_sight * -1, max_sight + 1):
+                for j in range(max_sight * -1, max_sight + 1):
                     position = (player.y + i) * w + (player.x + j)
                     if 0 <= position < len(self.props):
                         item = self.props[position]
                     else:
                         continue
-                    if item.y < self.height -1:
+                    if item.y < self.height - 1:
                         test_item = self.props[((item.y + 1) * w) + (item.x)]
-                        if test_item.revealed and not item.sight \
-                        and test_item.sight:
+                        if (
+                                test_item.revealed and not
+                                item.sight and test_item.sight):
                             to_reveal.append(item)
                     if item.y > 0:
                         test_item = self.props[((item.y - 1) * w) + (item.x)]
-                        if test_item.revealed and not item.sight \
-                        and test_item.sight:
+                        if (
+                                test_item.revealed and not
+                                item.sight and test_item.sight):
                             to_reveal.append(item)
                     if item.x < self.width:
                         test_item = self.props[((item.y) * w) + (item.x + 1)]
-                        if test_item.revealed and not item.sight \
-                        and test_item.sight:
+                        if (
+                                test_item.revealed and not
+                                item.sight and test_item.sight):
                             to_reveal.append(item)
                     if item.x > 0:
                         test_item = self.props[((item.y) * w) + (item.x - 1)]
-                        if test_item.revealed and not item.sight \
-                        and test_item.sight:
+                        if (
+                                test_item.revealed and not
+                                item.sight and test_item.sight):
                             to_reveal.append(item)
         for item in to_reveal:
             item.revealed = True
         for player in self.players:
-            for i in range(max_sight * -1,max_sight + 1):
-                for j in range(max_sight * -1,max_sight + 1):
+            for i in range(max_sight * -1, max_sight + 1):
+                for j in range(max_sight * -1, max_sight + 1):
                     position = (player.y + i) * w + (player.x + j)
                     if 0 <= position < len(self.props):
                         item = self.props[position]
                     else:
                         continue
                     revealed_wall_count = []
-                    if item.y < self.height -1:
+                    if item.y < self.height - 1:
                         test_item = self.props[((item.y + 1) * w) + (item.x)]
-                        if test_item.revealed and not test_item.sight \
-                        and not item.sight:
+                        if (
+                                test_item.revealed and not
+                                test_item.sight and not item.sight):
                             revealed_wall_count.append(item)
                     if item.y > 0:
                         test_item = self.props[((item.y - 1) * w) + (item.x)]
-                        if test_item.revealed and not test_item.sight \
-                        and not item.sight:
+                        if (
+                                test_item.revealed and not
+                                test_item.sight and not item.sight):
                             revealed_wall_count.append(item)
                     if item.x < self.width:
                         test_item = self.props[((item.y) * w) + (item.x + 1)]
-                        if test_item.revealed and not test_item.sight \
-                        and not item.sight:
+                        if (
+                                test_item.revealed and not
+                                test_item.sight and not item.sight):
                             revealed_wall_count.append(item)
                     if item.x > 0:
                         test_item = self.props[((item.y) * w) + (item.x - 1)]
-                        if test_item.revealed and not test_item.sight \
-                        and not item.sight:
+                        if (
+                                test_item.revealed and not
+                                test_item.sight and not item.sight):
                             revealed_wall_count.append(item)
                     if len(revealed_wall_count) == 2:
                         item.revealed = True
@@ -278,11 +301,13 @@ class GameScreen:
         self.margin = ((int(self.columns) - self.width)//2)
         self.margin_v = ((int(self.rows) - self.height)//2)
 
-
         # if self.turn_count % 5 == 0:  NO. Blinky.
         if True:
-            maze_map = CLEAR_SCREEN+"\033[{};0H".format(self.margin_v) \
-            + " " * self.margin + CLR_ATTR
+            maze_map = (
+                    CLEAR_SCREEN +
+                    "\033[{};0H".format(self.margin_v) +
+                    " " * self.margin +
+                    CLR_ATTR)
             for item in self.props:
                 maze_map += str(item)
                 if item.x == self.width:
@@ -290,14 +315,15 @@ class GameScreen:
             print(maze_map)
         else:
             for player in self.players:
-                for i in range((max_sight + 2) * -1,(max_sight + 2) + 1):
-                    for j in range(max_sight * -1,max_sight + 1):
+                for i in range((max_sight + 2) * -1, (max_sight + 2) + 1):
+                    for j in range(max_sight * -1, max_sight + 1):
                         position = (player.y + i) * w + (player.x + j)
                         if 0 <= position < len(self.props):
                             item = self.props[position]
                         else:
                             continue
-                        self.props[position].display(self.margin, self.margin_v)
+                        self.props[position]\
+                            .display(self.margin, self.margin_v)
         self.turn_count += 1
         for player in self.players:
             player.display(self.margin, self.margin_v)
@@ -305,15 +331,21 @@ class GameScreen:
             margin = ((int(self.columns) - len(SYMBOL_KEY) + 4)//2)
             if margin < 0:
                 margin = 0
-            print(B_WHITE_TEXT + "\033[{0};{1}H{2}\033[1B"\
-            .format(self.height + self.margin_v, margin, SYMBOL_KEY)+CLR_ATTR)
+            print(
+                    B_WHITE_TEXT +
+                    "\033[{0};{1}H{2}\033[1B"
+                    .format(self.height + self.margin_v, margin, SYMBOL_KEY) +
+                    CLR_ATTR)
         else:
             margin = ((int(self.columns) - len(MESSAGE_KEY) + 4)//2)
             if margin < 0:
                 margin = 0
-            print(self.txt_color + "\033[{0};{1}H{2}\033[1B"\
-            .format(self.height + self.margin_v, margin, MESSAGE_KEY)+CLR_ATTR)
-        if len(self.players)>1:
+            print(
+                    self.txt_color +
+                    "\033[{0};{1}H{2}\033[1B"
+                    .format(self.height + self.margin_v, margin, MESSAGE_KEY) +
+                    CLR_ATTR)
+        if len(self.players) > 1:
             margin = ((int(self.columns) - (len(MESSAGE_MOVES_MULTI)-30))//2)
             message_moves = MESSAGE_MOVES_MULTI
         else:
@@ -321,8 +353,14 @@ class GameScreen:
             message_moves = MESSAGE_MOVES
         if margin < 0:
             margin = 0
-        print(self.txt_color + "\033[{0};{1}H{2}"\
-        .format(self.height + 1 + self.margin_v,margin,message_moves)+CLR_ATTR)
+        print(
+                self.txt_color +
+                "\033[{0};{1}H{2}"
+                .format(
+                    self.height + 1 + self.margin_v,
+                    margin,
+                    message_moves) +
+                CLR_ATTR)
         self.timer_add()
         self.save_game()
         self.timer_start()
@@ -342,15 +380,15 @@ class GameScreen:
                 no_input = False
                 self.maze_on = False
                 self.start_menu.chosen = False
-            elif keystroke.lower()=='p':
+            elif keystroke.lower() == 'p':
                 cheatcode = 1
-            elif keystroke.lower()=='o' and cheatcode == 1:
+            elif keystroke.lower() == 'o' and cheatcode == 1:
                 cheatcode = 2
-            elif keystroke.lower()=='u' and cheatcode == 2:
+            elif keystroke.lower() == 'u' and cheatcode == 2:
                 cheatcode = 3
-            elif keystroke.lower()=='e' and cheatcode == 3:
+            elif keystroke.lower() == 'e' and cheatcode == 3:
                 cheatcode = 4
-            elif keystroke.lower()=='t' and cheatcode == 4:
+            elif keystroke.lower() == 't' and cheatcode == 4:
                 self.start_menu.difficulty = 0
                 self.turn_count = 0
                 no_input = False
@@ -437,10 +475,11 @@ class GameScreen:
         else:
             word_minutes = WORD_MINUTES
         if not minutes and not hours:
-            self.time_spent = "{0} {1}".format(seconds,word_seconds)
+            self.time_spent = "{0} {1}".format(seconds, word_seconds)
         elif not hours:
-            self.time_spent =  "{0} {1}, {2} {3}"\
-            .format(minutes,word_minutes, seconds,word_seconds)
+            self.time_spent = (
+                "{0} {1}, {2} {3}"
+                .format(minutes, word_minutes, seconds, word_seconds))
         else:
             self.time_spent = MESSAGE_HOUR_LONG
 
@@ -451,14 +490,20 @@ class GameScreen:
             margin = ((int(self.columns) - len(MESSAGE_SAVE_MAZE))//2)
             if margin < 0:
                 margin = 0
-            maze_file = input(self.txt_color + \
-            "\033[{0};0H\033[K\033[{1}C{2}\n\033[K\033[{1}C"\
-            .format(self.height + self.margin_v, margin, MESSAGE_SAVE_MAZE))
+            maze_file = input(
+                self.txt_color +
+                "\033[{0};0H\033[K\033[{1}C{2}\n\033[K\033[{1}C".format(
+                    self.height + self.margin_v,
+                    margin,
+                    MESSAGE_SAVE_MAZE))
             maze_file = MAPS_DIRECTORY + maze_file + MAPS_FORMAT
             if os.path.exists(maze_file):
-                print("\033[{0};0H\033[K\033[{1}C{2}\n\033[K\033[{1}C{3}"\
-                .format(self.height + self.margin_v, margin, \
-                MESSAGE_SAVE_OVERWRITE_1, MESSAGE_SAVE_OVERWRITE_2))
+                print(
+                    "\033[{0};0H\033[K\033[{1}C{2}\n\033[K\033[{1}C{3}".format(
+                        self.height + self.margin_v,
+                        margin,
+                        MESSAGE_SAVE_OVERWRITE_1,
+                        MESSAGE_SAVE_OVERWRITE_2))
                 keystroke = self.keyboard_input(1)
                 if keystroke == 'CTRL_C':
                     os.system('clear')
@@ -477,9 +522,12 @@ class GameScreen:
         """Print the path players had taken"""
         for item in self.props:
             if (type(item) == Corridor) and item.visited:
-                print("{0}\033[{1};{2}H{3}".format\
-                (B_BLUE_TEXT,item.y+self.margin_v,item.x+1+self.margin,\
-                SYMBOL_CORRIDOR_VISITED))
+                print(
+                    "{0}\033[{1};{2}H{3}".format(
+                        B_BLUE_TEXT,
+                        item.y + self.margin_v,
+                        item.x + 1 + self.margin,
+                        SYMBOL_CORRIDOR_VISITED))
         for player in self.players:
             player.display(self.margin, self.margin_v)
 
@@ -487,7 +535,7 @@ class GameScreen:
         """Capture keystrokes"""
         orig_settings = termios.tcgetattr(sys.stdin)
         tty.setraw(sys.stdin)
-        text_grab=sys.stdin.read(nbl)
+        text_grab = sys.stdin.read(nbl)
         termios.tcsetattr(sys.stdin, termios.TCSADRAIN, orig_settings)
         return text_grab
 
@@ -509,9 +557,12 @@ class GameScreen:
         margin = ((int(self.columns) - len(MESSAGE_WIN_1))//2)
         if margin < 0:
             margin = 0
-        print(self.txt_color + "\033[{0};{1}H{2}"\
-        .format(self.height + self.margin_v, margin,\
-        MESSAGE_WIN_1.format(self.time_spent, steps)))
+        print(
+            self.txt_color +
+            "\033[{0};{1}H{2}".format(
+                self.height + self.margin_v,
+                margin,
+                MESSAGE_WIN_1.format(self.time_spent, steps)))
         if map_already_saved:
             message = MESSAGE_WIN_2_SAVED
         else:
@@ -519,8 +570,10 @@ class GameScreen:
         margin = ((int(self.columns) - len(message)+8)//2)
         if margin < 0:
             margin = 0
-        print(self.txt_color + "\033[{0};0H\033[K\033[{1}C{2}"\
-        .format(self.height + 1 + self.margin_v, margin, message))
+        print(
+            self.txt_color +
+            "\033[{0};0H\033[K\033[{1}C{2}"
+            .format(self.height + 1 + self.margin_v, margin, message))
         no_input = True
         while no_input:
             keystroke = self.keyboard_input(1)
@@ -534,13 +587,16 @@ class GameScreen:
                 no_input = False
             elif keystroke.lower() == "k":
                 if map_already_saved:
-                    margin = ((int(self.columns)\
-                    -len(MESSAGE_MAP_ALREADY_SAVED))//2)
+                    margin = (
+                        (int(self.columns) -
+                            len(MESSAGE_MAP_ALREADY_SAVED)) // 2)
                     if margin < 0:
                         margin = 0
-                    print("\033[{0};0H\033[K\033[{1}C{2}"\
-                    .format(self.height + self.margin_v, margin, \
-                    MESSAGE_MAP_ALREADY_SAVED))
+                    print(
+                        "\033[{0};0H\033[K\033[{1}C{2}".format(
+                            self.height + self.margin_v,
+                            margin,
+                            MESSAGE_MAP_ALREADY_SAVED))
                 else:
                     self.save_maze()
                     no_input = False

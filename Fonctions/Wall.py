@@ -3,8 +3,9 @@
 
 from Fonctions.Variables import *
 
+
 class Wall:
-    def __init__(self, y, x, neighbors = False):
+    def __init__(self, y, x, neighbors=False):
         self.x = x
         self.y = y
         self.revealed = False
@@ -48,8 +49,6 @@ class Wall:
         else:
             self.symbol = SYMBOL_WALL
 
-
-
     def __str__(self):
         if self.lit:
             color = B_WHITE_TEXT
@@ -68,5 +67,8 @@ class Wall:
             return color+symbol
 
     def display(self, margin, margin_v):
-        print("\033[{0};{1}H{2}".format\
-        (self.y+margin_v,self.x+1+margin,str(self)))
+        print(
+            "\033[{0};{1}H{2}".format(
+                self.y + margin_v,
+                self.x + 1 + margin,
+                str(self)))

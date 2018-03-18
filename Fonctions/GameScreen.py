@@ -113,6 +113,12 @@ class GameScreen:
 
     def display(self):
         """Update and display the maze"""
+        orig_settings = termios.tcgetattr(sys.stdin)
+        (iflag, oflag, cflag, lflag, ispeed, ospeed, cc) = \
+            termios.tcgetattr(sys.stdin)
+        lflag &= ~termios.ECHO
+        new_attr = [iflag, oflag, cflag, lflag, ispeed, ospeed, cc]
+        termios.tcsetattr(sys.stdin, termios.TCSANOW, new_attr)
         if self.start_menu.difficulty == 2 and self.maze_on:
             for item in self.props:
                 item.revealed = False
@@ -364,6 +370,8 @@ class GameScreen:
         self.timer_add()
         self.save_game()
         self.timer_start()
+        termios.tcsetattr(sys.stdin, termios.TCSADRAIN, orig_settings)
+
 
     def player_move(self):
         """Detect keystrokes and move the player accordingly"""

@@ -38,6 +38,8 @@ class GameScreen:
         self.time_limit = ((self.height * self.width)//20) + 25
         self.hint = 0
         self.turn_count = 0
+        self.max_sight = 15
+
 
     def extract(self, maze):
         """Extract game data from the map"""
@@ -111,6 +113,10 @@ class GameScreen:
         with open(SAVE_FILE, "wb") as save_file:
             save_file.write(pickle.dumps(self))
 
+    def line_of_sight(self):
+        """Check if objects are in line of sight in order to reveal them"""
+        return True
+
     def display(self):
         """Update and display the maze"""
         orig_settings = termios.tcgetattr(sys.stdin)
@@ -119,10 +125,7 @@ class GameScreen:
         lflag &= ~termios.ECHO
         new_attr = [iflag, oflag, cflag, lflag, ispeed, ospeed, cc]
         termios.tcsetattr(sys.stdin, termios.TCSANOW, new_attr)
-        if self.start_menu.difficulty == 2 and self.maze_on:
-            for item in self.props:
-                item.revealed = False
-        elif self.start_menu.difficulty == 0:
+        if self.start_menu.difficulty == 0 and self.turn_count == 0:
             for item in self.props:
                 item.revealed = True
         offset = 3
@@ -137,6 +140,8 @@ class GameScreen:
                     .format(self.height + offset, self.width+1) +
                     CLR_ATTR)
         w = self.width + 1
+
+        erase_buffer = self.max_sight + 1
         # turn off the light near players
         for player in self.players:
             for i in range(-3, 4):
@@ -144,6 +149,16 @@ class GameScreen:
                     position = (player.y + i) * w + (player.x + j)
                     if 0 <= position < len(self.props):
                         self.props[position].lit = False
+            # Put the fog back if difficulty is set to hard
+            if self.start_menu.difficulty == 2 and self.maze_on:
+                for i in range (-erase_buffer, erase_buffer + 1):
+                    for j in range(-erase_buffer, erase_buffer + 1):
+                        position = (player.y + i) * w + (player.x + j)
+                        if 0 <= position < len(self.props):
+                            item = self.props[position]
+                        else:
+                            continue
+                        item.revealed = False
         # light surrounding of players
         for player in self.players:
             range_left = -1
@@ -192,7 +207,6 @@ class GameScreen:
                         if 0 <= position < len(self.props):
                             self.props[position].revealed = True
         # Calculate line of sight
-        max_sight = 15
         matrice = (
                 ((0,  0, -1, 0),  (0, -1, -1,  0),  (0, 1, -1, 0)),
                 ((0,  0,  1, 0),  (0, -1,  1,  0),  (0, 1,  1, 0)),
@@ -206,7 +220,7 @@ class GameScreen:
                 for n in matrice:
                     i = 1
                     j = 1
-                    side1 = side2 = lenght = max_sight
+                    side1 = side2 = lenght = self.max_sight
                     while i < lenght:
                         item = self.props[(
                                 ((y + (i * n[0][0]) + (j * n[0][1])) * w) +
@@ -235,8 +249,8 @@ class GameScreen:
                         i += 1
         to_reveal = []
         for player in self.players:
-            for i in range(max_sight * -1, max_sight + 1):
-                for j in range(max_sight * -1, max_sight + 1):
+            for i in range(self.max_sight * -1, self.max_sight + 1):
+                for j in range(self.max_sight * -1, self.max_sight + 1):
                     position = (player.y + i) * w + (player.x + j)
                     if 0 <= position < len(self.props):
                         item = self.props[position]
@@ -269,8 +283,8 @@ class GameScreen:
         for item in to_reveal:
             item.revealed = True
         for player in self.players:
-            for i in range(max_sight * -1, max_sight + 1):
-                for j in range(max_sight * -1, max_sight + 1):
+            for i in range(self.max_sight * -1, self.max_sight + 1):
+                for j in range(self.max_sight * -1, self.max_sight + 1):
                     position = (player.y + i) * w + (player.x + j)
                     if 0 <= position < len(self.props):
                         item = self.props[position]
@@ -304,35 +318,24 @@ class GameScreen:
                     if len(revealed_wall_count) == 2:
                         item.revealed = True
 
+        # Actually print the maze
         self.margin = ((int(self.columns) - self.width)//2)
         self.margin_v = ((int(self.rows) - self.height)//2)
-
-        # if self.turn_count % 5 == 0:  NO. Blinky.
-        if True:
-            maze_map = (
-                    CLEAR_SCREEN +
-                    "\033[{};0H".format(self.margin_v) +
-                    " " * self.margin +
-                    CLR_ATTR)
-            for item in self.props:
-                maze_map += str(item)
-                if item.x == self.width:
-                    maze_map += "\n" + " " * self.margin
-            print(maze_map)
-        else:
-            for player in self.players:
-                for i in range((max_sight + 2) * -1, (max_sight + 2) + 1):
-                    for j in range(max_sight * -1, max_sight + 1):
-                        position = (player.y + i) * w + (player.x + j)
-                        if 0 <= position < len(self.props):
-                            item = self.props[position]
-                        else:
-                            continue
-                        self.props[position]\
-                            .display(self.margin, self.margin_v)
+        maze_map = (
+                CLEAR_SCREEN +
+                "\033[{};0H".format(self.margin_v) +
+                " " * self.margin +
+                CLR_ATTR)
+        for item in self.props:
+            maze_map += str(item)
+            if item.x == self.width:
+                maze_map += "\n" + " " * self.margin
+        print(maze_map)
         self.turn_count += 1
+        # Display the players on top of the maze
         for player in self.players:
             player.display(self.margin, self.margin_v)
+        # Print the text below the maze
         if self.player_have_key:
             margin = ((int(self.columns) - len(SYMBOL_KEY) + 4)//2)
             if margin < 0:
@@ -367,6 +370,7 @@ class GameScreen:
                     margin,
                     message_moves) +
                 CLR_ATTR)
+
         self.timer_add()
         self.save_game()
         self.timer_start()

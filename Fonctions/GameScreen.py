@@ -40,7 +40,6 @@ class GameScreen:
         self.turn_count = 0
         self.max_sight = 15
 
-
     def extract(self, maze):
         """Extract game data from the map"""
         lines = maze.split("\n")
@@ -113,9 +112,62 @@ class GameScreen:
         with open(SAVE_FILE, "wb") as save_file:
             save_file.write(pickle.dumps(self))
 
+    def bresenham(self, x0, y0, x1, y1):
+        """Yield integer coordinates on the line from (x0, y0) to (x1, y1).
+        Input coordinates should be integers.
+        The result will contain both the start and the end point.
+        made by Encukou
+        found on Github
+        """
+
+        dx = x1 - x0
+        dy = y1 - y0
+
+        xsign = 1 if dx > 0 else -1
+        ysign = 1 if dy > 0 else -1
+
+        dx = abs(dx)
+        dy = abs(dy)
+
+        if dx > dy:
+            xx, xy, yx, yy = xsign, 0, 0, ysign
+        else:
+            dx, dy = dy, dx
+            xx, xy, yx, yy = 0, ysign, xsign, 0
+
+        D = 2*dy - dx
+        y = 0
+
+        for x in range(dx + 1):
+            yield x0 + x*xx + y*yx, y0 + x*xy + y*yy
+            if D >= 0:
+                y += 1
+                D -= 2*dx
+            D += 2*dy
+
     def line_of_sight(self):
         """Check if objects are in line of sight in order to reveal them"""
-        return True
+        w = self.width + 1
+        for player in self.players:
+            xp, yp = player.x, player.y
+            list_of_items_to_check_for_sight = []
+            for i in range(-self.max_sight, self.max_sight + 1):
+                for j in range(-self.max_sight, self.max_sight + 1):
+                    position = ((yp + i) * w) + (xp + j)
+                    if 0 <= position < len(self.props):
+                        item = self.props[position]
+                        list_of_items_to_check_for_sight.append(item)
+            for item in list_of_items_to_check_for_sight:
+                xi, yi = item.x, item.y
+                line = self.bresenham(xp, yp, xi, yi)
+                for coord in line:
+                    x, y = coord
+                    if x == xp and y == yp:
+                        continue
+                    item_index = (y * w) + x
+                    self.props[item_index].revealed = True
+                    if not self.props[item_index].sight:
+                        break
 
     def display(self):
         """Update and display the maze"""
@@ -141,8 +193,8 @@ class GameScreen:
                     CLR_ATTR)
         w = self.width + 1
 
-        erase_buffer = self.max_sight + 1
         # turn off the light near players
+        erase_buffer = self.max_sight + 1
         for player in self.players:
             for i in range(-3, 4):
                 for j in range(-3, 4):
@@ -151,14 +203,8 @@ class GameScreen:
                         self.props[position].lit = False
             # Put the fog back if difficulty is set to hard
             if self.start_menu.difficulty == 2 and self.maze_on:
-                for i in range (-erase_buffer, erase_buffer + 1):
-                    for j in range(-erase_buffer, erase_buffer + 1):
-                        position = (player.y + i) * w + (player.x + j)
-                        if 0 <= position < len(self.props):
-                            item = self.props[position]
-                        else:
-                            continue
-                        item.revealed = False
+                for item in self.props:
+                    item.revealed = False
         # light surrounding of players
         for player in self.players:
             range_left = -1
@@ -206,117 +252,9 @@ class GameScreen:
                                 (self.position_end[1] + j))
                         if 0 <= position < len(self.props):
                             self.props[position].revealed = True
-        # Calculate line of sight
-        matrice = (
-                ((0,  0, -1, 0),  (0, -1, -1,  0),  (0, 1, -1, 0)),
-                ((0,  0,  1, 0),  (0, -1,  1,  0),  (0, 1,  1, 0)),
-                ((-1, 0,  0, 0), (-1,  0,  0, -1), (-1, 0,  0, 1)),
-                ((1,  0,  0, 0),  (1,  0,  0, -1),  (1, 0,  0, 1)))
-        if self.maze_on:  # do not remove or bug
-            for player in self.players:
-                x = player.x
-                y = player.y
-                self.props[(y * w) + (x)].revealed = True
-                for n in matrice:
-                    i = 1
-                    j = 1
-                    side1 = side2 = lenght = self.max_sight
-                    while i < lenght:
-                        item = self.props[(
-                                ((y + (i * n[0][0]) + (j * n[0][1])) * w) +
-                                (x + (i * n[0][2]) + (j * n[0][3])))]
-                        if not item.sight:
-                            lenght = i
-                        item.revealed = True
-                        j = 1
-                        while j < side1:
-                            side_item = self.props[(
-                                    ((y + (i * n[1][0]) + (j * n[1][1])) * w) +
-                                    (x + (i * n[1][2]) + (j * n[1][3])))]
-                            j += 1
-                            if not side_item.sight:
-                                side1 = j
-                            side_item.revealed = True
-                        j = 1
-                        while j < side2:
-                            side_item = self.props[(
-                                    ((y + (i * n[2][0]) + (j * n[2][1])) * w) +
-                                    (x + (i * n[2][2]) + (j * n[2][3])))]
-                            j += 1
-                            if not side_item.sight:
-                                side2 = j
-                            side_item.revealed = True
-                        i += 1
-        to_reveal = []
-        for player in self.players:
-            for i in range(self.max_sight * -1, self.max_sight + 1):
-                for j in range(self.max_sight * -1, self.max_sight + 1):
-                    position = (player.y + i) * w + (player.x + j)
-                    if 0 <= position < len(self.props):
-                        item = self.props[position]
-                    else:
-                        continue
-                    if item.y < self.height - 1:
-                        test_item = self.props[((item.y + 1) * w) + (item.x)]
-                        if (
-                                test_item.revealed and not
-                                item.sight and test_item.sight):
-                            to_reveal.append(item)
-                    if item.y > 0:
-                        test_item = self.props[((item.y - 1) * w) + (item.x)]
-                        if (
-                                test_item.revealed and not
-                                item.sight and test_item.sight):
-                            to_reveal.append(item)
-                    if item.x < self.width:
-                        test_item = self.props[((item.y) * w) + (item.x + 1)]
-                        if (
-                                test_item.revealed and not
-                                item.sight and test_item.sight):
-                            to_reveal.append(item)
-                    if item.x > 0:
-                        test_item = self.props[((item.y) * w) + (item.x - 1)]
-                        if (
-                                test_item.revealed and not
-                                item.sight and test_item.sight):
-                            to_reveal.append(item)
-        for item in to_reveal:
-            item.revealed = True
-        for player in self.players:
-            for i in range(self.max_sight * -1, self.max_sight + 1):
-                for j in range(self.max_sight * -1, self.max_sight + 1):
-                    position = (player.y + i) * w + (player.x + j)
-                    if 0 <= position < len(self.props):
-                        item = self.props[position]
-                    else:
-                        continue
-                    revealed_wall_count = []
-                    if item.y < self.height - 1:
-                        test_item = self.props[((item.y + 1) * w) + (item.x)]
-                        if (
-                                test_item.revealed and not
-                                test_item.sight and not item.sight):
-                            revealed_wall_count.append(item)
-                    if item.y > 0:
-                        test_item = self.props[((item.y - 1) * w) + (item.x)]
-                        if (
-                                test_item.revealed and not
-                                test_item.sight and not item.sight):
-                            revealed_wall_count.append(item)
-                    if item.x < self.width:
-                        test_item = self.props[((item.y) * w) + (item.x + 1)]
-                        if (
-                                test_item.revealed and not
-                                test_item.sight and not item.sight):
-                            revealed_wall_count.append(item)
-                    if item.x > 0:
-                        test_item = self.props[((item.y) * w) + (item.x - 1)]
-                        if (
-                                test_item.revealed and not
-                                test_item.sight and not item.sight):
-                            revealed_wall_count.append(item)
-                    if len(revealed_wall_count) == 2:
-                        item.revealed = True
+
+        if self.maze_on:
+            self.line_of_sight()
 
         # Actually print the maze
         self.margin = ((int(self.columns) - self.width)//2)
@@ -375,7 +313,6 @@ class GameScreen:
         self.save_game()
         self.timer_start()
         termios.tcsetattr(sys.stdin, termios.TCSADRAIN, orig_settings)
-
 
     def player_move(self):
         """Detect keystrokes and move the player accordingly"""

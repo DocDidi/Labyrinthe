@@ -38,7 +38,7 @@ class GameScreen:
         self.time_limit = ((self.height * self.width)//20) + 25
         self.hint = 0
         self.turn_count = 0
-        self.max_sight = 15
+        self.max_sight = 16
 
     def extract(self, maze):
         """Extract game data from the map"""
@@ -148,15 +148,21 @@ class GameScreen:
     def line_of_sight(self):
         """Check if objects are in line of sight in order to reveal them"""
         w = self.width + 1
+        radius_sqr = self.max_sight ** 2
         for player in self.players:
             xp, yp = player.x, player.y
             list_of_items_to_check_for_sight = []
+            left_vision = min(self.max_sight, xp)
+            right_vision = min(self.max_sight, w - xp)
             for i in range(-self.max_sight, self.max_sight + 1):
-                for j in range(-self.max_sight, self.max_sight + 1):
+                for j in range(-left_vision, right_vision):
                     position = ((yp + i) * w) + (xp + j)
                     if 0 <= position < len(self.props):
                         item = self.props[position]
-                        list_of_items_to_check_for_sight.append(item)
+                        xdif = xp - item.x
+                        ydif = yp - item.y
+                        if (xdif ** 2) + (ydif ** 2) <= radius_sqr:
+                            list_of_items_to_check_for_sight.append(item)
             for item in list_of_items_to_check_for_sight:
                 xi, yi = item.x, item.y
                 line = self.bresenham(xp, yp, xi, yi)

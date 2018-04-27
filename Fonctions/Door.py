@@ -24,6 +24,7 @@ class Door:
         elif self.visited:
             color = MAGENTA_TEXT
             b_color = B_MAGENTA_TEXT
+            self.sight = True
         else:
             color = YELLOW_TEXT
             b_color = B_WHITE_TEXT

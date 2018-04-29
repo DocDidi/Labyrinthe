@@ -163,29 +163,39 @@ class GameScreen:
                         ydif = yp - item.y
                         if (xdif ** 2) + (ydif ** 2) <= radius_sqr:
                             list_of_items_to_check_for_sight.append(item)
+            # while len(list_of_items_to_check_for_sight) != 0:
             for item in list_of_items_to_check_for_sight:
+                # item = list_of_items_to_check_for_sight[0]
                 xi, yi = item.x, item.y
                 line = self.bresenham(xp, yp, xi, yi)
+                reveal = True
                 for coord in line:
                     x, y = coord
                     if x == xp and y == yp:
                         continue
-                    item_index = (y * w) + x
-                    self.props[item_index].revealed = True
-                    if not self.props[item_index].sight:
-                        break
+                    target_index = (y * w) + x
+                    target_obj = self.props[target_index]
+                    if reveal == True:
+                        target_obj.revealed = True
+                    if not target_obj.sight:
+                        reveal = False
 
     def display(self):
         """Update and display the maze"""
+        # set keyboard in "no echo" while doing the math
         orig_settings = termios.tcgetattr(sys.stdin)
         (iflag, oflag, cflag, lflag, ispeed, ospeed, cc) = \
             termios.tcgetattr(sys.stdin)
         lflag &= ~termios.ECHO
         new_attr = [iflag, oflag, cflag, lflag, ispeed, ospeed, cc]
         termios.tcsetattr(sys.stdin, termios.TCSANOW, new_attr)
+
+        # reveal the map in easy mode
         if self.start_menu.difficulty == 0 and self.turn_count == 0:
             for item in self.props:
                 item.revealed = True
+
+        # calculate where to render the maze
         offset = 3
         if self.width < len(MESSAGE_MOVES):
             offset = 4
@@ -238,6 +248,7 @@ class GameScreen:
             # mark position
             position = (player.y) * w + (player.x)
             self.props[position].visited = True
+
         # give hint after time limit
         if not self.start_menu.difficulty == 2:
             if self.time_total > self.time_limit and self.hint < 1:
@@ -259,7 +270,8 @@ class GameScreen:
                         if 0 <= position < len(self.props):
                             self.props[position].revealed = True
 
-        if self.maze_on:
+        # unfog the things the player can see
+        if self.maze_on and self.start_menu.difficulty != 0:
             self.line_of_sight()
 
         # Actually print the maze

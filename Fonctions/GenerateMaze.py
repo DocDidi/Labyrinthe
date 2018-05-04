@@ -180,38 +180,65 @@ def find_eligible_exit(maze_map, corner):
     eligible_exits = []
     map_width = len(maze_map[0]) - 1
     map_height = len(maze_map) - 1
+    avoid = (LETTER_WALL, LETTER_DOOR)
     if corner == "NW":
         for i in range(1, map_width // 2):
-            if maze_map[1][i] != LETTER_WALL:
+            if maze_map[1][i] not in avoid:
                 eligible_exits.append((0, i))
         for j in range(1, map_height // 2):
-            if maze_map[j][1] != LETTER_WALL:
+            if maze_map[j][1] not in avoid:
                 eligible_exits.append((j, 0))
         return eligible_exits
     if corner == "NE":
         for i in range(map_width // 2, map_width):
-            if maze_map[1][i] != LETTER_WALL:
+            if maze_map[1][i] not in avoid:
                 eligible_exits.append((0, i))
         for j in range(1, map_height // 2):
-            if maze_map[j][map_width-1] != LETTER_WALL:
+            if maze_map[j][map_width-1] not in avoid:
                 eligible_exits.append((j, map_width))
         return eligible_exits
     if corner == "SW":
         for i in range(1, map_width // 2):
-            if maze_map[map_height - 1][i] != LETTER_WALL:
+            if maze_map[map_height - 1][i] not in avoid:
                 eligible_exits.append((map_height, i))
         for j in range(map_height // 2, map_height):
-            if maze_map[j][1] != LETTER_WALL:
+            if maze_map[j][1] not in avoid:
                 eligible_exits.append((j, 0))
         return eligible_exits
     if corner == "SE":
         for i in range(map_width // 2, map_width):
-            if maze_map[map_height - 1][i] != LETTER_WALL:
+            if maze_map[map_height - 1][i] not in avoid:
                 eligible_exits.append((map_height, i))
         for j in range(map_height // 2, map_height):
-            if maze_map[j][map_width - 1] != LETTER_WALL:
+            if maze_map[j][map_width - 1] not in avoid:
                 eligible_exits.append((j, map_width))
         return eligible_exits
+
+
+def place_player(maze_map, corner, player_number):
+    x_middle = len(maze_map[0]) // 2
+    y_middle = len(maze_map) // 2
+    x_end = len(maze_map[0]) - 1
+    y_end = len(maze_map) - 1
+    if corner == "NW":
+        x_range = (1, x_middle)
+        y_range = (1, y_middle)
+    elif corner == "NE":
+        x_range = (x_middle + 2, x_end)
+        y_range = (1, y_middle)
+    elif corner == "SW":
+        x_range = (1, x_middle)
+        y_range = (y_middle + 2, y_end)
+    elif corner == "SE":
+        x_range = (x_middle + 2, x_end)
+        y_range = (y_middle + 2, y_end)
+    while True:
+        x = random.randint(x_range[0], x_range[1])
+        y = random.randint(y_range[0], y_range[1])
+        if maze_map[y][x] == LETTER_CORRIDOR:
+            maze_map[y][x] = LETTER_PLAYER[player_number]
+            print("done")
+            break
 
 
 def make_entrance_and_exit(maze_map, number_of_players):
@@ -219,14 +246,15 @@ def make_entrance_and_exit(maze_map, number_of_players):
     locations = ["NW", "NE", "SW", "SE"]
     for i in range(number_of_players):
         position_start = locations.pop(random.randint(0, len(locations)-1))
-        if position_start == "NW":
-            maze_map[1][1] = LETTER_PLAYER[i]
-        elif position_start == "NE":
-            maze_map[1][len(maze_map[1])-2] = LETTER_PLAYER[i]
-        elif position_start == "SW":
-            maze_map[len(maze_map)-2][1] = LETTER_PLAYER[i]
-        elif position_start == "SE":
-            maze_map[len(maze_map)-2][len(maze_map[1])-2] = LETTER_PLAYER[i]
+        place_player(maze_map, position_start, i)
+        # if position_start == "NW":
+        #     maze_map[1][1] = LETTER_PLAYER[i]
+        # elif position_start == "NE":
+        #     maze_map[1][len(maze_map[1])-2] = LETTER_PLAYER[i]
+        # elif position_start == "SW":
+        #     maze_map[len(maze_map)-2][1] = LETTER_PLAYER[i]
+        # elif position_start == "SE":
+        #     maze_map[len(maze_map)-2][len(maze_map[1])-2] = LETTER_PLAYER[i]
     corner_end = locations.pop(random.randint(0, len(locations)-1))
     eligible_exits = find_eligible_exit(maze_map, corner_end)
     location_choice = random.randint(0, len(eligible_exits)-1)
@@ -331,7 +359,8 @@ def make_maze(w, h, number_of_players=1):
             if not item.right:
                 maze_map[item.i * 2 + 1][item.j * 2 + 2] = LETTER_CORRIDOR
     make_room(maze_map)
-    make_entrance_and_exit(maze_map, number_of_players)
     add_doors(maze_map)
+    make_entrance_and_exit(maze_map, number_of_players)
+    # add_doors(maze_map)
     map_finished = make_str_from_2d_array(maze_map)
     return map_finished

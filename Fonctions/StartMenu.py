@@ -96,6 +96,9 @@ class StartMenu():
                 if keystroke == CTRL_C or ord(keystroke) == BACKSPACE:
                     os.system('clear')
                     exit()
+                elif ord(keystroke) == ENTER and self.selected == 5:
+                    self.extract(make_maze(30, 15))
+                    no_input = False
                 elif ord(keystroke) == ENTER:
                     self.chosen = self.choice[self.selected]
                     no_input = False

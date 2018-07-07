@@ -163,22 +163,23 @@ class GameScreen:
                         ydif = yp - item.y
                         if (xdif ** 2) + (ydif ** 2) <= radius_sqr:
                             list_of_items_to_check_for_sight.append(item)
-            # while len(list_of_items_to_check_for_sight) != 0:
+            item_checked = []
             for item in list_of_items_to_check_for_sight:
-                # item = list_of_items_to_check_for_sight[0]
-                xi, yi = item.x, item.y
-                line = self.bresenham(xp, yp, xi, yi)
-                reveal = True
-                for coord in line:
-                    x, y = coord
-                    if x == xp and y == yp:
-                        continue
-                    target_index = (y * w) + x
-                    target_obj = self.props[target_index]
-                    if reveal == True:
-                        target_obj.revealed = True
-                    if not target_obj.sight:
-                        reveal = False
+                if item not in item_checked:
+                    xi, yi = item.x, item.y
+                    line = self.bresenham(xp, yp, xi, yi)
+                    reveal = True
+                    for coord in line:
+                        x, y = coord
+                        if x == xp and y == yp:
+                            continue
+                        target_index = (y * w) + x
+                        target_obj = self.props[target_index]
+                        if reveal == True:
+                            target_obj.revealed = True
+                        if not target_obj.sight:
+                            reveal = False
+                        item_checked.append(target_obj)
 
     def display(self):
         """Update and display the maze"""

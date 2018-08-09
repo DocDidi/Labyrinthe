@@ -2,7 +2,7 @@
 # coding: utf-8
 
 LETTER_WALL = "X"
-LETTER_PLAYER = "OI"  # Player1 = O, player2 = I
+LETTER_PLAYER = "OIM"  # Player1 = O, Player2 = I, Minotaur = M
 LETTER_END = "_"
 LETTER_DOOR = "#"
 LETTER_CORRIDOR = " "

@@ -14,6 +14,7 @@ from Fonctions.Player import *
 from Fonctions.Wall import *
 from Fonctions.Door import *
 from Fonctions.Corridor import *
+from Fonctions.Minotaur import *
 from Fonctions.GenerateMaze import *
 
 
@@ -46,6 +47,7 @@ class GameScreen:
         join_with = (LETTER_WALL, LETTER_DOOR, LETTER_END)
         props = []
         players = []
+        minotaurs = []
         check_player = False
         check_end = False
         check_key = False
@@ -57,6 +59,9 @@ class GameScreen:
                     check_player = True
                 elif letter is LETTER_PLAYER[1]:
                     players.append(Player(i, j, player_number=2))
+                    props.append(Corridor(i, j))
+                elif letter is LETTER_PLAYER[2]:
+                    minotaurs.append(Minotaur(i, j,))
                     props.append(Corridor(i, j))
                 elif letter is LETTER_END:
                     vertical = False
@@ -101,6 +106,7 @@ class GameScreen:
                     props.append(Corridor(i, j))
         if check_player and check_end and check_key:
             self.players = players
+            self.minotaurs = minotaurs
             self.props = props
             self.height = i
             self.width = j
@@ -292,6 +298,8 @@ class GameScreen:
         # Display the players on top of the maze
         for player in self.players:
             player.display(self.margin, self.margin_v)
+        for minotaur in self.minotaurs:
+            minotaur.display(self.margin, self.margin_v)
         # Print the text below the maze
         if self.player_have_key:
             margin = ((int(self.columns) - len(SYMBOL_KEY) + 4)//2)

@@ -237,7 +237,7 @@ def place_player(maze_map, corner, player_number):
         y = random.randint(y_range[0], y_range[1])
         if maze_map[y][x] == LETTER_CORRIDOR:
             maze_map[y][x] = LETTER_PLAYER[player_number]
-            print("done")
+            # print("done")
             break
 
 
@@ -245,16 +245,13 @@ def make_entrance_and_exit(maze_map, number_of_players):
     """Place enter and exit on the map"""
     locations = ["NW", "NE", "SW", "SE"]
     for i in range(number_of_players):
+        # input(locations)
         position_start = locations.pop(random.randint(0, len(locations)-1))
         place_player(maze_map, position_start, i)
-        # if position_start == "NW":
-        #     maze_map[1][1] = LETTER_PLAYER[i]
-        # elif position_start == "NE":
-        #     maze_map[1][len(maze_map[1])-2] = LETTER_PLAYER[i]
-        # elif position_start == "SW":
-        #     maze_map[len(maze_map)-2][1] = LETTER_PLAYER[i]
-        # elif position_start == "SE":
-        #     maze_map[len(maze_map)-2][len(maze_map[1])-2] = LETTER_PLAYER[i]
+    # input(locations)
+    minotaur_position = locations.pop(random.randint(0, len(locations)-1))
+    place_player(maze_map, minotaur_position, 2)
+    # input(locations)
     corner_end = locations.pop(random.randint(0, len(locations)-1))
     eligible_exits = find_eligible_exit(maze_map, corner_end)
     location_choice = random.randint(0, len(eligible_exits)-1)

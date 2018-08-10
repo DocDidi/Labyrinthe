@@ -298,10 +298,11 @@ class GameScreen:
         # Display the players on top of the maze
         for player in self.players:
             player.display(self.margin, self.margin_v)
-        for minotaur in self.minotaurs:
-            position = (minotaur.y) * w + (minotaur.x)
-            if self.props[position].revealed:
-                minotaur.display(self.margin, self.margin_v)
+        # Display the minotaur on top of the maze
+        # for minotaur in self.minotaurs:
+        #     position = (minotaur.y) * w + (minotaur.x)
+        #     if self.props[position].revealed:
+        #         minotaur.display(self.margin, self.margin_v)
         # Print the text below the maze
         if self.player_have_key:
             margin = ((int(self.columns) - len(SYMBOL_KEY) + 4)//2)

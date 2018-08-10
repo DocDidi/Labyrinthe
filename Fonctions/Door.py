@@ -18,10 +18,10 @@ class Door:
         self.sight = False
 
     def __str__(self):
-        if self.end:
-            color = CYAN_TEXT
-            b_color = B_CYAN_TEXT
-        elif self.visited:
+        # if self.end:
+        #     color = WHITE_TEXT
+        #     b_color = B_WHITE_TEXT
+        if self.visited:
             color = MAGENTA_TEXT
             b_color = B_MAGENTA_TEXT
             self.sight = True

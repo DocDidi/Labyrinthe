@@ -19,8 +19,8 @@ class Door:
 
     def __str__(self):
         if self.end:
-            color = RED_TEXT
-            b_color = B_RED_TEXT
+            color = CYAN_TEXT
+            b_color = B_CYAN_TEXT
         elif self.visited:
             color = MAGENTA_TEXT
             b_color = B_MAGENTA_TEXT

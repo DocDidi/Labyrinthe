@@ -11,13 +11,13 @@ class Minotaur:
         self.target = (x, y)
 
     def display(self, margin, margin_v):
-        color = B_GREEN_TEXT
+        color = B_RED_TEXT
         print(
             "{0}\033[{1};{2}H{3}".format(
                 color,
                 self.y + margin_v,
                 self.x+1+margin,
-                SYMBOL_PLAYER) +
+                SYMBOL_MINOTAUR) +
             CLR_ATTR)
 
     def move(self, movement, props, width):

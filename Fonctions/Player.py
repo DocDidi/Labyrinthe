@@ -13,9 +13,9 @@ class Player:
 
     def display(self, margin, margin_v):
         if self.player_number == 1:
-            color = B_BLUE_TEXT
+            color = COLOR_PLAYER_1
         else:
-            color = B_RED_TEXT
+            color = COLOR_PLAYER_2
         print(
             "{0}\033[{1};{2}H{3}".format(
                 color,
